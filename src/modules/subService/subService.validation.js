@@ -1,5 +1,5 @@
 import joi from "joi"
-import { generalFields } from "../../middlewares/validation.js"
+import { generalFields } from "../../middleWares/validation.js"
 export const addSubServiceSchema ={
     query:joi.object({
         serviceId:generalFields._id

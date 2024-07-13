@@ -2,7 +2,7 @@ import { Router } from "express"
 import * as IPController from './IP.controller.js'
 import * as IPvalidators from './IP.validation.js'
 import { asyncHandler } from "../../utils/errorHandeling.js"
-import { validationCoreFunction } from "../../middlewares/validation.js"
+import { validationCoreFunction } from "../../middleWares/validation.js"
 const router = Router()
 
 router.post('/newIP',
