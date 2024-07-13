@@ -12,7 +12,9 @@ export const addAboutData = async (req, res, next) => {
         vission,
         ourStory,
         ourValue,
-        whyUs,
+        whyUsTitle,
+        whyUsDesc,
+        whyUsPoints,
         metaDesc,
         metaKeyWords,
         altImage1,
@@ -50,7 +52,9 @@ export const addAboutData = async (req, res, next) => {
         vission,
         ourStory,
         ourValue,
-        whyUs,
+        whyUsTitle,
+        whyUsDesc,
+        whyUsPoints,
         metaDesc,
         metaKeyWords,
         whyUsImage1: { secure_url: secureUrl1, public_id: publicId1, customId: customId1, alt: altImage1 },
@@ -77,7 +81,9 @@ export const editAboutData = async (req, res, next) => {
         vission,
         ourStory,
         ourValue,
-        whyUs,
+        whyUsTitle,
+        whyUsDesc,
+        whyUsPoints,
         metaDesc,
         metaKeyWords,
         altImage1,
@@ -87,8 +93,6 @@ export const editAboutData = async (req, res, next) => {
     if (!about) {
         return next(new Error('no about exist', { cause: 400 }))
     }
-
-
 
     // const customId = `${fileName}_${moment().format('DD/MM/YYYY/_HH:mm:ss')}`;
     let whyUs_Image1
@@ -150,11 +154,23 @@ export const editAboutData = async (req, res, next) => {
     else {
         about.ourValue = ourValue
     }
-    if (!whyUs) {
-        about.whyUs = about.whyUs
+    if (!whyUsTitle) {
+        about.whyUsTitle = about.whyUsTitle
     }
     else {
-        about.whyUs = whyUs
+        about.whyUsTitle = whyUsTitle
+    }
+    if (!whyUsDesc) {
+        about.whyUsDesc = about.whyUsDesc
+    }
+    else {
+        about.whyUsDesc = whyUsDesc
+    }
+    if (!whyUsPoints) {
+        about.whyUsPoints = about.whyUsPoints
+    }
+    else {
+        about.whyUsPoints = whyUsPoints
     }
     if (!metaDesc) {
         about.metaDesc = about.metaDesc

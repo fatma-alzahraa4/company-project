@@ -6,6 +6,7 @@ import teamRouter from './ourTeam/ourTeam.router.js';
 import clientRouter from './ourClient/ourClient.router.js';
 import contactRouter from './ContactUs/contactUs.router.js';
 import IPRouter from './IP/IP.router.js';
+import mainServiceRouter from './mainService/mainService.router.js';
 
 
 export{
@@ -16,5 +17,6 @@ export{
     teamRouter,
     clientRouter,
     contactRouter,
-    IPRouter
+    IPRouter,
+    mainServiceRouter
 } 

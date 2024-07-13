@@ -22,27 +22,34 @@ export const addOurClient = async (req, res, next) => {
     if (!companyName) {
         return next(new Error('Please enter a Company Name', { cause: 400 }))
     }
-    const logo = req.files['logo'][0];
-    const video = req.files['video'][0];
-    const logoName = getFileNameWithoutExtension(logo.originalname);
-    const videoName = getFileNameWithoutExtension(video.originalname);
-    const customIdImage = `${logoName}_${nanoId()}`
-    const customIdVideo = `${videoName}_${nanoId()}`
-
     if (!req.files['logo']) {
         return next(new Error('Please upload logo for our clients', { cause: 400 }))
     }
 
+    const logo = req.files['logo'][0];
+    const logoName = getFileNameWithoutExtension(logo.originalname);
+    const customIdImage = `${logoName}_${nanoId()}`
+    
+    
     const { secure_url: imageSecureUrl, public_id: imagePublicId } = await cloudinary.uploader.upload(req.files['logo'][0].path,
         { folder: `${process.env.PROJECT_FOLDER}/clientsImage/${customIdImage}` }
     )
     req.imagePath = `${process.env.PROJECT_FOLDER}/clientsImage/${customIdImage}`
-    const { secure_url: videoSecureUrl, public_id: videoPublicId } = await cloudinary.uploader.upload(req.files['video'][0].path, {
-        resource_type: 'video',
-        folder: `${process.env.PROJECT_FOLDER}/clientsVideo/${customIdVideo}`
-    });
+    let vid = {}
+    let customIdVid = ''
+    if(req.files['video']){
+        const video = req.files['video'][0];
+        const videoName = getFileNameWithoutExtension(video.originalname);
+        const customIdVideo = `${videoName}_${nanoId()}`
+        const { secure_url: videoSecureUrl, public_id: videoPublicId } = await cloudinary.uploader.upload(req.files['video'][0].path, {
+            resource_type: 'video',
+            folder: `${process.env.PROJECT_FOLDER}/clientsVideo/${customIdVideo}`
+        });
+        vid = { secure_url: videoSecureUrl, public_id: videoPublicId, alt: altVideo }
+        customIdVid=customIdVideo
+        req.videoPath = `${process.env.PROJECT_FOLDER}/clientsVideo/${customIdVideo}`;
 
-    req.videoPath = `${process.env.PROJECT_FOLDER}/clientsVideo/${customIdVideo}`;
+    }
 
 
     const clientObj = {
@@ -50,9 +57,9 @@ export const addOurClient = async (req, res, next) => {
         details,
         logo: { secure_url: imageSecureUrl, public_id: imagePublicId, alt: altImage },
         teamId,
-        video: { secure_url: videoSecureUrl, public_id: videoPublicId, alt: altVideo },
+        video:vid,
         customIdImage,
-        customIdVideo
+        customIdVideo:customIdVid
 
     }
     const newClient = await clientModel.create(clientObj)
@@ -108,8 +115,11 @@ export const editClientData = async (req, res, next) => {
         const video = req.files['video'][0];
         const videoName = getFileNameWithoutExtension(video.originalname);
         const customIdVideo = `${videoName}_${nanoId()}`
-        await cloudinary.uploader.destroy(client.video.public_id, { resource_type: 'video' });
-        await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/clientsVideo/${client.customIdVideo}`)
+        if(client.video.length){
+            console.log("true");
+            await cloudinary.uploader.destroy(client.video.public_id, { resource_type: 'video' });
+            await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/clientsVideo/${client.customIdVideo}`)
+        }
         const { secure_url: videoSecureUrl, public_id: videoPublicId } = await cloudinary.uploader.upload(req.files['video'][0].path, {
             resource_type: 'video',
             folder: `${process.env.PROJECT_FOLDER}/clientsVideo/${customIdVideo}`

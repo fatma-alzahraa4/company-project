@@ -37,6 +37,7 @@ var corsOptions = {
     app.use('/client',routers.clientRouter)
     app.use('/contact',routers.contactRouter)
     app.use('/IP',routers.IPRouter)
+    app.use('/mainService',routers.mainServiceRouter)
 
 
 

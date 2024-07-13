@@ -3,7 +3,8 @@ import { generalFields } from "../../middlewares/validation.js"
 export const addServiceSchema ={
     body:joi.object({
         name:joi.string().min(3).max(30).required(),
-        alt:joi.string().min(3).max(100).required(),  
+        mainServiceId:generalFields._id.required(),
+        // alt:joi.string().min(3).max(100).required(),  
     }).required()
 }
 
@@ -13,7 +14,8 @@ export const editServiceSchema ={
     }).required(),
     body:joi.object({
         name:joi.string().min(3).max(30),
-        alt:joi.string().min(3).max(100),  
+        mainServiceId:generalFields._id,
+        // alt:joi.string().min(3).max(100),  
     }).required()
 }
 

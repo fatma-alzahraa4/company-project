@@ -26,7 +26,8 @@ export const teamSchema = new Schema({
         },
         alt:{
             type:String,
-            maxlength: 100
+            maxlength: 100,
+            required: true
         }
     },
     customId:String,

@@ -17,10 +17,18 @@ export const aboutSchema = new Schema({
         type:String,
         required:true,
     },
-    whyUs:{
+    whyUsTitle:{
         type:String,
         required:true,
     },
+    whyUsDesc:{
+        type:String,
+        required:true,
+    },
+    whyUsPoints:[{
+        type:String,
+        required:true,
+    }],
     whyUsImage1: {
         secure_url: {
             type: String,
