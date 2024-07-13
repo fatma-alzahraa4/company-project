@@ -9,7 +9,7 @@ const router = Router()
 
 router.post('/add',
     multerCloudFunction(allowedExtensions.Image).single('icon'),
-    convertToWebP,
+    // convertToWebP,
     validationCoreFunction(mainServiceValidators.addMainServiceSchema),
     asyncHandler(mainServiceController.addMainServiceData),
     mainServiceController.addMainServiceData)

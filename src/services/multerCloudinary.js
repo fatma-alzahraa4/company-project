@@ -1,6 +1,9 @@
 import multer from 'multer'
 import { allowedExtensions } from './../utils/allowedEtensions.js';
-import sharp from 'sharp';
+import gm from 'gm';
+import path from 'path';
+import fs from 'fs';
+
 export const multerCloudFunction = (allowedExtensionsArr)=>{
     if(!allowedExtensionsArr){
         allowedExtensionsArr = allowedExtensions.Image
@@ -18,26 +21,22 @@ export const multerCloudFunction = (allowedExtensionsArr)=>{
 
 
 export const convertToWebP = async (req, res, next) => {
-    if (req.file) {
-        try {
-            const outputFilePath = `uploads/${Date.now()}-converted.webp`;
-
-            await sharp(req.file.path)
-                .webp({ quality: 80 })
-                .toFile(outputFilePath);
-
-            // Update file info in req.file
-            req.file.path = outputFilePath;
-            req.file.mimetype = 'image/webp';
-
-            // Clean up the original uploaded file
-            fs.unlinkSync(req.file.path);
-
-            next();
-        } catch (error) {
-            return next(error);
+    try {
+        if (!req.file) {
+            throw new Error('No file uploaded');
         }
-    } else {
-        next();
+
+        gm(req.file.path)
+            .setFormat('webp')
+            .write(`${req.file.path}.webp`, (err) => {
+                if (err) throw err;
+                req.file.path = `${req.file.path}.webp`;
+                next();
+            });
+    } catch (err) {
+        next(new Error(`Error converting image to WebP: ${err.message}`));
     }
+
 };
+
+
