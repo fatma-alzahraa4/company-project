@@ -21,6 +21,11 @@ export const mainServiceSchema = new Schema({
             required: true
         }
     },
+    active:{
+        type:Boolean,
+        required:true,
+        default:true
+    },
     customId:String,
 }, 
 { 

@@ -90,27 +90,49 @@ export const editMainService = async (req, res, next) => {
 
 export const deleteMainService = async (req, res, next) => {
     const { mainServiceId } = req.params
-    const deletedMainService = await mainServiceModel.findByIdAndDelete(mainServiceId)
+    const deletedMainService = await mainServiceModel.findOneAndUpdate({ _id: mainServiceId, active: true }, { active: false }, { new: true })
     if (!deletedMainService) {
         return next(new Error('failed to delete', { cause: 400 }))
     }
-    await cloudinary.uploader.destroy(deletedMainService.icon.public_id)
-    await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/mainService/${deletedMainService.customId}`)
+    // await cloudinary.uploader.destroy(deletedMainService.icon.public_id)
+    // await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/mainService/${deletedMainService.customId}`)
     return res.status(200).json({ message: 'Done', deletedMainService })
 
 }
 
 export const getMainServices = async (req, res, next) => {
-    const mainServices = await mainServiceModel.find().populate([
-        {
-            path: 'services',
-            populate:[{
-                path:'subServices',
-            }]
-        }])
+    const { notActive } = req.query
+    if (!notActive) {
+        const mainServices = await mainServiceModel.find({ active: true }).populate([
+            {
+                path: 'services',
+                populate: [{
+                    path: 'subServices',
+                }]
+            }])
 
-    if (!mainServices) {
-        return next(new Error('failed to get main services', { cause: 400 }))
+        if (!mainServices) {
+            return next(new Error('failed to get main services', { cause: 400 }))
+        }
+        return res.status(200).json({ message: 'Done', mainServices })
     }
-    return res.status(200).json({ message: 'Done', mainServices })
+    else {
+        if (notActive == 'true') {
+            const mainServices = await mainServiceModel.find().populate([
+                {
+                    path: 'services',
+                    populate: [{
+                        path: 'subServices',
+                    }]
+                }])
+
+            if (!mainServices) {
+                return next(new Error('failed to get main services', { cause: 400 }))
+            }
+            return res.status(200).json({ message: 'Done', mainServices })
+        }
+        else {
+            return next(new Error('wrong query', { cause: 400 }))
+        }
+    }
 }

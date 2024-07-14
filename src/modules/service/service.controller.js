@@ -10,6 +10,7 @@ import { mainServiceModel } from "../../../DB/models/mainServiceModel.js";
 
 export const addServiceData = async (req, res, next) => {
     const { name, mainServiceId } = req.body
+    console.log(name,mainServiceId);
     if (!name) {
         return next(new Error('Please enter a name for service', { cause: 400 }))
     }
@@ -106,24 +107,44 @@ export const editService = async (req, res, next) => {
 
 export const deleteService = async (req, res, next) => {
     const { serviceId } = req.params
-    const deletedService = await serviceModel.findByIdAndDelete(serviceId)
+    const deletedService = await serviceModel.findOneAndUpdate({_id:serviceId , active:true},{active:false},{new:true})
     if (!deletedService) {
         return next(new Error('failed to delete', { cause: 400 }))
     }
-    await cloudinary.uploader.destroy(deletedService.icon.public_id)
-    await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/service/${deletedService.customId}`)
+    // await cloudinary.uploader.destroy(deletedService.icon.public_id)
+    // await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/service/${deletedService.customId}`)
     return res.status(200).json({ message: 'Done', deletedService })
 
 }
 
 export const getservices = async (req, res, next) => {
-    const services = await serviceModel.find().populate([
-        {
-            path: 'subServices',
-        }])
-
-    if (!services) {
-        return next(new Error('failed to get services', { cause: 400 }))
+    const { notActive } = req.query
+    if (!notActive) {
+        const services = await serviceModel.find({active:true}).populate([
+            {
+                path: 'subServices',
+            }])
+    
+        if (!services) {
+            return next(new Error('failed to get services', { cause: 400 }))
+        }
+        return res.status(200).json({ message: 'Done', services })
     }
-    return res.status(200).json({ message: 'Done', services })
+    else {
+        if (notActive == 'true') {
+            const services = await serviceModel.find().populate([
+                {
+                    path: 'subServices',
+                }])
+        
+            if (!services) {
+                return next(new Error('failed to get services', { cause: 400 }))
+            }
+            return res.status(200).json({ message: 'Done', services })
+        }
+        else {
+            return next(new Error('wrong query', { cause: 400 }))
+        }
+    }
+    
 }

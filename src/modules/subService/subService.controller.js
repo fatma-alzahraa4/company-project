@@ -3,18 +3,18 @@ import cloudinary from "../../utils/cloudinaryConfigrations.js";
 import { subServiceModel } from "../../../DB/models/subServiceModel.js";
 
 export const addSubServiceData = async (req, res, next) => {
-    const{serviceId} = req.query
-    const {name,brief} = req.body
-    if(serviceId){
+    const { serviceId } = req.query
+    const { name, brief } = req.body
+    if (serviceId) {
         const service = await serviceModel.findById(serviceId)
-        if(!service){
+        if (!service) {
             return next(new Error('no service found', { cause: 400 }))
         }
     }
-    if(!name){
+    if (!name) {
         return next(new Error('Please enter a name for subService', { cause: 400 }))
     }
-    
+
     const subServiceObj = {
         name,
         brief,
@@ -29,31 +29,31 @@ export const addSubServiceData = async (req, res, next) => {
 }
 
 export const editSubService = async (req, res, next) => {
-    const{subserviceId} = req.params
-    const {name,brief,serviceId} = req.body
+    const { subserviceId } = req.params
+    const { name, brief, serviceId } = req.body
     const subService = await subServiceModel.findById(subserviceId)
-    if(serviceId){
+    if (serviceId) {
         const service = await serviceModel.findById(serviceId)
-        if(!service){
+        if (!service) {
             return next(new Error('no service found', { cause: 400 }))
         }
     }
-    if(!subService){
+    if (!subService) {
         return next(new Error('no subService found', { cause: 400 }))
     }
-    if(!name){
-       subService.name = subService.name
+    if (!name) {
+        subService.name = subService.name
     }
-    else{
+    else {
         subService.name = name
     }
-    if(!brief){
+    if (!brief) {
         subService.brief = subService.brief
     }
-    else{
+    else {
         subService.brief = brief
     }
-    if(serviceId){
+    if (serviceId) {
         subService.serviceId = serviceId
     }
 
@@ -68,18 +68,34 @@ export const editSubService = async (req, res, next) => {
 
 export const deleteSubService = async (req, res, next) => {
     const { subserviceId } = req.params
-    const deletedSubService = await subServiceModel.findByIdAndDelete(subserviceId)
+    const deletedSubService = await subServiceModel.findOneAndUpdate({ _id: subserviceId, active: true }, { active: false }, { new: true })
     if (!deletedSubService) {
         return next(new Error('failed to delete', { cause: 400 }))
     }
-    return res.status(200).json({ message: 'Done' ,deletedSubService})
+    return res.status(200).json({ message: 'Done', deletedSubService })
 
-} 
+}
 
-export const getSubServices = async (req,res,next) =>{
-    const subServices = await subServiceModel.find()
-    if(!subServices){
-        return next(new Error('failed to get services', { cause: 400 }))
+export const getSubServices = async (req, res, next) => {
+    const { notActive } = req.query
+    if (!notActive) {
+        const subServices = await subServiceModel.find({ active: true })
+        if (!subServices) {
+            return next(new Error('failed to get services', { cause: 400 }))
+        }
+        return res.status(200).json({ message: 'Done', subServices })
     }
-    return res.status(200).json({ message: 'Done', subServices })
+    else {
+        if (notActive == 'true') {
+            const subServices = await subServiceModel.find()
+            if (!subServices) {
+                return next(new Error('failed to get services', { cause: 400 }))
+            }
+            return res.status(200).json({ message: 'Done', subServices })
+        }
+        else {
+            return next(new Error('wrong query', { cause: 400 }))
+        }
+    }
+
 }

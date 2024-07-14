@@ -1,7 +1,7 @@
 import { Router } from "express";
 import * as aboutController from './aboutUs.controller.js'
 import { asyncHandler } from "../../utils/errorHandeling.js";
-import { multerCloudFunction } from './../../services/multerCloudinary.js';
+import { convertToWebP, multerCloudFunction } from './../../services/multerCloudinary.js';
 import { allowedExtensions } from "../../utils/allowedEtensions.js";
 import { validationCoreFunction } from "../../middleWares/validation.js";
 import * as aboutValidators from './aboutUs.validation.js'
@@ -13,6 +13,7 @@ router.post('/add',
         { name: 'Image1', maxCount: 1 },
         { name: 'Image2', maxCount: 1 }
     ]),
+    convertToWebP,
     validationCoreFunction(aboutValidators.addAboutSchema),
     asyncHandler(aboutController.addAboutData),
     aboutController.addAboutData)
@@ -23,6 +24,7 @@ router.put('/edit',
         { name: 'Image1', maxCount: 1 },
         { name: 'Image2', maxCount: 1 }
     ]),
+    convertToWebP,
     validationCoreFunction(aboutValidators.editAboutSchema),
     asyncHandler(aboutController.editAboutData),
     aboutController.editAboutData)

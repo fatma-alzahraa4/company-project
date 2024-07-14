@@ -26,3 +26,9 @@ export const deleteTeamSchema ={
         memberId:generalFields._id.required()
     }).required(),
 }
+
+export const getTeamSchema ={
+    query:joi.object({
+        notActive:joi.string().min(4).max(4).valid('true')
+    }).required(),
+}

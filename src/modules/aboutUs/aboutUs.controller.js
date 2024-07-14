@@ -20,6 +20,14 @@ export const addAboutData = async (req, res, next) => {
         altImage1,
         altImage2,
     } = req.body
+    
+    if (!req.files['Image1']) {
+        return next(new Error('Please upload image 1', { cause: 400 }));
+    }
+    if (!req.files['Image2']) {
+        return next(new Error('Please upload image 2', { cause: 400 }));
+    }
+
     const file1 = req.files['Image1'][0];
     const file2 = req.files['Image2'][0];
 
@@ -28,13 +36,6 @@ export const addAboutData = async (req, res, next) => {
     // const customId = `${fileName}_${moment().format('DD/MM/YYYY/_HH:mm:ss')}`;
     const customId1 = `${Image1Name}_${nanoId()}`
     const customId2 = `${Image2Name}_${nanoId()}`
-    if (!req.files['Image1']) {
-        return next(new Error('Please upload image 1', { cause: 400 }));
-    }
-    if (!req.files['Image2']) {
-        return next(new Error('Please upload image 2', { cause: 400 }));
-    }
-
     const { secure_url: secureUrl1, public_id: publicId1 } = await cloudinary.uploader.upload(req.files['Image1'][0].path, {
         folder: `${process.env.PROJECT_FOLDER}/whyUs/${customId1}`
     });

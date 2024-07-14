@@ -8,23 +8,22 @@ import { validationCoreFunction } from "../../middleWares/validation.js"
 const router = Router()
 
 router.post('/add',
-    multerCloudFunction(allowedExtensions.Image).single('icon'),
     validationCoreFunction(serviceValidators.addServiceSchema),
     asyncHandler(serviceController.addServiceData),
     serviceController.addServiceData)
 
 router.put('/edit/:serviceId',
-    multerCloudFunction(allowedExtensions.Image).single('icon'),
     validationCoreFunction(serviceValidators.editServiceSchema),
     asyncHandler(serviceController.editService),
     serviceController.editService)
 
-router.delete('/delete/:serviceId',
+router.patch('/delete/:serviceId',
     validationCoreFunction(serviceValidators.deleteServiceSchema),
     asyncHandler(serviceController.deleteService),
     serviceController.deleteService)
 
 router.get('/get',
+    validationCoreFunction(serviceValidators.getServiceSchema),
     asyncHandler(serviceController.getservices),
     serviceController.getservices)
 

@@ -24,3 +24,9 @@ export const deleteServiceSchema ={
         serviceId:generalFields._id.required()
     }).required(),
 }
+
+export const getServiceSchema ={
+    query:joi.object({
+        notActive:joi.string().min(4).max(4).valid('true')
+    }).required(),
+}

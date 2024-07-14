@@ -28,3 +28,9 @@ export const deleteClientSchema ={
         clientId:generalFields._id.required()
     }).required(),
 }
+
+export const getClientSchema ={
+    query:joi.object({
+        notActive:joi.string().min(4).max(4).valid('true')
+    }).required(),
+}

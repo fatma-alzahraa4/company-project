@@ -8,7 +8,7 @@ const nanoId = customAlphabet('abcdefghijklmnopqrstuvwxyz123456890', 5)
 
 const getFileNameWithoutExtension = (filename) => {
     return filename.split('.').slice(0, -1).join('.');
-  };
+};
 export const addOurClient = async (req, res, next) => {
     const { companyName, details, teamId, altImage, altVideo } = req.body
     if (teamId.length) {
@@ -29,15 +29,15 @@ export const addOurClient = async (req, res, next) => {
     const logo = req.files['logo'][0];
     const logoName = getFileNameWithoutExtension(logo.originalname);
     const customIdImage = `${logoName}_${nanoId()}`
-    
-    
+
+
     const { secure_url: imageSecureUrl, public_id: imagePublicId } = await cloudinary.uploader.upload(req.files['logo'][0].path,
         { folder: `${process.env.PROJECT_FOLDER}/clientsImage/${customIdImage}` }
     )
     req.imagePath = `${process.env.PROJECT_FOLDER}/clientsImage/${customIdImage}`
     let vid = {}
     let customIdVid = ''
-    if(req.files['video']){
+    if (req.files['video']) {
         const video = req.files['video'][0];
         const videoName = getFileNameWithoutExtension(video.originalname);
         const customIdVideo = `${videoName}_${nanoId()}`
@@ -46,7 +46,7 @@ export const addOurClient = async (req, res, next) => {
             folder: `${process.env.PROJECT_FOLDER}/clientsVideo/${customIdVideo}`
         });
         vid = { secure_url: videoSecureUrl, public_id: videoPublicId, alt: altVideo }
-        customIdVid=customIdVideo
+        customIdVid = customIdVideo
         req.videoPath = `${process.env.PROJECT_FOLDER}/clientsVideo/${customIdVideo}`;
 
     }
@@ -57,9 +57,9 @@ export const addOurClient = async (req, res, next) => {
         details,
         logo: { secure_url: imageSecureUrl, public_id: imagePublicId, alt: altImage },
         teamId,
-        video:vid,
+        video: vid,
         customIdImage,
-        customIdVideo:customIdVid
+        customIdVideo: customIdVid
 
     }
     const newClient = await clientModel.create(clientObj)
@@ -90,10 +90,10 @@ export const editClientData = async (req, res, next) => {
     if (!client) {
         return next(new Error('no client exist', { cause: 400 }))
     }
-    
+
     let client_logo
     let client_video
-   
+
     if (req.files['logo']) {
         const logo = req.files['logo'][0];
         const logoName = getFileNameWithoutExtension(logo.originalname);
@@ -115,7 +115,7 @@ export const editClientData = async (req, res, next) => {
         const video = req.files['video'][0];
         const videoName = getFileNameWithoutExtension(video.originalname);
         const customIdVideo = `${videoName}_${nanoId()}`
-        if(client.video.length){
+        if (client.video.length) {
             console.log("true");
             await cloudinary.uploader.destroy(client.video.public_id, { resource_type: 'video' });
             await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/clientsVideo/${client.customIdVideo}`)
@@ -183,23 +183,39 @@ export const editClientData = async (req, res, next) => {
 
 export const deleteClient = async (req, res, next) => {
     const { clientId } = req.params
-    const deletedClient = await clientModel.findByIdAndDelete(clientId)
+    const deletedClient = await clientModel.findOneAndUpdate({_id:clientId,active:true}, { active:false},{new:true})
     if (!deletedClient) {
         return next(new Error('failed to delete', { cause: 400 }))
     }
-    await cloudinary.uploader.destroy(deletedClient.logo.public_id);
-    await cloudinary.uploader.destroy(deletedClient.video.public_id, { resource_type: 'video' });
-    await Promise.all([
-        cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/clientsImage/${deletedClient.customIdImage}`),
-        cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/clientsVideo/${deletedClient.customIdVideo}`)
-    ]);
+    // await cloudinary.uploader.destroy(deletedClient.logo.public_id);
+    // await cloudinary.uploader.destroy(deletedClient.video.public_id, { resource_type: 'video' });
+    // await Promise.all([
+    //     cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/clientsImage/${deletedClient.customIdImage}`),
+    //     cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/clientsVideo/${deletedClient.customIdVideo}`)
+    // ]);
     return res.status(200).json({ message: 'Done', deletedClient })
 
 }
 export const getClients = async (req, res, next) => {
-    const client = await clientModel.find().populate('teamId')
-    if (!client) {
-        return next(new Error('failed to get client data', { cause: 400 }))
+    const { notActive } = req.query
+    if (!notActive) {
+        const client = await clientModel.find({ active: true }).populate('teamId')
+        if (!client) {
+            return next(new Error('failed to get client data', { cause: 400 }))
+        }
+        return res.status(200).json({ message: 'Done', client })
     }
-    return res.status(200).json({ message: 'Done', client })
+    else {
+        if (notActive == 'true') {
+            const client = await clientModel.find().populate('teamId')
+            if (!client) {
+                return next(new Error('failed to get client data', { cause: 400 }))
+            }
+            return res.status(200).json({ message: 'Done', client })
+        }
+        else {
+            return next(new Error('wrong query', { cause: 400 }))
+        }
+    }
+
 }

@@ -15,12 +15,13 @@ router.put('/edit/:subserviceId',
     asyncHandler(subServiceController.editSubService),
     subServiceController.editSubService)
 
-router.delete('/delete/:subserviceId',
+router.patch('/delete/:subserviceId',
     validationCoreFunction(subServiceValidators.deleteSubServiceSchema),
     asyncHandler(subServiceController.deleteSubService),
     subServiceController.deleteSubService)
 
 router.get('/get',
+    validationCoreFunction(subServiceValidators.getSubServiceSchema),
     asyncHandler(subServiceController.getSubServices),
     subServiceController.getSubServices)
 

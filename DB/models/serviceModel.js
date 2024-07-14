@@ -25,6 +25,11 @@ export const serviceSchema = new Schema({
         type:Schema.Types.ObjectId,
         ref:'MainService',
     },
+    active:{
+        type:Boolean,
+        required:true,
+        default:true
+    },
 }, 
 { 
     toObject:{virtuals:true},

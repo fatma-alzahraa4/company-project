@@ -43,7 +43,12 @@ export const clientSchema = new Schema({
     teamId:[{
         type:Schema.Types.ObjectId,
         ref:'Team',
-    }]
+    }],
+    active:{
+        type:Boolean,
+        required:true,
+        default:true
+    },
 },
 { timestamps: true })
 

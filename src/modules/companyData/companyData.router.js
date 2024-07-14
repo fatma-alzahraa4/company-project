@@ -9,12 +9,14 @@ const router = Router()
 
 router.post('/add',
     multerCloudFunction(allowedExtensions.Image).single('logo'),
+    convertToWebP,
     validationCoreFunction(companyValidators.addCompanySchema),
     asyncHandler(companyCntroller.addCompanyData),
     companyCntroller.addCompanyData)
 
 router.put('/edit',
     multerCloudFunction(allowedExtensions.Image).single('logo'),
+    convertToWebP,
     validationCoreFunction(companyValidators.editCompanySchema),
     asyncHandler(companyCntroller.editCompanyData),
     companyCntroller.editCompanyData)

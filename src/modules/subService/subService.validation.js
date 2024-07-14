@@ -26,3 +26,9 @@ export const deleteSubServiceSchema ={
         subserviceId:generalFields._id.required()
     }).required(),
 }
+
+export const getSubServiceSchema ={
+    query:joi.object({
+        notActive:joi.string().min(4).max(4).valid('true')
+    }).required(),
+}

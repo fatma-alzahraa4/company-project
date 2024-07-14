@@ -114,20 +114,36 @@ export const editTeamMember = async (req, res, next) => {
 
 export const deleteTeamMember = async (req, res, next) => {
     const { memberId } = req.params
-    const deletedmember = await teamModel.findByIdAndDelete(memberId)
+    const deletedmember = await teamModel.findOneAndUpdate({_id:memberId,active:true}, { active: false },{new:true})
     if (!deletedmember) {
         return next(new Error('failed to delete', { cause: 400 }))
     }
-    await cloudinary.uploader.destroy(deletedmember.image.public_id)
-    await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/team/${deletedmember.customId}`)
+    // await cloudinary.uploader.destroy(deletedmember.image.public_id)
+    // await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/team/${deletedmember.customId}`)
     return res.status(200).json({ message: 'Done', deletedmember })
 
 }
 
 export const getTeam = async (req, res, next) => {
-    const teamMembers = await teamModel.find()
-    if (!teamMembers) {
-        return next(new Error('failed to get team members', { cause: 400 }))
+    const { notActive } = req.query
+    if (!notActive) {
+        const teamMembers = await teamModel.find({ active: true })
+        if (!teamMembers) {
+            return next(new Error('failed to get team members', { cause: 400 }))
+        }
+        return res.status(200).json({ message: 'Done', teamMembers })
     }
-    return res.status(200).json({ message: 'Done', teamMembers })
+    else {
+        if (notActive == 'true') {
+            const teamMembers = await teamModel.find()
+            if (!teamMembers) {
+                return next(new Error('failed to get team members', { cause: 400 }))
+            }
+            return res.status(200).json({ message: 'Done', teamMembers })
+        }
+        else {
+            return next(new Error('wrong query', { cause: 400 }))
+        }
+    }
+
 }
