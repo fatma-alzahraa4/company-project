@@ -54,10 +54,10 @@ export const aboutSchema = new Schema({
             required: true
         },
         customId:String,
-        // alt:{
-        //     type:String,
-        //     maxlength: 100
-        // }
+        alt:{
+            type:String,
+            maxlength: 100
+        }
     },   
     metaDesc:{
         type:String,

@@ -27,11 +27,11 @@ export const companySchema = new Schema({
             type: String,
             required: true
         },
-        // alt:{
-        //     type:String,
-        //     maxlength: 100,
-        //     required: true
-        // }
+        alt:{
+            type:String,
+            maxlength: 100,
+            required: true
+        }
     },
     landLine: {
         type: String,

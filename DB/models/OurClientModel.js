@@ -20,11 +20,11 @@ export const clientSchema = new Schema({
             type: String,
             required: true
         },
-        // alt:{
-        //     type:String,
-        //     maxlength: 100,
-        //     required: true
-        // }
+        alt:{
+            type:String,
+            maxlength: 100,
+            required: true
+        }
     },
     customIdImage:String,
     video:{
