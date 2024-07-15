@@ -26,7 +26,7 @@ var corsOptions = {
   credentials: true
     })); 
 
-    app.get('/',(req,res)=>{res.json({message:"hello app"})})  
+    app.get('/get',(req,res)=>{res.json({message:"hello app"})})  
 
     app.use(json())
     app.use('/company',routers.companyRouter)
