@@ -11,7 +11,7 @@ const getFileNameWithoutExtension = (filename) => {
 };
 export const addOurClient = async (req, res, next) => {
     const { companyName, details, teamId, altImage } = req.body
-    if (teamId.length) {
+    if (teamId?.length) {
         for (const Id of teamId) {
             const isTeamExist = await teamModel.findById(Id)
             if (!isTeamExist) {
