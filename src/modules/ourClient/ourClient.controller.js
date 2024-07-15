@@ -10,7 +10,7 @@ const getFileNameWithoutExtension = (filename) => {
     return filename.split('.').slice(0, -1).join('.');
 };
 export const addOurClient = async (req, res, next) => {
-    const { companyName, details, teamId, altImage, altVideo } = req.body
+    const { companyName, details, teamId } = req.body
     if (teamId.length) {
         for (const Id of teamId) {
             const isTeamExist = await teamModel.findById(Id)
@@ -45,7 +45,7 @@ export const addOurClient = async (req, res, next) => {
             resource_type: 'video',
             folder: `${process.env.PROJECT_FOLDER}/clientsVideo/${customIdVideo}`
         });
-        vid = { secure_url: videoSecureUrl, public_id: videoPublicId, alt: altVideo }
+        vid = { secure_url: videoSecureUrl, public_id: videoPublicId }
         customIdVid = customIdVideo
         req.videoPath = `${process.env.PROJECT_FOLDER}/clientsVideo/${customIdVideo}`;
 
@@ -55,7 +55,7 @@ export const addOurClient = async (req, res, next) => {
     const clientObj = {
         companyName,
         details,
-        logo: { secure_url: imageSecureUrl, public_id: imagePublicId, alt: altImage },
+        logo: { secure_url: imageSecureUrl, public_id: imagePublicId },
         teamId,
         video: vid,
         customIdImage,
@@ -77,7 +77,7 @@ export const addOurClient = async (req, res, next) => {
 
 export const editClientData = async (req, res, next) => {
     const { clientId } = req.params
-    const { companyName, details, teamId, altImage, altVideo } = req.body
+    const { companyName, details, teamId } = req.body
     if (teamId.length) {
         for (const Id of teamId) {
             const isTeamExist = await teamModel.findById(Id)
@@ -152,19 +152,8 @@ export const editClientData = async (req, res, next) => {
     else {
         client.teamId = teamId
     }
-    if (!altImage) {
-        client.logo = { ...client_logo, alt: client.logo.alt }
-
-    }
-    else {
-        client.logo = { ...client_logo, alt: altImage }
-    }
-    if (!altVideo) {
-        client.video = { ...client_video, alt: client.video.alt }
-    }
-    else {
-        client.video = { ...client_video, alt: altVideo }
-    }
+    client.logo = client_logo
+    client.video = client_video
 
 
     const updatedClient = await client.save()

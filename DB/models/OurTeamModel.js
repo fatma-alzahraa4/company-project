@@ -24,11 +24,11 @@ export const teamSchema = new Schema({
             type: String,
             required: true
         },
-        alt:{
-            type:String,
-            maxlength: 100,
-            required: true
-        }
+        // alt:{
+        //     type:String,
+        //     maxlength: 100,
+        //     required: true
+        // }
     },
     customId:String,
     qoute:{

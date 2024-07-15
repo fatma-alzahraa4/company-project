@@ -17,8 +17,6 @@ export const addAboutData = async (req, res, next) => {
         whyUsPoints,
         metaDesc,
         metaKeyWords,
-        altImage1,
-        altImage2,
     } = req.body
     
     if (!req.files['Image1']) {
@@ -58,8 +56,8 @@ export const addAboutData = async (req, res, next) => {
         whyUsPoints,
         metaDesc,
         metaKeyWords,
-        whyUsImage1: { secure_url: secureUrl1, public_id: publicId1, customId: customId1, alt: altImage1 },
-        whyUsImage2: { secure_url: secureUrl2, public_id: publicId2, customId: customId2, alt: altImage2 },
+        whyUsImage1: { secure_url: secureUrl1, public_id: publicId1, customId: customId1 },
+        whyUsImage2: { secure_url: secureUrl2, public_id: publicId2, customId: customId2 },
 
     }
     const newAbout = await aboutModel.create(aboutObj)
@@ -87,8 +85,6 @@ export const editAboutData = async (req, res, next) => {
         whyUsPoints,
         metaDesc,
         metaKeyWords,
-        altImage1,
-        altImage2
     } = req.body
     const about = await aboutModel.findOne()
     if (!about) {
@@ -185,20 +181,10 @@ export const editAboutData = async (req, res, next) => {
     else {
         about.metaKeyWords = metaKeyWords
     }
-    if (!altImage1) {
-        about.whyUsImage1 = { ...whyUs_Image1, alt: about.whyUsImage1.alt }
-    }
-    else {
-        about.whyUsImage1 = { ...whyUs_Image1, alt: altImage1 }
-    }
-    if (!altImage2) {
-        about.whyUsImage2 = { ...whyUs_Image2, alt: about.whyUsImage2.alt }
-    }
-    else {
-        about.whyUsImage2 = { ...whyUs_Image2, alt: altImage2 }
-    }
+    
 
-
+    about.whyUsImage1 = whyUs_Image1
+    about.whyUsImage2 = whyUs_Image2
 
     const updatedAbout = await about.save()
     if (!updatedAbout) {

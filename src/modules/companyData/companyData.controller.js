@@ -21,7 +21,6 @@ export const addCompanyData = async (req, res, next) => {
         Linkedin,
         SnapChat,
         Tiktok,
-        alt,
         metaDesc,
         metaKeyWords,
     } = req.body
@@ -61,7 +60,7 @@ export const addCompanyData = async (req, res, next) => {
         phoneNum,
         landLine,
         mapLink,
-        logo: { secure_url, public_id, alt },
+        logo: { secure_url, public_id },
         Facebook,
         Instagram,
         Twitter,
@@ -96,7 +95,6 @@ export const editCompanyData = async (req, res, next) => {
         Linkedin,
         SnapChat,
         Tiktok,
-        alt,
         metaDesc,
         metaKeyWords,
     } = req.body
@@ -204,14 +202,7 @@ export const editCompanyData = async (req, res, next) => {
     else {
         company.metaKeyWords = metaKeyWords
     }
-    if (!alt) {
-        const sameAlt = company.logo.alt
-        // console.log(sameAlt);
-        company.logo = {...Company_logo,alt:sameAlt}
-    }
-    else {
-        company.logo = {...Company_logo,alt}
-    }
+    company.logo = Company_logo
 
 
     const updatedCompany = await company.save()

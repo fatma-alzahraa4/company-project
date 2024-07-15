@@ -15,11 +15,11 @@ export const mainServiceSchema = new Schema({
             type:String,
             required:true
         },
-        alt:{
-            type:String,
-            maxlength: 100,
-            required: true
-        }
+        // alt:{
+        //     type:String,
+        //     maxlength: 100,
+        //     required: true
+        // }
     },
     active:{
         type:Boolean,
