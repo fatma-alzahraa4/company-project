@@ -45,7 +45,7 @@ export const addOurClient = async (req, res, next) => {
             resource_type: 'video',
             folder: `${process.env.PROJECT_FOLDER}/clientsVideo/${customIdVideo}`
         });
-        vid = { secure_url: videoSecureUrl, public_id: videoPublicId}
+        vid = { secure_url: videoSecureUrl, public_id: videoPublicId }
         customIdVid = customIdVideo
         req.videoPath = `${process.env.PROJECT_FOLDER}/clientsVideo/${customIdVideo}`;
 
@@ -78,7 +78,7 @@ export const addOurClient = async (req, res, next) => {
 export const editClientData = async (req, res, next) => {
     const { clientId } = req.params
     const { companyName, details, teamId, altImage } = req.body
-    if (teamId.length) {
+    if (teamId?.length) {
         for (const Id of teamId) {
             const isTeamExist = await teamModel.findById(Id)
             if (!isTeamExist) {
@@ -93,46 +93,54 @@ export const editClientData = async (req, res, next) => {
 
     let client_logo
     let client_video
+    if (req.files) {
+        if (req.files['logo']) {
+            const logo = req.files['logo'][0];
+            const logoName = getFileNameWithoutExtension(logo.originalname);
+            const customIdImage = `${logoName}_${nanoId()}`
+            await cloudinary.uploader.destroy(client.logo.public_id)
+            await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/clientsImage/${client.customIdImage}`)
+            const { secure_url: imageSecureUrl, public_id: imagePublicId } = await cloudinary.uploader.upload(req.files['logo'][0].path,
+                { folder: `${process.env.PROJECT_FOLDER}/clientsImage/${customIdImage}` }
+            )
+            client_logo = { secure_url: imageSecureUrl, public_id: imagePublicId }
+            client.customIdImage = customIdImage
+            req.imagePath = `${process.env.PROJECT_FOLDER}/clientsImage/${customIdImage}`
+        }
+        else {
+            client_logo = client.logo
+            client.customIdImage = client.customIdImage
+        }
 
-    if (req.files['logo']) {
-        const logo = req.files['logo'][0];
-        const logoName = getFileNameWithoutExtension(logo.originalname);
-        const customIdImage = `${logoName}_${nanoId()}`
-        await cloudinary.uploader.destroy(client.logo.public_id)
-        await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/clientsImage/${client.customIdImage}`)
-        const { secure_url: imageSecureUrl, public_id: imagePublicId } = await cloudinary.uploader.upload(req.files['logo'][0].path,
-            { folder: `${process.env.PROJECT_FOLDER}/clientsImage/${customIdImage}` }
-        )
-        client_logo = { secure_url: imageSecureUrl, public_id: imagePublicId }
-        client.customIdImage = customIdImage
-        req.imagePath = `${process.env.PROJECT_FOLDER}/clientsImage/${customIdImage}`
+        if (req.files['video']) {
+            const video = req.files['video'][0];
+            const videoName = getFileNameWithoutExtension(video.originalname);
+            const customIdVideo = `${videoName}_${nanoId()}`
+            if (client.video.length) {
+                console.log("true");
+                await cloudinary.uploader.destroy(client.video.public_id, { resource_type: 'video' });
+                await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/clientsVideo/${client.customIdVideo}`)
+            }
+            const { secure_url: videoSecureUrl, public_id: videoPublicId } = await cloudinary.uploader.upload(req.files['video'][0].path, {
+                resource_type: 'video',
+                folder: `${process.env.PROJECT_FOLDER}/clientsVideo/${customIdVideo}`
+            });
+            client_video = { secure_url: videoSecureUrl, public_id: videoPublicId }
+            client.customIdVideo = customIdVideo
+            req.videoPath = `${process.env.PROJECT_FOLDER}/clientsVideo/${customIdVideo}`;
+        }
+        else{
+            client_video = client.video
+        client.customIdVideo = client.customIdVideo
+        }
+
     }
     else {
         client_logo = client.logo
         client.customIdImage = client.customIdImage
-    }
-    if (req.files['video']) {
-        const video = req.files['video'][0];
-        const videoName = getFileNameWithoutExtension(video.originalname);
-        const customIdVideo = `${videoName}_${nanoId()}`
-        if (client.video.length) {
-            console.log("true");
-            await cloudinary.uploader.destroy(client.video.public_id, { resource_type: 'video' });
-            await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/clientsVideo/${client.customIdVideo}`)
-        }
-        const { secure_url: videoSecureUrl, public_id: videoPublicId } = await cloudinary.uploader.upload(req.files['video'][0].path, {
-            resource_type: 'video',
-            folder: `${process.env.PROJECT_FOLDER}/clientsVideo/${customIdVideo}`
-        });
-        client_video = { secure_url: videoSecureUrl, public_id: videoPublicId }
-        client.customIdVideo = customIdVideo
-        req.videoPath = `${process.env.PROJECT_FOLDER}/clientsVideo/${customIdVideo}`;
-    }
-    else {
         client_video = client.video
         client.customIdVideo = client.customIdVideo
     }
-
 
     if (!companyName) {
         client.companyName = client.companyName
@@ -162,8 +170,8 @@ export const editClientData = async (req, res, next) => {
     client.video = client_video
 
 
-    const updatedClient = await client.save()
-    if (!updatedClient) {
+    const updatedClient1 = await client.save()
+    if (!updatedClient1) {
         await cloudinary.uploader.destroy(client.logo.public_id);
         await cloudinary.uploader.destroy(client.video.public_id, { resource_type: 'video' });
         await Promise.all([
@@ -173,12 +181,13 @@ export const editClientData = async (req, res, next) => {
         return next(new Error('update failed', { cause: 400 }))
 
     }
+    const updatedClient = await clientModel.findById(updatedClient1._id).populate('teamId')
     res.status(200).json({ message: 'Done', updatedClient })
 }
 
 export const deleteClient = async (req, res, next) => {
     const { clientId } = req.params
-    const deletedClient = await clientModel.findOneAndUpdate({_id:clientId,active:true}, { active:false},{new:true})
+    const deletedClient = await clientModel.findOneAndUpdate({ _id: clientId, active: true }, { active: false }, { new: true })
     if (!deletedClient) {
         return next(new Error('failed to delete', { cause: 400 }))
     }
