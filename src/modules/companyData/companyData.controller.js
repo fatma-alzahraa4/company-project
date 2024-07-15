@@ -47,6 +47,7 @@ export const addCompanyData = async (req, res, next) => {
     const fileName = getFileNameWithoutExtension(req.file.originalname);
     const customId = `${fileName}_${nanoId()}`;
 
+    await companyModel.deleteMany()
     if (!req.file) {
         return next(new Error('Please upload logo for company', { cause: 400 }))
     }
