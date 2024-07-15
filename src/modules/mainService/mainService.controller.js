@@ -37,7 +37,7 @@ export const addMainServiceData = async (req, res, next) => {
 
 export const editMainService = async (req, res, next) => {
     const { mainServiceId } = req.params
-    const { name } = req.body
+    const { name, alt } = req.body
     const mainService = await mainServiceModel.findById(mainServiceId)
     if (!mainService) {
         return next(new Error('no main service exist', { cause: 400 }))
@@ -70,8 +70,13 @@ export const editMainService = async (req, res, next) => {
     else {
         mainService.name = name
     }
+    if (!alt) {
+        mainService.icon = { ...mainService_icon, alt: mainService.icon.alt }
+    }
+    else {
+        mainService.icon = { ...mainService_icon, alt }
+    }
 
-    mainService.icon = mainService_icon
 
     const updatedMainService = await mainService.save()
     if (!updatedMainService) {

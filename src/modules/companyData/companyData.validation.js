@@ -15,6 +15,7 @@ export const addCompanySchema ={
         Tiktok:joi.string().uri(), 
         metaDesc:joi.string().min(3).max(200).required(),
         metaKeyWords:joi.string().min(3).max(250),  
+        alt:joi.string().min(3).max(100).required(),  
     }).required()
 }
 
@@ -33,6 +34,7 @@ export const editCompanySchema ={
         Tiktok:joi.string().uri(), 
         metaDesc:joi.string().min(3).max(200),
         metaKeyWords:joi.string().min(3).max(250),  
+        alt:joi.string().min(3).max(100),  
     }).required()
 }
 

@@ -11,6 +11,8 @@ export const addAboutSchema ={
         whyUsPoints:joi.array().items(joi.string().required()).required(),
         metaDesc:joi.string().min(3).max(200).required(),
         metaKeyWords:joi.string().min(3).max(250), 
+        altImage1:joi.string().min(3).max(100).required(),  
+        altImage2:joi.string().min(3).max(100).required(),  
     }).required()
 }
 
@@ -25,6 +27,8 @@ export const editAboutSchema ={
         whyUsPoints:joi.array().items(joi.string().required()),
         metaDesc:joi.string().min(3).max(200),
         metaKeyWords:joi.string().min(3).max(250),   
+        altImage1:joi.string().min(3).max(100),  
+        altImage2:joi.string().min(3).max(100),  
     }).required()
 }
 

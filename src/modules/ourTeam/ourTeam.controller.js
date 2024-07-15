@@ -11,6 +11,7 @@ export const addTeamMember = async (req, res, next) => {
         name,
         position,
         qoute,
+        alt
     } = req.body
     if (!name || !position) {
         return next(new Error('please enter all required data', { cause: 400 }))
@@ -29,7 +30,7 @@ export const addTeamMember = async (req, res, next) => {
         name,
         position,
         qoute,
-        image: { secure_url, public_id },
+        image: { secure_url, public_id, alt },
         customId
     }
     const newTeamMember = await teamModel.create(teamObj)
@@ -47,6 +48,7 @@ export const editTeamMember = async (req, res, next) => {
         name,
         position,
         qoute,
+        alt
     } = req.body
 
     const team = await teamModel.findById(memberId)
@@ -92,7 +94,12 @@ export const editTeamMember = async (req, res, next) => {
     else {
         team.qoute = qoute
     }
-    team.image = team_image
+    if (!alt) {
+        team.image = { ...team_image, alt: team.image.alt }
+    }
+    else {
+        team.image = { ...team_image, alt }
+    }
 
 
     const updatedTeam = await team.save()

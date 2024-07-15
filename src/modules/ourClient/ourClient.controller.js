@@ -10,7 +10,7 @@ const getFileNameWithoutExtension = (filename) => {
     return filename.split('.').slice(0, -1).join('.');
 };
 export const addOurClient = async (req, res, next) => {
-    const { companyName, details, teamId } = req.body
+    const { companyName, details, teamId, altImage } = req.body
     if (teamId.length) {
         for (const Id of teamId) {
             const isTeamExist = await teamModel.findById(Id)
@@ -45,7 +45,7 @@ export const addOurClient = async (req, res, next) => {
             resource_type: 'video',
             folder: `${process.env.PROJECT_FOLDER}/clientsVideo/${customIdVideo}`
         });
-        vid = { secure_url: videoSecureUrl, public_id: videoPublicId }
+        vid = { secure_url: videoSecureUrl, public_id: videoPublicId}
         customIdVid = customIdVideo
         req.videoPath = `${process.env.PROJECT_FOLDER}/clientsVideo/${customIdVideo}`;
 
@@ -55,7 +55,7 @@ export const addOurClient = async (req, res, next) => {
     const clientObj = {
         companyName,
         details,
-        logo: { secure_url: imageSecureUrl, public_id: imagePublicId },
+        logo: { secure_url: imageSecureUrl, public_id: imagePublicId, alt: altImage },
         teamId,
         video: vid,
         customIdImage,
@@ -77,7 +77,7 @@ export const addOurClient = async (req, res, next) => {
 
 export const editClientData = async (req, res, next) => {
     const { clientId } = req.params
-    const { companyName, details, teamId } = req.body
+    const { companyName, details, teamId, altImage } = req.body
     if (teamId.length) {
         for (const Id of teamId) {
             const isTeamExist = await teamModel.findById(Id)
@@ -152,7 +152,13 @@ export const editClientData = async (req, res, next) => {
     else {
         client.teamId = teamId
     }
-    client.logo = client_logo
+    if (!altImage) {
+        client.logo = { ...client_logo, alt: client.logo.alt }
+
+    }
+    else {
+        client.logo = { ...client_logo, alt: altImage }
+    }
     client.video = client_video
 
 
