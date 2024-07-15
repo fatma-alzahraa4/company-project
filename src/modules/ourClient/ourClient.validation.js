@@ -4,7 +4,7 @@ export const addClientSchema ={
     body:joi.object({
         companyName:joi.string().min(3).max(25).required(),
         details:joi.string().min(3).max(500),
-        teamId:joi.array().items(generalFields._id),
+        teamId:joi.array(),
         altImage:joi.string().min(3).max(100).required(),  
     }).required()
 }
@@ -16,7 +16,7 @@ export const editClientSchema ={
     body:joi.object({
         companyName:joi.string().min(3).max(25),
         details:joi.string().min(3).max(500),
-        teamId:joi.array().items(generalFields._id),
+        teamId:joi.array(),
         altImage:joi.string().min(3).max(100),  
     }).required()
 }
