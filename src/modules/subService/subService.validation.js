@@ -1,9 +1,6 @@
 import joi from "joi"
 import { generalFields } from "../../middleWares/validation.js"
 export const addSubServiceSchema ={
-    query:joi.object({
-        serviceId:generalFields._id
-    }).required(),
     body:joi.object({
         name:joi.string().min(3).max(30).required(),
         brief:joi.string().min(3).max(500),

@@ -3,8 +3,7 @@ import cloudinary from "../../utils/cloudinaryConfigrations.js";
 import { subServiceModel } from "../../../DB/models/subServiceModel.js";
 
 export const addSubServiceData = async (req, res, next) => {
-    const { serviceId } = req.query
-    const { name, brief } = req.body
+    const { name, brief ,serviceId} = req.body
     if (serviceId) {
         const service = await serviceModel.findById(serviceId)
         if (!service) {
