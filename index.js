@@ -9,7 +9,7 @@ import * as routers from './src/modules/index.routes.js';
 
 const app = express()
 
-var whitelist = [process.env.DASHBOARDLINK]
+var whitelist = [process.env.DASHBOARDLINK,'http://localhost:3000']
 var corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
@@ -36,7 +36,7 @@ var corsOptions = {
 // };
     app.use(cors(corsOptions)); 
 
-    app.get('/get',(req,res)=>{res.json({message:"hello app"})})  
+    app.get('/',(req,res)=>{res.json({message:"hello app"})})  
 
     app.use(json())
     app.use('/company',routers.companyRouter)
