@@ -13,8 +13,10 @@ export const homeData = async (req, res, next) => {
     const mainServices = await mainServiceModel.find({ active: true }).populate([
         {
             path: 'services',
+            match: { active: true },
             populate: [{
                 path: 'subServices',
+                match: { active: true },
             }]
         }])
     if (!mainServices) {
