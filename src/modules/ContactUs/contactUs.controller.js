@@ -34,7 +34,7 @@ export const contact = async (req, res, next) => {
         {to: CompanyEmail,
         subject:`Welcome ${companyName}`,
         message: emailTemplatePerson({
-            subject: 'Thank you for reaching out to us. We appreciate your message and will get back to you shortly.',
+            name: companyName,
           }),
     })
     if(!isEmailToPersonSent){

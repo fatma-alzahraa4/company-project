@@ -10,30 +10,30 @@ import * as routers from './src/modules/index.routes.js';
 const app = express()
 
 var whitelist = [process.env.DASHBOARDLINK,process.env.LOCALHOST]
-var corsOptions = {
-  origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true)
-    } else {
-      callback(new Error('Not allowed by CORS'))
-    }
-  },
-  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT'],
-  credentials: true,
-}
-// const allowedOrigins = [process.env.DASHBOARDLINK];
-
-// const corsOptions = {
-//   origin: (origin, callback) => {
-//     if (!origin || allowedOrigins.includes(origin)) {
-//       callback(null, true);
+// var corsOptions = {
+//   origin: function (origin, callback) {
+//     if (whitelist.indexOf(origin) !== -1) {
+//       callback(null, true)
 //     } else {
-//       callback(new Error('Not allowed by CORS'));
+//       callback(new Error('Not allowed by CORS'))
 //     }
 //   },
 //   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT'],
 //   credentials: true,
-// };
+// }
+const allowedOrigins = [process.env.DASHBOARDLINK,process.env.LOCALHOST];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT'],
+  credentials: true,
+};
     app.use(cors(corsOptions)); 
 
     app.get('/',(req,res)=>{res.json({message:"hello app"})})  
@@ -58,7 +58,7 @@ var corsOptions = {
     app.use(globalResponse)
     
     dbConnection()
-    const port = process.env.PORT||5000
+    const port = process.env.PORT||3000
     app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
 
