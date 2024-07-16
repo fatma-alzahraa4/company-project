@@ -48,6 +48,8 @@ const corsOptions = {
     app.use('/contact',routers.contactRouter)
     app.use('/IP',routers.IPRouter)
     app.use('/mainService',routers.mainServiceRouter)
+    app.use('/home',routers.homeRouter)
+
 
 
 

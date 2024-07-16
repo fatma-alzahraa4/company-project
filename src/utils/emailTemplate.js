@@ -1,6 +1,6 @@
 export const emailTemplatePerson = ({name}) => {
     return `
-		 <!doctype html>
+<!doctype html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -111,12 +111,13 @@ td[class=winebg] { background:#b92547; -webkit-border-top-right-radius:5px!impor
 td[class=myHeading]{font-size:24px!important; text-align:center!important; }
 td[class=heading]{font-size:28px!important; text-align:center!important;line-height:35px; }
 }
-} </style>
+ </style>
 <!--
 @media only screen and (max-width: 479px) 
 		   {
 		   -->
-<style type="text/css"> @media only screen and (max-width: 479px){	
+<style type="text/css"> 
+@media only screen and (max-width: 479px){	
 table[class=full] {width:100% !important; max-width:100%!important;}
 table[class=myfull] { width:100% !important;}
 table[class=notify-5-wrap] {width:100% !important;}
@@ -149,7 +150,7 @@ td[class=heading]{font-size:26px!important; text-align:center!important;line-hei
 td[class=winebg] {background:#b92547; -webkit-border-top-right-radius:5px!important; -moz-border-radius-topright:5px!important; border-top-right-radius:5px!important; -webkit-border-bottom-left-radius:0!important;-moz-border-radius-bottomleft:0!important; border-bottom-left-radius:0!important;}
  
 }
- } </style>
+</style>
 
 <!--[if mso]>
 <style type="text/css">
@@ -180,7 +181,8 @@ td {
         
         <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" class="full">
           <tr>
-            <td width="100%" align="center"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <td width="100%" align="center">
+              <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
                   <td height="60" class="em_h1">&nbsp;</td>
                 </tr>
@@ -194,7 +196,8 @@ td {
                         <tr>
                           <td valign="middle" width="100%" style="text-align: center;" class="fullCenter" ><a href="#" target="_blank" style="text-decoration:none;" cu-identify="element_0045055844496684205"><img class="em_logo mCS_img_loaded" src="https://res.cloudinary.com/dwblsxdfg/image/upload/v1721130848/companyApp/logoPNG_jzxued.png" alt="logo" width="150" height="63" border="0" style="text-align:center;"  cu-identify="element_006935063784175499"></a></td>
                         </tr>
-                      </table></td>
+                      </table>
+                    </td>
                   </tr>
                 </table>
                 <table width="100%" border="0" cellspacing="0" cellpadding="0" object="drag-module-small">
@@ -202,14 +205,17 @@ td {
                     <td height="40" class="em_h40">&nbsp;</td>
                   </tr>
                 </table>
-              </div></td>
+              </div>
+            </td>
           </tr>
         </table>
         <table width="400" border="0" cellpadding="0" cellspacing="0" align="center" class="full" style="max-width:400px!important">
           <tr>
-            <td align="center" width="100%" valign="middle" class="em_pad"><table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" class="full" style="border-top-right-radius: 5px; border-top-left-radius: 5px;">
+            <td align="center" width="100%" valign="middle" class="em_pad">
+              <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" class="full" style="border-top-right-radius: 5px; border-top-left-radius: 5px; ">
                 <tr>
-                  <td align="center" width="100%" valign="middle" bgcolor="#ffffff" style="border-radius: 5px; background-color: rgb(255, 255, 255);"><div class="sortable_inner ui-sortable">
+                  <td align="center" width="100%" valign="middle" bgcolor="#ffffff" style="border-radius: 5px; background-color: rgb(255, 255, 255); ">
+                    <div class="sortable_inner ui-sortable">
                       <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" class="full" style="border-top-right-radius: 5px; border-top-left-radius: 5px;">
                         <tr>
                           <td align="center" valign="bottom" bgcolor="#2c2a2b" style="border-top-right-radius: 5px; border-top-left-radius: 5px;" ><img src="http://rocketway.net/templatebuilder/templates/notify3/images/img2.png" alt="" class="em_full_img mCS_img_loaded" border="0" style="vertical-align:bottom;" ></td>
@@ -245,12 +251,14 @@ td {
                       </table>
 
                       
-                      <div style="display: none;" id="element_03164688699401288"></div></p></div>
+                      <div style="display: none;" id="element_03164688699401288"></div>
+                    </div>
                       <!-- End Button -->
                     
-                    </div></td>
+                    </td>
                 </tr>
-              </table></td>
+              </table>
+            </td>
           </tr>
         </table>
         <table align="center" width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -261,25 +269,30 @@ td {
         <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
           <tr>
             <td align="center" valign="top"><!-- SORTABLE -->
-              
-              <table align="center" class="full" width="400" border="0" cellspacing="0" cellpadding="0" style="table-layout:fixed;">
+              <table align="center" class="full" width="400" border="0" cellspacing="0" cellpadding="0" style="table-layout:fixed;" >
                 <tr>
-                  <td><div class="sortable_inner ui-sortable">
-                      <table align="center" width="100%" border="0" cellspacing="0" cellpadding="0" object="drag-module-small">
-                        <tr>
-                          <td valign="top" align="center" style="font-family:'Lato', Arial, sans-serif; font-weight:400; font-size:11px; color:#ffffff; line-height:22px;"   cu-identify="element_07930595852147182"> © 2024 <a style="color: white;" target="_blank" href="https://hyper-solution-media.vercel.app/">HSM.</a> All Rights Reserved.</td>
+                  <td>
+                    <div class="sortable_inner ui-sortable">
+                      <table align="center" width="100%" border="0" cellspacing="0" cellpadding="0" object="drag-module-small" style="margin-bottom: 10px;">
+                        <tr >
+                          <td valign="top" align="center" style=" font-family:'Lato', Arial, sans-serif; font-weight:400; font-size:11px; color:#ffffff; line-height:22px;"   cu-identify="element_07930595852147182"> © 2024 <a style="color: white;" target="_blank" href="https://hyper-solution-media.vercel.app/">HSM.</a> All Rights Reserved.</td>
                         </tr>
                       </table>
-                    </div></td>
+                    </div>
+                  </td>
                 </tr>
-              </table></td>
+              </table>
+            </td>
           </tr>
-        </table></td>
+        </table>
+      </td>
     </tr>
   </table>
   <!-- End of Notify 3-->
   
 </div>
+	
+	
 	`
 }
 

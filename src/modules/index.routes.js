@@ -7,6 +7,7 @@ import clientRouter from './ourClient/ourClient.router.js';
 import contactRouter from './ContactUs/contactUs.router.js';
 import IPRouter from './IP/IP.router.js';
 import mainServiceRouter from './mainService/mainService.router.js';
+import homeRouter from './home/home.router.js';
 
 
 export{
@@ -18,5 +19,6 @@ export{
     clientRouter,
     contactRouter,
     IPRouter,
-    mainServiceRouter
+    mainServiceRouter,
+    homeRouter
 } 
