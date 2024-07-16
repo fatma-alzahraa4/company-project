@@ -9,7 +9,7 @@ import * as routers from './src/modules/index.routes.js';
 
 const app = express()
 
-var whitelist = ['']
+var whitelist = [process.env.DASHBOARDLINK]
 var corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
@@ -17,14 +17,24 @@ var corsOptions = {
     } else {
       callback(new Error('Not allowed by CORS'))
     }
-  }
+  },
+  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT'],
+  credentials: true,
 }
+// const allowedOrigins = [process.env.DASHBOARDLINK];
 
-    app.use(cors({
-    origin: 'http://localhost:3000', // Replace with your frontend URL
-  methods: ['GET', 'POST', 'PATCH', 'DELETE','PUT'],
-  credentials: true
-    })); 
+// const corsOptions = {
+//   origin: (origin, callback) => {
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+//   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT'],
+//   credentials: true,
+// };
+    app.use(cors(corsOptions)); 
 
     app.get('/get',(req,res)=>{res.json({message:"hello app"})})  
 
