@@ -86,7 +86,7 @@ export const editClientData = async (req, res, next) => {
             }
         }
     }
-    const client = await clientModel.findById(clientId)
+    const client = await clientModel.findById(clientId).populate('teamId')
     if (!client) {
         return next(new Error('no client exist', { cause: 400 }))
     }
@@ -170,8 +170,8 @@ export const editClientData = async (req, res, next) => {
     client.video = client_video
 
 
-    const updatedClient1 = await client.save()
-    if (!updatedClient1) {
+    const updatedClient = await client.save()
+    if (!updatedClient) {
         await cloudinary.uploader.destroy(client.logo.public_id);
         await cloudinary.uploader.destroy(client.video.public_id, { resource_type: 'video' });
         await Promise.all([
@@ -181,7 +181,6 @@ export const editClientData = async (req, res, next) => {
         return next(new Error('update failed', { cause: 400 }))
 
     }
-    const updatedClient = await clientModel.findById(updatedClient1._id).populate('teamId')
     res.status(200).json({ message: 'Done', updatedClient })
 }
 
@@ -200,6 +199,7 @@ export const deleteClient = async (req, res, next) => {
     return res.status(200).json({ message: 'Done', deletedClient })
 
 }
+
 export const getClients = async (req, res, next) => {
     const { notActive } = req.query
     if (!notActive) {
