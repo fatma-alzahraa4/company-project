@@ -21,7 +21,7 @@ var whitelist = [process.env.DASHBOARDLINK,process.env.LOCALHOST]
 //   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT'],
 //   credentials: true,
 // }
-const allowedOrigins = [process.env.DASHBOARDLINK,process.env.LOCALHOST];
+const allowedOrigins = [process.env.DASHBOARDLINK,process.env.LOCALHOST,process.env.WEBSITELINK];
 
 const corsOptions = {
   origin: (origin, callback) => {
