@@ -19,6 +19,7 @@ export const addAboutData = async (req, res, next) => {
         metaKeyWords,
     } = req.body
 
+    await aboutModel.deleteMany()
     if (!req.files['Image1']) {
         return next(new Error('Please upload image 1', { cause: 400 }));
     }
