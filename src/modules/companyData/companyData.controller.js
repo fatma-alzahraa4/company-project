@@ -24,26 +24,12 @@ export const addCompanyData = async (req, res, next) => {
         alt,
         metaDesc,
         metaKeyWords,
+        address
     } = req.body
     if (!companyName || !phoneNum || !email) {
         return next(new Error('Please enter all required data', { cause: 400 }))
     }
-    // const isCompanyExist = await companyModel.findOne(
-    //     {
-    //         $or:
-    //             [
-    //                 { companyName },
-    //                 { email },
-    //                 { phoneNum },
-    //                 { landLine },
-    //             ]
-    //     }
-    // )
-    // if (isCompanyExist) {
-    //     // console.log("errrr");
-    //     return next(new Error('Comapny is already exist', { cause: 400 }))
-    // }
-    // const customId = `${fileName}_${moment().format('DD/MM/YYYY/_HH:mm:ss')}`;
+    
     const fileName = getFileNameWithoutExtension(req.file.originalname);
     const customId = `${fileName}_${nanoId()}`;
 
@@ -72,6 +58,7 @@ export const addCompanyData = async (req, res, next) => {
         customId,
         metaDesc,
         metaKeyWords,
+        address
     }
     const newCompany = await companyModel.create(companyObj)
     if (!newCompany) {
@@ -100,6 +87,7 @@ export const editCompanyData = async (req, res, next) => {
         alt,
         metaDesc,
         metaKeyWords,
+        address
     } = req.body
 
     const company = await companyModel.findOne()
@@ -204,6 +192,9 @@ export const editCompanyData = async (req, res, next) => {
     }
     else {
         company.metaKeyWords = metaKeyWords
+    }
+    if(address){
+        company.address = address
     }
     if (!alt) {
         const sameAlt = company.logo.alt

@@ -38,6 +38,11 @@ export const companySchema = new Schema({
         minlength: 4,
         maxlength: 15
     },
+    address:{
+        type:String,
+        required:true,
+        maxlength:200
+    },
     mapLink: {
         type: String
     },
