@@ -6,7 +6,7 @@ export const companySchema = new Schema({
         required: true,
         lowercase: true,
         minlength: 3,
-        maxlength: 25
+        // maxlength: 25
     },
     email: {
         type: String,
@@ -16,7 +16,7 @@ export const companySchema = new Schema({
         type: String,
         required: true,
         minlength: 4,
-        maxlength: 15
+        // maxlength: 15
     },
     logo: {
         secure_url: {
@@ -29,31 +29,31 @@ export const companySchema = new Schema({
         },
         alt:{
             type:String,
-            maxlength: 100,
+            // maxlength: 100,
             required: true
         }
     },
     landLine: {
         type: String,
         minlength: 4,
-        maxlength: 15
+        // maxlength: 15
     },
     address:{
         type:String,
         required:true,
-        maxlength:200
+        // maxlength:200
     },
     mapLink: {
         type: String
     },
     metaDesc:{
         type:String,
-        maxlength: 200,
+        // maxlength: 200,
         required: true,
     },
     metaKeyWords:{
         type:String,
-        maxlength: 250,
+        // maxlength: 250,
     },
     Facebook: String,
     Instagram: String,

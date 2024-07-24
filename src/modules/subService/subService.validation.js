@@ -4,8 +4,8 @@ export const addSubServiceSchema ={
    
     body:joi.object({
         serviceId:generalFields._id.required(),
-        name:joi.string().min(3).max(30).required(),
-        brief:joi.string().max(5000),
+        name:joi.string().min(3).required(),
+        brief:joi.string(),
     }).required()
 }
 
@@ -14,8 +14,8 @@ export const editSubServiceSchema ={
         subserviceId:generalFields._id.required()
     }).required(),
     body:joi.object({
-        name:joi.string().min(3).max(30),
-        brief:joi.string().max(5000),
+        name:joi.string().min(3),
+        brief:joi.string(),
         serviceId:generalFields._id
     }).required()
 }
@@ -28,6 +28,6 @@ export const deleteSubServiceSchema ={
 
 export const getSubServiceSchema ={
     query:joi.object({
-        notActive:joi.string().min(4).max(4).valid('true')
+        notActive:joi.string().min(4).valid('true')
     }).required(),
 }

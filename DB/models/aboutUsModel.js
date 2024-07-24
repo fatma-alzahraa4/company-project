@@ -56,17 +56,17 @@ export const aboutSchema = new Schema({
         customId:String,
         alt:{
             type:String,
-            maxlength: 100
+            // maxlength: 100
         }
     },   
     metaDesc:{
         type:String,
-        maxlength: 200,
+        // maxlength: 200,
         required: true,
     },
     metaKeyWords:{
         type:String,
-        maxlength: 250,
+        // maxlength: 250,
     },
 }, 
 { timestamps: true })

@@ -2,10 +2,10 @@ import joi from "joi"
 import { generalFields } from "../../middleWares/validation.js"
 export const addCompanySchema ={
     body:joi.object({
-        companyName:joi.string().min(3).max(25).required(),
+        companyName:joi.string().min(3).required(),
         email:generalFields.email.required(),
         phoneNum:generalFields.phoneNumbers.required(),
-        landLine:joi.string().min(4).max(15),
+        landLine:joi.string().min(4),
         mapLink:joi.string().uri(), 
         Facebook:joi.string().uri(), 
         Instagram:joi.string().uri(),  
@@ -13,18 +13,18 @@ export const addCompanySchema ={
         Linkedin:joi.string().uri(),  
         SnapChat:joi.string().uri(),  
         Tiktok:joi.string().uri(), 
-        metaDesc:joi.string().min(3).max(200).required(),
-        metaKeyWords:joi.string().min(3).max(250),  
-        alt:joi.string().min(3).max(100).required(),  
+        metaDesc:joi.string().min(3).required(),
+        metaKeyWords:joi.string().min(3),  
+        alt:joi.string().min(3).required(),  
     }).required()
 }
 
 export const editCompanySchema ={
     body:joi.object({
-        companyName:joi.string().min(3).max(25),
+        companyName:joi.string().min(3),
         email:generalFields.email,
         phoneNum:generalFields.phoneNumbers,
-        landLine:joi.string().min(4).max(15),
+        landLine:joi.string().min(4),
         mapLink:joi.string().uri(), 
         Facebook:joi.string().uri(), 
         Instagram:joi.string().uri(),  
@@ -32,9 +32,9 @@ export const editCompanySchema ={
         Linkedin:joi.string().uri(),  
         SnapChat:joi.string().uri(),  
         Tiktok:joi.string().uri(), 
-        metaDesc:joi.string().min(3).max(200),
-        metaKeyWords:joi.string().min(3).max(250),  
-        alt:joi.string().min(3).max(100),  
+        metaDesc:joi.string().min(3),
+        metaKeyWords:joi.string().min(3),  
+        alt:joi.string().min(3),  
     }).required()
 }
 

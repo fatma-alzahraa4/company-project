@@ -6,7 +6,7 @@ export const clientSchema = new Schema({
         required: true,
         lowercase: true,
         minlength: 3,
-        maxlength: 25
+        // maxlength: 25
     },
     details:{
         type:String
@@ -22,7 +22,7 @@ export const clientSchema = new Schema({
         },
         alt:{
             type:String,
-            maxlength: 100,
+            // maxlength: 100,
             required: true
         }
     },

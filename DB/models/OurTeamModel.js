@@ -6,14 +6,14 @@ export const teamSchema = new Schema({
         required: true,
         lowercase: true,
         minlength: 3,
-        maxlength: 15
+        // maxlength: 15
     },
     position:{
         type: String,
         required: true,
         lowercase: true,
         minlength: 3,
-        maxlength: 25
+        // maxlength: 25
     },
     image: {
         secure_url: {
@@ -26,7 +26,7 @@ export const teamSchema = new Schema({
         },
         alt:{
             type:String,
-            maxlength: 100,
+            // maxlength: 100,
             required: true
         }
     },

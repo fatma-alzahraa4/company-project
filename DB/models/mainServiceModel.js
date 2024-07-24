@@ -17,7 +17,7 @@ export const mainServiceSchema = new Schema({
         },
         alt:{
             type:String,
-            maxlength: 100,
+            // maxlength: 100,
             required: true
         }
     },
