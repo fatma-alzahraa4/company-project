@@ -4,14 +4,14 @@ export const teamSchema = new Schema({
     name: {
         type: String,
         required: true,
-        lowercase: true,
+        // lowercase: true,
         minlength: 3,
         // maxlength: 15
     },
     position:{
         type: String,
         required: true,
-        lowercase: true,
+        // lowercase: true,
         minlength: 3,
         // maxlength: 25
     },

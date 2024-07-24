@@ -4,7 +4,7 @@ export const companySchema = new Schema({
     companyName: {
         type: String,
         required: true,
-        lowercase: true,
+        // lowercase: true,
         minlength: 3,
         // maxlength: 25
     },

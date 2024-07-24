@@ -4,7 +4,7 @@ export const serviceSchema = new Schema({
     name:{
         type:String,
         required:true,
-        lowercase:true
+        // lowercase:true
     },
     // icon:{
     //     secure_url:{
