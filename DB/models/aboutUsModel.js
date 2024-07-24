@@ -39,10 +39,11 @@ export const aboutSchema = new Schema({
             required: true
         },
         customId:String,
-        // alt:{
-        //     type:String,
-        //     maxlength: 100
-        // }
+        alt:{
+            type:String,
+            required: true,
+            // maxlength: 100
+        }
     },   
     whyUsImage2: {
         secure_url: {
@@ -56,6 +57,7 @@ export const aboutSchema = new Schema({
         customId:String,
         alt:{
             type:String,
+            required: true,
             // maxlength: 100
         }
     },   
