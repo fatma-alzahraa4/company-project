@@ -10,7 +10,7 @@ const router = Router()
 router.post('/add',
     multerCloudFunction(allowedExtensions.Image).fields([
         { name: 'logo', maxCount: 1 },
-        { name: 'contactImage', maxCount: 1 }
+        { name: 'contactUsImage', maxCount: 1 }
     ]),
     convertToWebP,
     validationCoreFunction(companyValidators.addCompanySchema),
@@ -20,7 +20,7 @@ router.post('/add',
 router.put('/edit',
     multerCloudFunction(allowedExtensions.Image).fields([
         { name: 'logo', maxCount: 1 },
-        { name: 'contactImage', maxCount: 1 }
+        { name: 'contactUsImage', maxCount: 1 }
     ]),
     convertToWebP,
     validationCoreFunction(companyValidators.editCompanySchema),
