@@ -25,7 +25,7 @@ router.post('/add',
     aboutController.addAboutData)
 
 
-router.put('/edit',
+router.put('/edit/:_id',
     multerCloudFunction(allowedExtensions.Image).fields([
         { name: 'Image1', maxCount: 1 },
         { name: 'Image2', maxCount: 1 },

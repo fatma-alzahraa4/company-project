@@ -180,7 +180,8 @@ export const editAboutData = async (req, res, next) => {
         metaDesc,
         metaKeyWords,
     } = req.body
-    const about = await aboutModel.findOne()
+    const {_id} = req.params
+    const about = await aboutModel.findOne({_id})
     if (!about) {
         return next(new Error('no about exist', { cause: 400 }))
     }
@@ -282,7 +283,40 @@ export const editAboutData = async (req, res, next) => {
     about.howWeWorkMainTitle = howWeWorkMainTitle || about.howWeWorkMainTitle,
     about.whyUsImage1 = whyUs_Image1
     about.whyUsImage2 = whyUs_Image2
+    if (howWeWorkArr) {
+        for (let i = 0; i < howWeWorkArr.length; i++) {
+            let hWork = howWeWorkArr[i];
 
+            if (req.files && req.files[`howWeWorkImage${i + 1}`]) {
+                const file = req.files[`howWeWorkImage${i + 1}`][0];
+                const imageName = getFileNameWithoutExtension(file.originalname);
+                const customId = `${imageName}_${nanoId()}`;
+
+                if (about.howWeWork[i] && about.howWeWork[i].image && about.howWeWork[i].image.public_id) {
+                    await cloudinary.uploader.destroy(about.howWeWork[i].image.public_id);
+                    await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/howWeWork/${about.howWeWork[i].image.customId}`);
+                }
+
+                const { secure_url, public_id } = await cloudinary.uploader.upload(file.path, {
+                    folder: `${process.env.PROJECT_FOLDER}/howWeWork/${customId}`
+                });
+
+                hWork.image = {
+                    secure_url: secure_url,
+                    public_id: public_id,
+                    customId: customId,
+                    alt: howWeWorkAlt
+                };
+            } else if (about.howWeWork[i]) {
+                hWork.image = about.howWeWork[i].image;
+            }
+
+            // Ensure title and desc are included
+            hWork.title = hWork.title || about.howWeWork[i].title;
+            hWork.desc = hWork.desc || about.howWeWork[i].desc;
+        }
+        about.howWeWork = howWeWorkArr;
+    }
     const updatedAbout = await about.save()
     if (!updatedAbout) {
         await cloudinary.api.delete_resources([publicId1, publicId2]);
