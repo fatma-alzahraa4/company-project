@@ -112,19 +112,19 @@ export const addAboutData = async (req, res, next) => {
             { secure_url: hwImgsecureUrl3, public_id: hwImgpublicId3, customId: hwCustomId3, alt: howWeWorkAlt },
             { secure_url: hwImgsecureUrl4, public_id: hwImgpublicId4, customId: hwCustomId4, alt: howWeWorkAlt }
         ];
-    
+
         for (let i = 0; i < howWeWorkArr.length; i++) {
             let hWork = howWeWorkArr[i];
             hWork.image = imageUrls[i];
-    
+
             howArr.push({
                 title: hWork.title,
-                desc: hWork.desc,  
+                desc: hWork.desc,
                 image: hWork.image
             });
         }
     }
-        
+
     const aboutObj = {
         mission,
         missionTitle,
@@ -175,8 +175,7 @@ export const editAboutData = async (req, res, next) => {
         whyUsImage1Alt,
         whyUsImage2Alt,
         howWeWorkMainTitle,
-        howWeWorkTitle,
-        howWeWorkDesc,
+        howWeWorkArr,
         howWeWorkAlt,
         metaDesc,
         metaKeyWords,
@@ -186,7 +185,6 @@ export const editAboutData = async (req, res, next) => {
         return next(new Error('no about exist', { cause: 400 }))
     }
 
-    // const customId = `${fileName}_${moment().format('DD/MM/YYYY/_HH:mm:ss')}`;
     let whyUs_Image1
     let whyUs_Image2
     if (req.files) {
@@ -205,7 +203,6 @@ export const editAboutData = async (req, res, next) => {
         else {
             whyUs_Image1 = about.whyUsImage1
         }
-
         if (req.files['Image2']) {
             const file2 = req.files['Image2'][0];
             const Image2Name = getFileNameWithoutExtension(file2.originalname);
@@ -220,6 +217,66 @@ export const editAboutData = async (req, res, next) => {
         }
         else {
             whyUs_Image2 = about.whyUsImage2
+        }
+        if (req.files['howWeWorkImage1']) {
+            const file1 = req.files['Image1'][0];
+            const Image1Name = getFileNameWithoutExtension(file1.originalname);
+            const customId1 = `${Image1Name}_${nanoId()}`
+
+            await cloudinary.uploader.destroy(about.whyUsImage1.public_id)
+            await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/whyUs/${about.whyUsImage1.customId}`)
+            const { secure_url: secureUrl1, public_id: publicId1 } = await cloudinary.uploader.upload(req.files['Image1'][0].path, {
+                folder: `${process.env.PROJECT_FOLDER}/whyUs/${customId1}`
+            });
+            whyUs_Image1 = { secure_url: secureUrl1, public_id: publicId1, customId: customId1 }
+        }
+        else {
+            whyUs_Image1 = about.whyUsImage1
+        }
+        if (req.files['howWeWorkImage2']) {
+            const file1 = req.files['Image1'][0];
+            const Image1Name = getFileNameWithoutExtension(file1.originalname);
+            const customId1 = `${Image1Name}_${nanoId()}`
+
+            await cloudinary.uploader.destroy(about.whyUsImage1.public_id)
+            await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/whyUs/${about.whyUsImage1.customId}`)
+            const { secure_url: secureUrl1, public_id: publicId1 } = await cloudinary.uploader.upload(req.files['Image1'][0].path, {
+                folder: `${process.env.PROJECT_FOLDER}/whyUs/${customId1}`
+            });
+            whyUs_Image1 = { secure_url: secureUrl1, public_id: publicId1, customId: customId1 }
+        }
+        else {
+            whyUs_Image1 = about.whyUsImage1
+        }
+        if (req.files['howWeWorkImage3']) {
+            const file1 = req.files['Image1'][0];
+            const Image1Name = getFileNameWithoutExtension(file1.originalname);
+            const customId1 = `${Image1Name}_${nanoId()}`
+
+            await cloudinary.uploader.destroy(about.whyUsImage1.public_id)
+            await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/whyUs/${about.whyUsImage1.customId}`)
+            const { secure_url: secureUrl1, public_id: publicId1 } = await cloudinary.uploader.upload(req.files['Image1'][0].path, {
+                folder: `${process.env.PROJECT_FOLDER}/whyUs/${customId1}`
+            });
+            whyUs_Image1 = { secure_url: secureUrl1, public_id: publicId1, customId: customId1 }
+        }
+        else {
+            whyUs_Image1 = about.whyUsImage1
+        }
+        if (req.files['howWeWorkImage4']) {
+            const file1 = req.files['Image1'][0];
+            const Image1Name = getFileNameWithoutExtension(file1.originalname);
+            const customId1 = `${Image1Name}_${nanoId()}`
+
+            await cloudinary.uploader.destroy(about.whyUsImage1.public_id)
+            await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/whyUs/${about.whyUsImage1.customId}`)
+            const { secure_url: secureUrl1, public_id: publicId1 } = await cloudinary.uploader.upload(req.files['Image1'][0].path, {
+                folder: `${process.env.PROJECT_FOLDER}/whyUs/${customId1}`
+            });
+            whyUs_Image1 = { secure_url: secureUrl1, public_id: publicId1, customId: customId1 }
+        }
+        else {
+            whyUs_Image1 = about.whyUsImage1
         }
     }
     else {
@@ -278,16 +335,11 @@ export const editAboutData = async (req, res, next) => {
     }
     about.missionTitle = missionTitle || about.missionTitle
     about.vissionTitle = vissionTitle || about.vissionTitle,
-        about.ourStoryTitle = ourStoryTitle || about.ourStoryTitle,
-        about.ourValueTitle = ourValueTitle || about.ourValueTitle,
-        about.whyUsSubtitle = whyUsSubtitle || about.whyUsSubtitle,
-        about.howWeWorkMainTitle = howWeWorkMainTitle || about.howWeWorkMainTitle,
-
-
-
-
-
-        about.whyUsImage1 = whyUs_Image1
+    about.ourStoryTitle = ourStoryTitle || about.ourStoryTitle,
+    about.ourValueTitle = ourValueTitle || about.ourValueTitle,
+    about.whyUsSubtitle = whyUsSubtitle || about.whyUsSubtitle,
+    about.howWeWorkMainTitle = howWeWorkMainTitle || about.howWeWorkMainTitle,
+    about.whyUsImage1 = whyUs_Image1
     about.whyUsImage2 = whyUs_Image2
 
     const updatedAbout = await about.save()
