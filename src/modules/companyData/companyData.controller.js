@@ -21,26 +21,46 @@ export const addCompanyData = async (req, res, next) => {
         Linkedin,
         SnapChat,
         Tiktok,
-        alt,
+        altLogo,
+        altContact,
         metaDesc,
         metaKeyWords,
-        address
+        address,
+        slogan
     } = req.body
     if (!companyName || !phoneNum || !email) {
         return next(new Error('Please enter all required data', { cause: 400 }))
     }
-    
-    const fileName = getFileNameWithoutExtension(req.file.originalname);
-    const customId = `${fileName}_${nanoId()}`;
+    // await companyModel.deleteMany()
 
-    await companyModel.deleteMany()
-    if (!req.file) {
-        return next(new Error('Please upload logo for company', { cause: 400 }))
+    if (!req.files['logo']) {
+        return next(new Error('Please upload company logo', { cause: 400 }));
     }
-    const { secure_url, public_id } = await cloudinary.uploader.upload(req.file.path,
-        { folder: `${process.env.PROJECT_FOLDER}/Company/${customId}` }
-    )
-    req.imagePath = `${process.env.PROJECT_FOLDER}/Comapny/${customId}`
+    if (!req.files['contactUsImage']) {
+        return next(new Error('Please upload contact us image', { cause: 400 }));
+    }
+
+    const file1 = req.files['logo'][0];
+    const file2 = req.files['contactUsImage'][0];
+
+    const logoName = getFileNameWithoutExtension(file1.originalname);
+    const contactImageName = getFileNameWithoutExtension(file2.originalname);
+    // const customId = `${fileName}_${moment().format('DD/MM/YYYY/_HH:mm:ss')}`;
+    const customId1 = `${logoName}_${nanoId()}`
+    const customId2 = `${contactImageName}_${nanoId()}`
+    const { secure_url: secureUrl1, public_id: publicId1 } = await cloudinary.uploader.upload(req.files['logo'][0].path, {
+        folder: `${process.env.PROJECT_FOLDER}/Company/${customId1}`
+    });
+    const { secure_url: secureUrl2, public_id: publicId2 } = await cloudinary.uploader.upload(req.files['contactUsImage'][0].path, {
+        folder: `${process.env.PROJECT_FOLDER}/contactImages/${customId2}`
+    });
+
+    req.imagePaths = {
+        logo: `${process.env.PROJECT_FOLDER}/Company/${customId1}`,
+        contactImage: `${process.env.PROJECT_FOLDER}/contactImages/${customId2}`
+    };
+    
+    
 
     const companyObj = {
         companyName,
@@ -48,17 +68,19 @@ export const addCompanyData = async (req, res, next) => {
         phoneNum,
         landLine,
         mapLink,
-        logo: { secure_url, public_id, alt },
+        logo: { secure_url:secureUrl1, public_id:publicId1, alt :altLogo ,customId:customId1},
         Facebook,
         Instagram,
         Twitter,
         Linkedin,
         SnapChat,
         Tiktok,
-        customId,
         metaDesc,
         metaKeyWords,
-        address
+        address,
+        slogan,
+        contactUsImage: { secure_url:secureUrl2, public_id:publicId2, alt :altContact ,customId:customId2},
+
     }
     const newCompany = await companyModel.create(companyObj)
     if (!newCompany) {
@@ -84,37 +106,56 @@ export const editCompanyData = async (req, res, next) => {
         Linkedin,
         SnapChat,
         Tiktok,
-        alt,
+        altLogo,
+        altContact,
         metaDesc,
         metaKeyWords,
         address
     } = req.body
-
     const company = await companyModel.findOne()
     if (!company) {
         return next(new Error('no company exist', { cause: 400 }))
     }
-    // const customId = `${fileName}_${moment().format('DD/MM/YYYY/_HH:mm:ss')}`;
-    let Company_logo
-    if (req.file) {
-        const fileName = getFileNameWithoutExtension(req.file.originalname);
-        const customId = `${fileName}_${nanoId()}`;
-        await cloudinary.uploader.destroy(company.logo.public_id)
-        await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Company/${company.customId}`)
-        const { secure_url, public_id } = await cloudinary.uploader.upload(req.file.path,
-            { folder: `${process.env.PROJECT_FOLDER}/Company/${customId}` }
-        )
-        Company_logo = { secure_url, public_id }
-        company.customId = customId
-        req.imagePath = `${process.env.PROJECT_FOLDER}/Company/${customId}`
-    }
-    else {
-        const secure_url = company.logo.secure_url;
-        const public_id = company.logo.public_id
-        Company_logo = { secure_url, public_id }
-        company.customId = company.customId
 
+    let Company_logo
+    let contact_Image
+    if (req.files) {
+        if (req.files['logo']) {
+            const file1 = req.files['logo'][0];
+            const logoName = getFileNameWithoutExtension(file1.originalname);
+            const customId1 = `${logoName}_${nanoId()}`
+
+            await cloudinary.uploader.destroy(company.logo.public_id)
+            await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Company/${company.logo.customId}`)
+            const { secure_url: secureUrl1, public_id: publicId1 } = await cloudinary.uploader.upload(req.files['logo'][0].path, {
+                folder: `${process.env.PROJECT_FOLDER}/Company/${customId1}`
+            });
+            Company_logo = { secure_url: secureUrl1, public_id: publicId1, customId: customId1 }
+        }
+        else {
+            Company_logo = company.logo
+        }
+        if (req.files['contactUsImage']) {
+            const file2 = req.files['contactUsImage'][0];
+            const contactImageName = getFileNameWithoutExtension(file2.originalname);
+            const customId2 = `${contactImageName}_${nanoId()}`
+
+            await cloudinary.uploader.destroy(company.contactUsImage.public_id)
+            await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/contactImages/${company.contactUsImage.customId}`)
+            const { secure_url: secureUrl2, public_id: publicId2 } = await cloudinary.uploader.upload(req.files['contactUsImage'][0].path, {
+                folder: `${process.env.PROJECT_FOLDER}/contactImages/${customId2}`
+            });
+            contact_Image = { secure_url: secureUrl2, public_id: publicId2, customId: customId2 }
+        }
+        else {
+            contact_Image = company.contactUsImage
+        }
     }
+    else{
+        Company_logo = company.logo
+        contact_Image = company.contactUsImage
+    }
+
     if (!companyName) {
         company.companyName = company.companyName
     }
@@ -196,14 +237,23 @@ export const editCompanyData = async (req, res, next) => {
     if(address){
         company.address = address
     }
-    if (!alt) {
+    if (!altLogo) {
         const sameAlt = company.logo.alt
         // console.log(sameAlt);
         company.logo = {...Company_logo,alt:sameAlt}
     }
     else {
-        company.logo = {...Company_logo,alt}
+        company.logo = {...Company_logo,alt:altLogo}
     }
+    if (!altContact) {
+        const sameAlt = company.contactUsImage.alt
+        // console.log(sameAlt);
+        company.contactUsImage = {...contact_Image,alt:sameAlt}
+    }
+    else {
+        company.contactUsImage = {...contact_Image,alt:altContact}
+    }
+
 
 
     const updatedCompany = await company.save()

@@ -31,7 +31,8 @@ export const companySchema = new Schema({
             type:String,
             // maxlength: 100,
             required: true
-        }
+        },
+        customId:String,
     },
     landLine: {
         type: String,
@@ -55,13 +56,31 @@ export const companySchema = new Schema({
         type:String,
         // maxlength: 250,
     },
+    slogan:{
+        type:String,
+        required:true
+    },
+    contactUsImage: {
+        secure_url: {
+            type: String,
+            required: true
+        },
+        public_id: {
+            type: String,
+            required: true
+        },
+        alt:{
+            type:String,
+            required: true
+        },
+        customId:String,
+    },
     Facebook: String,
     Instagram: String,
     Twitter: String,
     Linkedin: String,
     SnapChat: String,
     Tiktok: String,
-    customId:String,
 
 },
     { timestamps: true })

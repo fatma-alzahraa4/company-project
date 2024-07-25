@@ -9,56 +9,140 @@ const getFileNameWithoutExtension = (filename) => {
 export const addAboutData = async (req, res, next) => {
     const {
         mission,
+        missionTitle,
         vission,
+        vissionTitle,
         ourStory,
+        ourStoryTitle,
         ourValue,
+        ourValueTitle,
         whyUsTitle,
         whyUsDesc,
-        whyUsPoints,
+        whyUsSubtitle,
+        whyUsImage1Alt,
+        whyUsImage2Alt,
+        howWeWorkMainTitle,
+        howWeWorkArr,
+        howWeWorkAlt,
         metaDesc,
         metaKeyWords,
     } = req.body
 
-    await aboutModel.deleteMany()
+    // await aboutModel.deleteMany()
     if (!req.files['Image1']) {
         return next(new Error('Please upload image 1', { cause: 400 }));
     }
     if (!req.files['Image2']) {
         return next(new Error('Please upload image 2', { cause: 400 }));
     }
+    if (!req.files['howWeWorkImage1']) {
+        return next(new Error('Please upload how work image 1', { cause: 400 }));
+    }
+    if (!req.files['howWeWorkImage2']) {
+        return next(new Error('Please upload how work image 2', { cause: 400 }));
+    }
+    if (!req.files['howWeWorkImage3']) {
+        return next(new Error('Please upload how work image 3', { cause: 400 }));
+    }
+    if (!req.files['howWeWorkImage4']) {
+        return next(new Error('Please upload how work image 4', { cause: 400 }));
+    }
+
+
 
     const file1 = req.files['Image1'][0];
     const file2 = req.files['Image2'][0];
+    const hwfile1 = req.files['howWeWorkImage1'][0];
+    const hwfile2 = req.files['howWeWorkImage2'][0];
+    const hwfile3 = req.files['howWeWorkImage3'][0];
+    const hwfile4 = req.files['howWeWorkImage4'][0];
+
+
 
     const Image1Name = getFileNameWithoutExtension(file1.originalname);
     const Image2Name = getFileNameWithoutExtension(file2.originalname);
-    // const customId = `${fileName}_${moment().format('DD/MM/YYYY/_HH:mm:ss')}`;
+    const hwImage1Name = getFileNameWithoutExtension(hwfile1.originalname);
+    const hwImage2Name = getFileNameWithoutExtension(hwfile2.originalname);
+    const hwImage3Name = getFileNameWithoutExtension(hwfile3.originalname);
+    const hwImage4Name = getFileNameWithoutExtension(hwfile4.originalname);
+
     const customId1 = `${Image1Name}_${nanoId()}`
     const customId2 = `${Image2Name}_${nanoId()}`
+    const hwCustomId1 = `${hwImage1Name}_${nanoId()}`
+    const hwCustomId2 = `${hwImage2Name}_${nanoId()}`
+    const hwCustomId3 = `${hwImage3Name}_${nanoId()}`
+    const hwCustomId4 = `${hwImage4Name}_${nanoId()}`
+
+
     const { secure_url: secureUrl1, public_id: publicId1 } = await cloudinary.uploader.upload(req.files['Image1'][0].path, {
         folder: `${process.env.PROJECT_FOLDER}/whyUs/${customId1}`
     });
     const { secure_url: secureUrl2, public_id: publicId2 } = await cloudinary.uploader.upload(req.files['Image2'][0].path, {
         folder: `${process.env.PROJECT_FOLDER}/whyUs/${customId2}`
     });
+    const { secure_url: hwImgsecureUrl1, public_id: hwImgpublicId1 } = await cloudinary.uploader.upload(req.files['howWeWorkImage1'][0].path, {
+        folder: `${process.env.PROJECT_FOLDER}/howWeWork/${hwCustomId1}`
+    });
+    const { secure_url: hwImgsecureUrl2, public_id: hwImgpublicId2 } = await cloudinary.uploader.upload(req.files['howWeWorkImage2'][0].path, {
+        folder: `${process.env.PROJECT_FOLDER}/howWeWork/${hwCustomId2}`
+    });
+    const { secure_url: hwImgsecureUrl3, public_id: hwImgpublicId3 } = await cloudinary.uploader.upload(req.files['howWeWorkImage3'][0].path, {
+        folder: `${process.env.PROJECT_FOLDER}/howWeWork/${hwCustomId3}`
+    });
+    const { secure_url: hwImgsecureUrl4, public_id: hwImgpublicId4 } = await cloudinary.uploader.upload(req.files['howWeWorkImage4'][0].path, {
+        folder: `${process.env.PROJECT_FOLDER}/howWeWork/${hwCustomId4}`
+    });
 
     req.imagePaths = {
         image1: `${process.env.PROJECT_FOLDER}/whyUs/${customId1}`,
-        image2: `${process.env.PROJECT_FOLDER}/whyUs/${customId2}`
+        image2: `${process.env.PROJECT_FOLDER}/whyUs/${customId2}`,
+        hwImage1: `${process.env.PROJECT_FOLDER}/howWeWork/${hwCustomId1}`,
+        hwImage2: `${process.env.PROJECT_FOLDER}/howWeWork/${hwCustomId2}`,
+        hwImage3: `${process.env.PROJECT_FOLDER}/howWeWork/${hwCustomId3}`,
+        hwImage4: `${process.env.PROJECT_FOLDER}/howWeWork/${hwCustomId4}`,
+
     };
 
+
+    let howArr = [];
+    if (howWeWorkArr && howWeWorkArr.length) {
+        const imageUrls = [
+            { secure_url: hwImgsecureUrl1, public_id: hwImgpublicId1, customId: hwCustomId1, alt: howWeWorkAlt },
+            { secure_url: hwImgsecureUrl2, public_id: hwImgpublicId2, customId: hwCustomId2, alt: howWeWorkAlt },
+            { secure_url: hwImgsecureUrl3, public_id: hwImgpublicId3, customId: hwCustomId3, alt: howWeWorkAlt },
+            { secure_url: hwImgsecureUrl4, public_id: hwImgpublicId4, customId: hwCustomId4, alt: howWeWorkAlt }
+        ];
+    
+        for (let i = 0; i < howWeWorkArr.length; i++) {
+            let hWork = howWeWorkArr[i];
+            hWork.image = imageUrls[i];
+    
+            howArr.push({
+                title: hWork.title,
+                desc: hWork.desc,  
+                image: hWork.image
+            });
+        }
+    }
+        
     const aboutObj = {
         mission,
+        missionTitle,
         vission,
+        vissionTitle,
         ourStory,
+        ourStoryTitle,
         ourValue,
+        ourValueTitle,
         whyUsTitle,
         whyUsDesc,
-        whyUsPoints,
+        whyUsSubtitle,
         metaDesc,
         metaKeyWords,
-        whyUsImage1: { secure_url: secureUrl1, public_id: publicId1, customId: customId1 },
-        whyUsImage2: { secure_url: secureUrl2, public_id: publicId2, customId: customId2 },
+        howWeWorkMainTitle,
+        howWeWork: howArr,
+        whyUsImage1: { secure_url: secureUrl1, public_id: publicId1, customId: customId1, alt: whyUsImage1Alt },
+        whyUsImage2: { secure_url: secureUrl2, public_id: publicId2, customId: customId2, alt: whyUsImage2Alt },
 
     }
     const newAbout = await aboutModel.create(aboutObj)
@@ -78,12 +162,22 @@ export const editAboutData = async (req, res, next) => {
     // const { aboutId } = req.params
     const {
         mission,
+        missionTitle,
         vission,
+        vissionTitle,
         ourStory,
+        ourStoryTitle,
         ourValue,
+        ourValueTitle,
         whyUsTitle,
         whyUsDesc,
-        whyUsPoints,
+        whyUsSubtitle,
+        whyUsImage1Alt,
+        whyUsImage2Alt,
+        howWeWorkMainTitle,
+        howWeWorkTitle,
+        howWeWorkDesc,
+        howWeWorkAlt,
         metaDesc,
         metaKeyWords,
     } = req.body
@@ -111,6 +205,7 @@ export const editAboutData = async (req, res, next) => {
         else {
             whyUs_Image1 = about.whyUsImage1
         }
+
         if (req.files['Image2']) {
             const file2 = req.files['Image2'][0];
             const Image2Name = getFileNameWithoutExtension(file2.originalname);
@@ -127,7 +222,7 @@ export const editAboutData = async (req, res, next) => {
             whyUs_Image2 = about.whyUsImage2
         }
     }
-    else{
+    else {
         whyUs_Image1 = about.whyUsImage1
         whyUs_Image2 = about.whyUsImage2
     }
@@ -169,12 +264,6 @@ export const editAboutData = async (req, res, next) => {
     else {
         about.whyUsDesc = whyUsDesc
     }
-    if (!whyUsPoints) {
-        about.whyUsPoints = about.whyUsPoints
-    }
-    else {
-        about.whyUsPoints = whyUsPoints
-    }
     if (!metaDesc) {
         about.metaDesc = about.metaDesc
     }
@@ -187,9 +276,18 @@ export const editAboutData = async (req, res, next) => {
     else {
         about.metaKeyWords = metaKeyWords
     }
+    about.missionTitle = missionTitle || about.missionTitle
+    about.vissionTitle = vissionTitle || about.vissionTitle,
+        about.ourStoryTitle = ourStoryTitle || about.ourStoryTitle,
+        about.ourValueTitle = ourValueTitle || about.ourValueTitle,
+        about.whyUsSubtitle = whyUsSubtitle || about.whyUsSubtitle,
+        about.howWeWorkMainTitle = howWeWorkMainTitle || about.howWeWorkMainTitle,
 
 
-    about.whyUsImage1 = whyUs_Image1
+
+
+
+        about.whyUsImage1 = whyUs_Image1
     about.whyUsImage2 = whyUs_Image2
 
     const updatedAbout = await about.save()

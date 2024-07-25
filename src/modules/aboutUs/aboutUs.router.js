@@ -11,7 +11,13 @@ const router = Router()
 router.post('/add',
     multerCloudFunction(allowedExtensions.Image).fields([
         { name: 'Image1', maxCount: 1 },
-        { name: 'Image2', maxCount: 1 }
+        { name: 'Image2', maxCount: 1 },
+        { name: 'howWeWorkImage1', maxCount: 1 },
+        { name: 'howWeWorkImage2', maxCount: 1 },
+        { name: 'howWeWorkImage3', maxCount: 1 },
+        { name: 'howWeWorkImage4', maxCount: 1 },
+
+
     ]),
     convertToWebP,
     validationCoreFunction(aboutValidators.addAboutSchema),
@@ -22,8 +28,12 @@ router.post('/add',
 router.put('/edit',
     multerCloudFunction(allowedExtensions.Image).fields([
         { name: 'Image1', maxCount: 1 },
-        { name: 'Image2', maxCount: 1 }
-    ]),
+        { name: 'Image2', maxCount: 1 },
+        { name: 'howWeWorkImage1', maxCount: 1 },
+        { name: 'howWeWorkImage2', maxCount: 1 },
+        { name: 'howWeWorkImage3', maxCount: 1 },
+        { name: 'howWeWorkImage4', maxCount: 1 },
+        ]),
     convertToWebP,
     validationCoreFunction(aboutValidators.editAboutSchema),
     asyncHandler(aboutController.editAboutData),
