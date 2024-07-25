@@ -9,7 +9,7 @@ import * as routers from './src/modules/index.routes.js';
 
 const app = express()
 
-var whitelist = [process.env.DASHBOARDLINK,process.env.LOCALHOST]
+// var whitelist = [process.env.DASHBOARDLINK,process.env.LOCALHOST]
 // var corsOptions = {
 //   origin: function (origin, callback) {
 //     if (whitelist.indexOf(origin) !== -1) {
@@ -34,7 +34,7 @@ const corsOptions = {
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT'],
   credentials: true,
 };
-    app.use(cors(corsOptions)); 
+    app.use(cors()); 
 
     app.get('/',(req,res)=>{res.json({message:"hello app"})})  
 

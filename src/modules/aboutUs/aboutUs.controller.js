@@ -219,8 +219,8 @@ export const editAboutData = async (req, res, next) => {
             whyUs_Image2 = about.whyUsImage2
         }
         if (req.files['howWeWorkImage1']) {
-            const file1 = req.files['Image1'][0];
-            const Image1Name = getFileNameWithoutExtension(file1.originalname);
+            const hwfile1 = req.files['howWeWorkImage1'][0];
+            const hwImage1Name = getFileNameWithoutExtension(hwfile1.originalname);
             const customId1 = `${Image1Name}_${nanoId()}`
 
             await cloudinary.uploader.destroy(about.whyUsImage1.public_id)
