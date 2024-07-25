@@ -180,8 +180,7 @@ export const editAboutData = async (req, res, next) => {
         metaDesc,
         metaKeyWords,
     } = req.body
-    const {_id} = req.params
-    const about = await aboutModel.findOne({_id})
+    const about = await aboutModel.findOne()
     if (!about) {
         return next(new Error('no about exist', { cause: 400 }))
     }
@@ -281,8 +280,8 @@ export const editAboutData = async (req, res, next) => {
     about.ourValueTitle = ourValueTitle || about.ourValueTitle,
     about.whyUsSubtitle = whyUsSubtitle || about.whyUsSubtitle,
     about.howWeWorkMainTitle = howWeWorkMainTitle || about.howWeWorkMainTitle,
-    about.whyUsImage1 = whyUs_Image1
-    about.whyUsImage2 = whyUs_Image2
+    about.whyUsImage1 = {...whyUs_Image1,alt:whyUsImage1Alt} || whyUs_Image1
+    about.whyUsImage2 = {...whyUs_Image2,alt:whyUsImage2Alt} || whyUs_Image1
     if (howWeWorkArr) {
         for (let i = 0; i < howWeWorkArr.length; i++) {
             let hWork = howWeWorkArr[i];
