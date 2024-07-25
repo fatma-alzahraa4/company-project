@@ -34,7 +34,7 @@ const corsOptions = {
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT'],
   credentials: true,
 };
-    app.use(cors()); 
+    app.use(cors(corsOptions)); 
 
     app.get('/',(req,res)=>{res.json({message:"hello app"})})  
 

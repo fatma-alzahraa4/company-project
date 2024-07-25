@@ -218,66 +218,7 @@ export const editAboutData = async (req, res, next) => {
         else {
             whyUs_Image2 = about.whyUsImage2
         }
-        if (req.files['howWeWorkImage1']) {
-            const hwfile1 = req.files['howWeWorkImage1'][0];
-            const hwImage1Name = getFileNameWithoutExtension(hwfile1.originalname);
-            const customId1 = `${Image1Name}_${nanoId()}`
-
-            await cloudinary.uploader.destroy(about.whyUsImage1.public_id)
-            await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/whyUs/${about.whyUsImage1.customId}`)
-            const { secure_url: secureUrl1, public_id: publicId1 } = await cloudinary.uploader.upload(req.files['Image1'][0].path, {
-                folder: `${process.env.PROJECT_FOLDER}/whyUs/${customId1}`
-            });
-            whyUs_Image1 = { secure_url: secureUrl1, public_id: publicId1, customId: customId1 }
-        }
-        else {
-            whyUs_Image1 = about.whyUsImage1
-        }
-        if (req.files['howWeWorkImage2']) {
-            const file1 = req.files['Image1'][0];
-            const Image1Name = getFileNameWithoutExtension(file1.originalname);
-            const customId1 = `${Image1Name}_${nanoId()}`
-
-            await cloudinary.uploader.destroy(about.whyUsImage1.public_id)
-            await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/whyUs/${about.whyUsImage1.customId}`)
-            const { secure_url: secureUrl1, public_id: publicId1 } = await cloudinary.uploader.upload(req.files['Image1'][0].path, {
-                folder: `${process.env.PROJECT_FOLDER}/whyUs/${customId1}`
-            });
-            whyUs_Image1 = { secure_url: secureUrl1, public_id: publicId1, customId: customId1 }
-        }
-        else {
-            whyUs_Image1 = about.whyUsImage1
-        }
-        if (req.files['howWeWorkImage3']) {
-            const file1 = req.files['Image1'][0];
-            const Image1Name = getFileNameWithoutExtension(file1.originalname);
-            const customId1 = `${Image1Name}_${nanoId()}`
-
-            await cloudinary.uploader.destroy(about.whyUsImage1.public_id)
-            await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/whyUs/${about.whyUsImage1.customId}`)
-            const { secure_url: secureUrl1, public_id: publicId1 } = await cloudinary.uploader.upload(req.files['Image1'][0].path, {
-                folder: `${process.env.PROJECT_FOLDER}/whyUs/${customId1}`
-            });
-            whyUs_Image1 = { secure_url: secureUrl1, public_id: publicId1, customId: customId1 }
-        }
-        else {
-            whyUs_Image1 = about.whyUsImage1
-        }
-        if (req.files['howWeWorkImage4']) {
-            const file1 = req.files['Image1'][0];
-            const Image1Name = getFileNameWithoutExtension(file1.originalname);
-            const customId1 = `${Image1Name}_${nanoId()}`
-
-            await cloudinary.uploader.destroy(about.whyUsImage1.public_id)
-            await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/whyUs/${about.whyUsImage1.customId}`)
-            const { secure_url: secureUrl1, public_id: publicId1 } = await cloudinary.uploader.upload(req.files['Image1'][0].path, {
-                folder: `${process.env.PROJECT_FOLDER}/whyUs/${customId1}`
-            });
-            whyUs_Image1 = { secure_url: secureUrl1, public_id: publicId1, customId: customId1 }
-        }
-        else {
-            whyUs_Image1 = about.whyUsImage1
-        }
+        
     }
     else {
         whyUs_Image1 = about.whyUsImage1
