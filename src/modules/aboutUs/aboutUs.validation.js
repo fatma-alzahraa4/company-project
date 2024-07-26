@@ -20,6 +20,11 @@ export const addAboutSchema ={
         howWeWorkAlt:joi.string().min(3),
         whyUsImage1Alt:joi.string().min(3).required(),  
         whyUsImage2Alt:joi.string().min(3).required(),  
+
+        missionVisionAlt:joi.string().min(3).required(),  
+        ourStoryAlt:joi.string().min(3).required(),  
+        ourValueAlt:joi.string().min(3).required(),  
+
     }).required()
 }
 
@@ -44,6 +49,10 @@ export const editAboutSchema ={
         metaKeyWords:joi.string().min(3),   
         whyUsImage1Alt:joi.string().min(3),  
         whyUsImage2Alt:joi.string().min(3),  
+
+        missionVisionAlt:joi.string().min(3),  
+        ourStoryAlt:joi.string().min(3),  
+        ourValueAlt:joi.string().min(3),  
     }).required()
 }
 

@@ -26,6 +26,10 @@ export const addAboutData = async (req, res, next) => {
         howWeWorkAlt,
         metaDesc,
         metaKeyWords,
+        //new
+        missionVisionAlt,
+        ourStoryAlt,
+        ourValueAlt
     } = req.body
 
     // await aboutModel.deleteMany()
@@ -47,6 +51,20 @@ export const addAboutData = async (req, res, next) => {
     if (!req.files['howWeWorkImage4']) {
         return next(new Error('Please upload how work image 4', { cause: 400 }));
     }
+    //new
+    if (!req.files['missionVisionImage']) {
+        return next(new Error('Please upload mission and vision image ', { cause: 400 }));
+    }
+    if (!req.files['ourStoryImage1']) {
+        return next(new Error('Please upload Our Story Image 1', { cause: 400 }));
+    }
+    if (!req.files['ourStoryImage2']) {
+        return next(new Error('Please upload Our Story Image 2', { cause: 400 }));
+    }
+    if (!req.files['ourValueImage']) {
+        return next(new Error('Please upload Our Value Image ', { cause: 400 }));
+    }
+
 
 
 
@@ -56,6 +74,11 @@ export const addAboutData = async (req, res, next) => {
     const hwfile2 = req.files['howWeWorkImage2'][0];
     const hwfile3 = req.files['howWeWorkImage3'][0];
     const hwfile4 = req.files['howWeWorkImage4'][0];
+    //new
+    const MVfile = req.files['missionVisionImage'][0];
+    const OSfile1 = req.files['ourStoryImage1'][0];
+    const OSfile2 = req.files['ourStoryImage2'][0];
+    const OVfile = req.files['ourValueImage'][0];
 
 
 
@@ -65,6 +88,12 @@ export const addAboutData = async (req, res, next) => {
     const hwImage2Name = getFileNameWithoutExtension(hwfile2.originalname);
     const hwImage3Name = getFileNameWithoutExtension(hwfile3.originalname);
     const hwImage4Name = getFileNameWithoutExtension(hwfile4.originalname);
+    //new
+    const MVImageName = getFileNameWithoutExtension(MVfile.originalname);
+    const OSImage1Name = getFileNameWithoutExtension(OSfile1.originalname);
+    const OSImage2Name = getFileNameWithoutExtension(OSfile2.originalname);
+    const OVImageName = getFileNameWithoutExtension(OVfile.originalname);
+
 
     const customId1 = `${Image1Name}_${nanoId()}`
     const customId2 = `${Image2Name}_${nanoId()}`
@@ -72,6 +101,11 @@ export const addAboutData = async (req, res, next) => {
     const hwCustomId2 = `${hwImage2Name}_${nanoId()}`
     const hwCustomId3 = `${hwImage3Name}_${nanoId()}`
     const hwCustomId4 = `${hwImage4Name}_${nanoId()}`
+    //new
+    const MVCustomId = `${MVImageName}_${nanoId()}`
+    const OSCustomId1 = `${OSImage1Name}_${nanoId()}`
+    const OSCustomId2 = `${OSImage2Name}_${nanoId()}`
+    const OVCustomId = `${OVImageName}_${nanoId()}`
 
 
     const { secure_url: secureUrl1, public_id: publicId1 } = await cloudinary.uploader.upload(req.files['Image1'][0].path, {
@@ -91,6 +125,20 @@ export const addAboutData = async (req, res, next) => {
     });
     const { secure_url: hwImgsecureUrl4, public_id: hwImgpublicId4 } = await cloudinary.uploader.upload(req.files['howWeWorkImage4'][0].path, {
         folder: `${process.env.PROJECT_FOLDER}/howWeWork/${hwCustomId4}`
+    });
+
+    //new
+    const { secure_url: MVImgsecureUrl, public_id: MVImgpublicId } = await cloudinary.uploader.upload(req.files['missionVisionImage'][0].path, {
+        folder: `${process.env.PROJECT_FOLDER}/about/vision&mission/${MVCustomId}`
+    });
+    const { secure_url: OSImgsecureUrl1, public_id: OSImgpublicId1 } = await cloudinary.uploader.upload(req.files['ourStoryImage1'][0].path, {
+        folder: `${process.env.PROJECT_FOLDER}/about/OurStory/${OSCustomId1}`
+    });
+    const { secure_url: OSImgsecureUrl2, public_id: OSImgpublicId2 } = await cloudinary.uploader.upload(req.files['ourStoryImage2'][0].path, {
+        folder: `${process.env.PROJECT_FOLDER}/about/OurStory/${OSCustomId2}`
+    });
+    const { secure_url: OVImgsecureUrl, public_id: OVImgpublicId } = await cloudinary.uploader.upload(req.files['ourValueImage'][0].path, {
+        folder: `${process.env.PROJECT_FOLDER}/about/OurValue/${OVCustomId}`
     });
 
     req.imagePaths = {
@@ -143,6 +191,11 @@ export const addAboutData = async (req, res, next) => {
         howWeWork: howArr,
         whyUsImage1: { secure_url: secureUrl1, public_id: publicId1, customId: customId1, alt: whyUsImage1Alt },
         whyUsImage2: { secure_url: secureUrl2, public_id: publicId2, customId: customId2, alt: whyUsImage2Alt },
+        //neww
+        missionVisionImage: { secure_url: MVImgsecureUrl, public_id: MVImgpublicId, customId: MVCustomId, alt: missionVisionAlt },
+        ourStoryImage1: { secure_url: OSImgsecureUrl1, public_id: OSImgpublicId1, customId: OSCustomId1, alt: ourStoryAlt },
+        ourStoryImage2: { secure_url: OSImgsecureUrl2, public_id: OSImgpublicId2, customId: OSCustomId2, alt: ourStoryAlt },
+        ourValueImage: { secure_url: OVImgsecureUrl, public_id: OVImgpublicId, customId: OVCustomId, alt: ourValueAlt },
 
     }
     const newAbout = await aboutModel.create(aboutObj)
@@ -159,7 +212,7 @@ export const addAboutData = async (req, res, next) => {
 }
 
 export const editAboutData = async (req, res, next) => {
-    // const { aboutId } = req.params
+    // const { _id } = req.params
     const {
         mission,
         missionTitle,
@@ -179,22 +232,31 @@ export const editAboutData = async (req, res, next) => {
         howWeWorkAlt,
         metaDesc,
         metaKeyWords,
+        //new
+        missionVisionAlt,
+        ourStoryAlt,
+        ourValueAlt
     } = req.body
     const about = await aboutModel.findOne()
     if (!about) {
         return next(new Error('no about exist', { cause: 400 }))
     }
-
+// console.log(about);
     let whyUs_Image1
     let whyUs_Image2
+    let missionVision_Image
+    let ourStory_Image1
+    let ourStory_Image2
+    let ourValue_Image
+
     if (req.files) {
         if (req.files['Image1']) {
             const file1 = req.files['Image1'][0];
             const Image1Name = getFileNameWithoutExtension(file1.originalname);
             const customId1 = `${Image1Name}_${nanoId()}`
 
-            await cloudinary.uploader.destroy(about.whyUsImage1.public_id)
-            await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/whyUs/${about.whyUsImage1.customId}`)
+            // await cloudinary.uploader.destroy(about.whyUsImage1.public_id)
+            // await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/whyUs/${about.whyUsImage1.customId}`)
             const { secure_url: secureUrl1, public_id: publicId1 } = await cloudinary.uploader.upload(req.files['Image1'][0].path, {
                 folder: `${process.env.PROJECT_FOLDER}/whyUs/${customId1}`
             });
@@ -208,8 +270,8 @@ export const editAboutData = async (req, res, next) => {
             const Image2Name = getFileNameWithoutExtension(file2.originalname);
             const customId2 = `${Image2Name}_${nanoId()}`
 
-            await cloudinary.uploader.destroy(about.whyUsImage2.public_id)
-            await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/whyUs/${about.whyUsImage2.customId}`)
+            // await cloudinary.uploader.destroy(about.whyUsImage2.public_id)
+            // await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/whyUs/${about.whyUsImage2.customId}`)
             const { secure_url: secureUrl2, public_id: publicId2 } = await cloudinary.uploader.upload(req.files['Image2'][0].path, {
                 folder: `${process.env.PROJECT_FOLDER}/whyUs/${customId2}`
             });
@@ -218,11 +280,81 @@ export const editAboutData = async (req, res, next) => {
         else {
             whyUs_Image2 = about.whyUsImage2
         }
-        
+    
+        //new
+        if (req.files['missionVisionImage']) {
+            const MVfile = req.files['missionVisionImage'][0];
+            const MVImageName = getFileNameWithoutExtension(MVfile.originalname);
+            const MVCustomId = `${MVImageName}_${nanoId()}`
+
+            // await cloudinary.uploader.destroy(about.missionVisionImage.public_id)
+            // await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/about/vision&mission/${about.missionVisionImage.customId}`)
+            const { secure_url: MVImgsecureUrl, public_id: MVImgpublicId } = await cloudinary.uploader.upload(req.files['missionVisionImage'][0].path, {
+                folder: `${process.env.PROJECT_FOLDER}/about/visionMission/${MVCustomId}`
+            });
+            missionVision_Image = { secure_url: MVImgsecureUrl, public_id: MVImgpublicId, customId: MVCustomId }
+        }
+        else {
+            missionVision_Image = about.missionVisionImage
+        }
+
+        if (req.files['ourStoryImage1']) {
+            const OSfile1 = req.files['ourStoryImage1'][0];
+            const OSImage1Name = getFileNameWithoutExtension(OSfile1.originalname);
+            const OSCustomId1 = `${OSImage1Name}_${nanoId()}`
+    
+            // await cloudinary.uploader.destroy(about.ourStoryImage1.public_id)
+            // await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/about/OurStory/${about.ourStoryImage1.customId}`)
+            const { secure_url: OSImgsecureUrl1, public_id: OSImgpublicId1 } = await cloudinary.uploader.upload(req.files['ourStoryImage1'][0].path, {
+                folder: `${process.env.PROJECT_FOLDER}/about/OurStory/${OSCustomId1}`
+            });
+            ourStory_Image1 = { secure_url: OSImgsecureUrl1, public_id: OSImgpublicId1, customId: OSCustomId1 }
+        }
+        else {
+            ourStory_Image1 = about.ourStoryImage1
+        }
+
+        if (req.files['ourStoryImage2']) {
+            const OSfile2 = req.files['ourStoryImage2'][0];
+            const OSImage2Name = getFileNameWithoutExtension(OSfile2.originalname);
+            const OSCustomId2 = `${OSImage2Name}_${nanoId()}`
+    
+            // await cloudinary.uploader.destroy(about.ourStoryImage2.public_id)
+            // await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/about/OurStory/${about.ourStoryImage2.customId}`)
+            const { secure_url: OSImgsecureUrl2, public_id: OSImgpublicId2 } = await cloudinary.uploader.upload(req.files['ourStoryImage2'][0].path, {
+                folder: `${process.env.PROJECT_FOLDER}/about/OurStory/${OSCustomId2}`
+            });
+            ourStory_Image2 = { secure_url: OSImgsecureUrl2, public_id: OSImgpublicId2, customId: OSCustomId2 }
+        }
+        else {
+            ourStory_Image2 = about.ourStoryImage2
+        }
+
+        if (req.files['ourValueImage']) {
+            const OVfile = req.files['ourValueImage'][0];
+            const OVImageName = getFileNameWithoutExtension(OVfile.originalname);
+            const OVCustomId = `${OVImageName}_${nanoId()}`
+    
+            // await cloudinary.uploader.destroy(about.ourValueImage.public_id)
+            // await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/about/OurValue/${about.ourValueImage.customId}`)
+            const { secure_url: OVImgsecureUrl, public_id: OVImgpublicId } = await cloudinary.uploader.upload(req.files['ourValueImage'][0].path, {
+                folder: `${process.env.PROJECT_FOLDER}/about/OurValue/${OVCustomId}`
+            });
+            ourValue_Image = { secure_url: OVImgsecureUrl, public_id: OVImgpublicId, customId: OVCustomId }
+        }
+        else {
+            ourValue_Image = about.ourValueImage
+        }
+
     }
+
     else {
         whyUs_Image1 = about.whyUsImage1
         whyUs_Image2 = about.whyUsImage2
+        missionVision_Image = about.missionVisionImage
+        ourStory_Image1 = about.ourStoryImage1
+        ourStory_Image2 = about.ourStoryImage2
+        ourValue_Image = about.ourValueImage
     }
 
 
@@ -275,13 +407,49 @@ export const editAboutData = async (req, res, next) => {
         about.metaKeyWords = metaKeyWords
     }
     about.missionTitle = missionTitle || about.missionTitle
-    about.vissionTitle = vissionTitle || about.vissionTitle,
-    about.ourStoryTitle = ourStoryTitle || about.ourStoryTitle,
-    about.ourValueTitle = ourValueTitle || about.ourValueTitle,
-    about.whyUsSubtitle = whyUsSubtitle || about.whyUsSubtitle,
-    about.howWeWorkMainTitle = howWeWorkMainTitle || about.howWeWorkMainTitle,
-    about.whyUsImage1 = {...whyUs_Image1,alt:whyUsImage1Alt} || whyUs_Image1
-    about.whyUsImage2 = {...whyUs_Image2,alt:whyUsImage2Alt} || whyUs_Image1
+    about.vissionTitle = vissionTitle || about.vissionTitle
+    about.ourStoryTitle = ourStoryTitle || about.ourStoryTitle
+    about.ourValueTitle = ourValueTitle || about.ourValueTitle
+    about.whyUsSubtitle = whyUsSubtitle || about.whyUsSubtitle
+    about.howWeWorkMainTitle = howWeWorkMainTitle || about.howWeWorkMainTitle
+    if (whyUsImage1Alt) {
+        about.whyUsImage1 = { ...whyUs_Image1, alt: whyUsImage1Alt }
+    }
+    else {
+        about.whyUsImage1 = whyUs_Image1
+    }
+    if (whyUsImage2Alt) {
+        about.whyUsImage2 = { ...whyUs_Image2, alt: whyUsImage2Alt }
+    }
+    else {
+        about.whyUsImage2 = whyUs_Image2
+    }
+
+    if (missionVisionAlt) {
+        about.missionVisionImage = { ...missionVision_Image, alt: missionVisionAlt }
+    }
+    else {
+        about.missionVisionImage = missionVision_Image
+    }
+
+    if (ourStoryAlt) {
+        about.ourStoryImage1 = { ...ourStory_Image1, alt: ourStoryAlt }
+        about.ourStoryImage2 = { ...ourStory_Image2, alt: ourStoryAlt }
+    }
+    else {
+        about.ourStoryImage1 = ourStory_Image1
+        about.ourStoryImage2 = ourStory_Image2
+    }
+
+    if (ourValueAlt) {
+        about.ourValueImage = { ...ourValue_Image, alt: ourValueAlt }
+    }
+    else {
+        about.ourValueImage = ourValue_Image
+    }
+
+
+
     if (howWeWorkArr) {
         for (let i = 0; i < howWeWorkArr.length; i++) {
             let hWork = howWeWorkArr[i];
@@ -318,11 +486,11 @@ export const editAboutData = async (req, res, next) => {
     }
     const updatedAbout = await about.save()
     if (!updatedAbout) {
-        await cloudinary.api.delete_resources([publicId1, publicId2]);
-        await Promise.all([
-            cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/whyUs/${customId1}`),
-            cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/whyUs/${customId2}`)
-        ]);
+        // await cloudinary.api.delete_resources([publicId1, publicId2]);
+        // await Promise.all([
+        //     cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/whyUs/${customId1}`),
+        //     cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/whyUs/${customId2}`)
+        // ]);
         return next(new Error('update failed', { cause: 400 }))
 
     }
@@ -335,10 +503,24 @@ export const deleteAbout = async (req, res, next) => {
     if (!deletedAbout) {
         return next(new Error('failed to delete', { cause: 400 }))
     }
-    await cloudinary.api.delete_resources([deletedAbout.whyUsImage1.public_id, deletedAbout.whyUsImage2.public_id]);
+    await cloudinary.api.delete_resources([
+        deletedAbout.whyUsImage1.public_id, 
+        deletedAbout.whyUsImage2.public_id,
+        deletedAbout.missionVisionImage.public_id,
+        deletedAbout.ourStoryImage1.public_id,
+        deletedAbout.ourStoryImage2.public_id,
+        deletedAbout.ourValueImage.public_id,
+
+    ]);
     await Promise.all([
         cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/whyUs/${deletedAbout.whyUsImage1.customId}`),
-        cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/whyUs/${deletedAbout.whyUsImage2.customId}`)
+        cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/whyUs/${deletedAbout.whyUsImage2.customId}`),
+
+        cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/about/vision&mission/${deletedAbout.missionVisionImage.customId}`),
+        cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/about/OurStory/${deletedAbout.ourStoryImage1.customId}`),
+        cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/about/OurStory/${deletedAbout.ourStoryImage2.customId}`),
+        cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/about/OurValue/${deletedAbout.ourValueImage.customId}`),
+
     ]);
     return res.status(200).json({ message: 'Done', deletedAbout })
 

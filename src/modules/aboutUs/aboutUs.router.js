@@ -12,6 +12,12 @@ router.post('/add',
     multerCloudFunction(allowedExtensions.Image).fields([
         { name: 'Image1', maxCount: 1 },
         { name: 'Image2', maxCount: 1 },
+
+        { name: 'missionVisionImage', maxCount: 1 },
+        { name: 'ourStoryImage1', maxCount: 1 },
+        { name: 'ourStoryImage2', maxCount: 1 },
+        { name: 'ourValueImage', maxCount: 1 },
+
         { name: 'howWeWorkImage1', maxCount: 1 },
         { name: 'howWeWorkImage2', maxCount: 1 },
         { name: 'howWeWorkImage3', maxCount: 1 },
@@ -29,6 +35,12 @@ router.put('/edit',
     multerCloudFunction(allowedExtensions.Image).fields([
         { name: 'Image1', maxCount: 1 },
         { name: 'Image2', maxCount: 1 },
+
+        { name: 'missionVisionImage', maxCount: 1 },
+        { name: 'ourStoryImage1', maxCount: 1 },
+        { name: 'ourStoryImage2', maxCount: 1 },
+        { name: 'ourValueImage', maxCount: 1 },
+
         { name: 'howWeWorkImage1', maxCount: 1 },
         { name: 'howWeWorkImage2', maxCount: 1 },
         { name: 'howWeWorkImage3', maxCount: 1 },

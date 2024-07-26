@@ -17,6 +17,21 @@ export const aboutSchema = new Schema({
         type: String,
         required: true,
     },
+    missionVisionImage:{
+        secure_url: {
+            type: String,
+            required: true
+        },
+        public_id: {
+            type: String,
+            required: true
+        },
+        customId: String,
+        alt: {
+            type: String,
+            required: true,
+        }
+    },
     ourStory: {
         type: String,
         required: true,
@@ -25,6 +40,36 @@ export const aboutSchema = new Schema({
         type: String,
         required: true,
     },
+   ourStoryImage1:{
+        secure_url: {
+            type: String,
+            required: true
+        },
+        public_id: {
+            type: String,
+            required: true
+        },
+        customId: String,
+        alt: {
+            type: String,
+            required: true,
+        }
+    },
+    ourStoryImage2:{
+        secure_url: {
+            type: String,
+            required: true
+        },
+        public_id: {
+            type: String,
+            required: true
+        },
+        customId: String,
+        alt: {
+            type: String,
+            required: true,
+        }
+    },
     ourValue: {
         type: String,
         required: true,
@@ -32,6 +77,21 @@ export const aboutSchema = new Schema({
     ourValueTitle: {
         type: String,
         required: true,
+    },
+    ourValueImage:{
+        secure_url: {
+            type: String,
+            required: true
+        },
+        public_id: {
+            type: String,
+            required: true
+        },
+        customId: String,
+        alt: {
+            type: String,
+            required: true,
+        }
     },
     whyUsTitle: {
         type: String,
