@@ -23,7 +23,7 @@ export const homeData = async (req, res, next) => {
         return next(new Error('no main services found', { cause: 400 }))
     }
 
-    const whyUsData = await aboutModel.findOne().select('-_id whyUsTitle whyUsDesc whyUsPoints whyUsImage1 whyUsImage2')
+    const whyUsData = await aboutModel.findOne().select('-_id whyUsTitle whyUsDesc whyUsSubtitle whyUsImage1 whyUsImage2')
     if (!whyUsData) {
         return next(new Error('no why us data found', { cause: 400 }))
     }
