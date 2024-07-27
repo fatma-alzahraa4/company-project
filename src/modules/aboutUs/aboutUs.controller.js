@@ -459,10 +459,10 @@ export const editAboutData = async (req, res, next) => {
                 const imageName = getFileNameWithoutExtension(file.originalname);
                 const customId = `${imageName}_${nanoId()}`;
 
-                if (about.howWeWork[i] && about.howWeWork[i].image && about.howWeWork[i].image.public_id) {
-                    await cloudinary.uploader.destroy(about.howWeWork[i].image.public_id);
-                    await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/howWeWork/${about.howWeWork[i].image.customId}`);
-                }
+                // if (about.howWeWork[i] && about.howWeWork[i].image && about.howWeWork[i].image.public_id) {
+                //     await cloudinary.uploader.destroy(about.howWeWork[i].image.public_id);
+                //     await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/howWeWork/${about.howWeWork[i].image.customId}`);
+                // }
 
                 const { secure_url, public_id } = await cloudinary.uploader.upload(file.path, {
                     folder: `${process.env.PROJECT_FOLDER}/howWeWork/${customId}`

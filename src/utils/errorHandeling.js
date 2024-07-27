@@ -12,7 +12,7 @@ export const asyncHandler = (API)=>{
                 await cloudinary.api.delete_resources_by_prefix(req.videoPath)
                 await cloudinary.api.delete_folder(req.videoPath)
             }
-            return next(new Error('catch Error',{cause:500}))
+            return res.status(err['cause']||500).json({message:err.message})
         })
     }
 }
