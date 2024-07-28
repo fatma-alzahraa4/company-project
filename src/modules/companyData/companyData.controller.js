@@ -110,7 +110,8 @@ export const editCompanyData = async (req, res, next) => {
         altContact,
         metaDesc,
         metaKeyWords,
-        address
+        address,
+        slogan
     } = req.body
     const company = await companyModel.findOne()
     if (!company) {
@@ -253,6 +254,7 @@ export const editCompanyData = async (req, res, next) => {
     else {
         company.contactUsImage = {...contact_Image,alt:altContact}
     }
+    company.slogan = slogan || company.slogan
 
 
 
