@@ -38,10 +38,10 @@ export const editCompanySchema = {
         Tiktok: joi.string().uri(),
         metaDesc: joi.string().min(3),
         metaKeyWords: joi.string().min(3),
-        altLogo: joi.string().min(3).required(),
-        altContact: joi.string().min(3).required(),
-        address: joi.string().min(3).required(),
-        slogan: joi.string().min(3).required(),
+        altLogo: joi.string().min(3),
+        altContact: joi.string().min(3),
+        address: joi.string().min(3),
+        slogan: joi.string().min(3),
     }).required()
 }
 
