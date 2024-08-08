@@ -12,12 +12,12 @@ export async function sendEmailService({
         secure:false,
         service:'gmail',
         auth:{
-            user:'Kfatmaalzahraa@gmail.com',
-            pass:'zxpjbprfownrhvxf'
+            user:process.env.SENDEMAIL_EMAIL,
+            pass:process.env.SENDEMAIL_PASSWORD
         }
     })
     const emailInfo = transporter.sendMail({
-        from:'"HSM" <Kfatmaalzahraa@gmail.com>',
+        from:`"HSM" <${process.env.SENDEMAIL_EMAIL}>`,
         to : to ? to : '',
         subject : subject ? subject : '',
         html:message ? message :'',
