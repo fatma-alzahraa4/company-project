@@ -4,7 +4,7 @@ export const addCompanySchema = {
     body: joi.object({
         companyName: joi.string().min(3).required(),
         email: generalFields.email.required(),
-        phoneNum: generalFields.phoneNumbers.required(),
+        phoneNum: joi.string(),
         landLine: joi.string().min(4),
         mapLink: joi.string().uri(),
         Facebook: joi.string().uri(),
@@ -27,7 +27,7 @@ export const editCompanySchema = {
     body: joi.object({
         companyName: joi.string().min(3),
         email: generalFields.email,
-        phoneNum: generalFields.phoneNumbers,
+        phoneNum: joi.string(),
         landLine: joi.string().min(4),
         mapLink: joi.string().uri(),
         Facebook: joi.string().uri(),
