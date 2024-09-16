@@ -7,7 +7,7 @@ const validationIdSchema = (value,helper)=>
 export const generalFields = {
   email: joi
     .string()
-    .email({ tlds: { allow: ['com', 'net', 'org'] } })
+    .email()
     ,
   password: joi
     .string()
