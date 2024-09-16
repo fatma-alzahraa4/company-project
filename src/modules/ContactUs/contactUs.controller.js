@@ -41,7 +41,7 @@ export const contact = async (req, res, next) => {
         return next(new Error('fail to send email',{cause:400}))
     }
     const isEmailToCompanySent = sendEmailService(
-        {to: process.env.SENDEMAIL_EMAIL,
+        {to: process.env.NODE_MAILER_USER,
         subject:`new Company Contacts US`,
         message: emailTemplateCompany({
             companyName:companyName, 
