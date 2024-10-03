@@ -1,6 +1,6 @@
 import { systemRoles } from '../../utils/systemRoles.js';
 
-export const adminApisRoles = {
+export const accountApisRoles = {
     CHANGE_PASSWORD:[systemRoles.ADMIN],
     ADD_ACCOUNT:[systemRoles.ADMIN],
     DELETE_ACCOUNT:[systemRoles.ADMIN],

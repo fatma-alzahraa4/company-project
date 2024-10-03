@@ -1,10 +1,9 @@
 import pkg from 'bcrypt'
 import { customAlphabet } from 'nanoid';
-import { accountModel } from "../../../DB/models/accountModel.js";
 import { sendEmailService } from "../../services/sendEmail.js";
 import { generateToken, verifyToken } from '../../utils/tokenFunction.js';
 import { isTempEmail } from '../../utils/blockTempEmailDomains.js';
-import { accountModel } from './../../../DB/models/accountModel';
+import { accountModel } from './../../../DB/models/accountModel.js';
 const nanoId = customAlphabet('012345689', 4)
 
 //TODO Uncomment Send Email Service
@@ -164,7 +163,7 @@ export const signIn = async (req, res, next) => {
 
 export const resendVerificationCode = async (req, res, next) => {
     const { accountId } = req.params
-    const account = await accountModel.findOne({ _id: accountId })
+    const account = await accountModel.findOne({ _id: accountId })    
     const verificationCode = nanoId();
     const hashedVerificationCode = pkg.hashSync(verificationCode, +process.env.SALT_ROUNDS)
     // const isEmailSent = sendEmailService(
@@ -212,14 +211,14 @@ export const forgetPassword = async (req, res, next) => {
     //     return next(new Error('failed to send  email', { cause: 400 }))
     // }
     await accountModel.findOneAndUpdate({ email }, { forgetCode: hashedCode }, { new: true })
-    res.status(200).json({ message: 'Check you gmail to reset password', forgetToken: token, code })
+    res.status(200).json({ message: 'Check you gmail to reset password', forgetToken: token, forgetCode:code })
 }
 
 //========================================== resend forget code ==========================================
 
 export const resendForgetCode = async (req, res, next) => {
-    const { adminId } = req.params
-    const admin = await accountModel.findOne({ _id: adminId, role: 'admin' })
+    const { accountId } = req.params
+    const admin = await accountModel.findOne({ _id: accountId, role: 'admin' })
     const code = nanoId()
     const hashedCode = pkg.hashSync(code, +process.env.SALT_ROUNDS)
     // const isEmailSent = sendEmailService({
@@ -252,11 +251,15 @@ export const resetPassword = async (req, res, next) => {
     if (!admin) {
         return next(new Error('Invalid email', { cause: 400 }))
     }
+    if(!admin.forgetCode){
+        return next(new Error('you reseted your password before', { cause: 400 }))
+    }
+
     const isCodeMatch = pkg.compareSync(forgetCode, admin.forgetCode)
     if (!isCodeMatch) {
         return next(new Error('the code doesnot match', { cause: 400 }))
     }
-
+    console.log(isCodeMatch);
     const hashedPassword = pkg.hashSync(newPassword, +process.env.SALT_ROUNDS)
     const changePasswordTime = Date.now()
     const resetedAdmin = await accountModel.findByIdAndUpdate(admin._id, { password: hashedPassword, forgetCode: null, changePasswordTime }, { new: true })
@@ -275,7 +278,7 @@ export const resetPassword = async (req, res, next) => {
 //========================================== change password =========================================
 
 export const changePassword = async (req, res, next) => {
-    const { _id } = req.authAdmin
+    const { _id } = req.authAccount
     const { oldPassword, newPassword } = req.body
     if (!oldPassword || !newPassword) {
         return next(new Error('all fields are required', { cause: 400 }))
@@ -412,6 +415,7 @@ export const addAccount = async (req, res, next) => {
 // }
 
 //============================================== delete account ==============================================
+
 
 export const deleteAccount = async (req, res, next) => {
     const { email } = req.body

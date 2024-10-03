@@ -60,7 +60,7 @@ export const signInSchema = {
 
 export const resendCodeSchema = {
     params: joi.object({
-        adminId: generalFields._id.required()
+        accountId: generalFields._id.required()
     }).required()
 };
 

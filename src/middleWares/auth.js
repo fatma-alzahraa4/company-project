@@ -1,5 +1,4 @@
 import { accountModel } from '../../DB/models/accountModel.js';
-import { adminModel } from '../../DB/models/adminModel.js';
 import { verifyToken } from '../utils/tokenFunction.js'
 
 

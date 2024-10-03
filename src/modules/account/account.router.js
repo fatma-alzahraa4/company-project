@@ -1,10 +1,10 @@
 import { Router } from "express";
-import * as adminAuthController from './admin.controller.js';
+import * as adminAuthController from './account.controller.js';
 import * as adminAuthValidators from './account.validation.js';
 import { asyncHandler } from "../../utils/errorHandeling.js";
 import { validationCoreFunction } from "../../middlewares/validation.js";
-import { adminApisRoles } from "./apiRoles.js";
-import { isAuth } from './../../middlewares/auth';
+import { accountApisRoles } from "./apiRoles.js";
+import { isAuth } from './../../middlewares/auth.js';
 isAuth
 const router = Router()
 router.post('/signUp',
@@ -21,52 +21,52 @@ router.post('/signIn',
     asyncHandler(adminAuthController.signIn),
 )
 
-router.get('/resendVerificationCode/:adminId',
+router.get('/resendVerificationCode/:accountId',
     validationCoreFunction(adminAuthValidators.resendCodeSchema),
     asyncHandler(adminAuthController.resendVerificationCode),
 )
 
-router.get('/resendForgetCode/:adminId',
+router.get('/resendForgetCode/:accountId',
     validationCoreFunction(adminAuthValidators.resendCodeSchema),
     asyncHandler(adminAuthController.resendForgetCode),
 )
 
-router.post('/forget',
+router.post('/forgetPassword',
     validationCoreFunction(adminAuthValidators.forgetPassSchema),
     asyncHandler(adminAuthController.forgetPassword),
 )
 
-router.patch('/reset',
+router.patch('/resetPassword',
     validationCoreFunction(adminAuthValidators.resetPassSchema),
     asyncHandler(adminAuthController.resetPassword),
 )
 
 router.patch('/changePassword',
-    // isAuth(adminApisRoles.CHANGE_PASSWORD),
+    isAuth(accountApisRoles.CHANGE_PASSWORD),
     validationCoreFunction(adminAuthValidators.changePassSchema),
     asyncHandler(adminAuthController.changePassword),
 )
 
 router.patch('/logOut',
-    // isAuth(adminApisRoles.LOGOUT),
+    // isAuth(accountApisRoles.LOGOUT),
     // validationCoreFunction(adminAuthValidators.adminSignUp),
     asyncHandler(adminAuthController.logOut),
 )
 
 router.post('/addAccount',
-    // isAuth(adminApisRoles.ADD_ACCOUNT),
+    isAuth(accountApisRoles.ADD_ACCOUNT),
     validationCoreFunction(adminAuthValidators.addAccountSchema),
     asyncHandler(adminAuthController.addAccount),
 )
 
 router.delete('/deleteAccount',
-    // isAuth(adminApisRoles.DELETE_ACCOUNT),
+    isAuth(accountApisRoles.DELETE_ACCOUNT),
     validationCoreFunction(adminAuthValidators.deleteAccountSchema),
     asyncHandler(adminAuthController.deleteAccount),
 )
 
 router.patch('/changeRole',
-    // isAuth(adminApisRoles.CHANGE_ROLE),
+    isAuth(accountApisRoles.CHANGE_ROLE),
     validationCoreFunction(adminAuthValidators.changeRoleSchema),
     asyncHandler(adminAuthController.changeRole),
 )

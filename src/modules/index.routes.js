@@ -8,6 +8,8 @@ import contactRouter from './ContactUs/contactUs.router.js';
 import IPRouter from './IP/IP.router.js';
 import mainServiceRouter from './mainService/mainService.router.js';
 import homeRouter from './home/home.router.js';
+import adminRouter from './account/account.router.js';
+import jobRouter from './jobApplication/jobApplication.router.js'
 
 
 export{
@@ -20,5 +22,7 @@ export{
     contactRouter,
     IPRouter,
     mainServiceRouter,
-    homeRouter
+    homeRouter,
+    adminRouter,
+    jobRouter
 } 
