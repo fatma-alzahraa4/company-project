@@ -27,7 +27,7 @@ export const addJobOffer = async (req, res, next) => {
         rejectedKeyWords,
     } = req.body
 
-    if(!jobTitle || !address || !employmentType || !experienceYears || !jobPurpose || !jobResponsabilities || !jobRequirements){
+    if (!jobTitle || !address || !employmentType || !experienceYears || !jobPurpose || !jobResponsabilities || !jobRequirements) {
         return next(new Error('Please Enter All Required Fields', { cause: 400 }))
     }
     const jobOfferObj =
@@ -50,7 +50,7 @@ export const addJobOffer = async (req, res, next) => {
 }
 
 export const editJobOffer = async (req, res, next) => {
-    const {jobId} = req.params
+    const { jobId } = req.params
     const {
         jobTitle,
         address,
@@ -76,24 +76,24 @@ export const editJobOffer = async (req, res, next) => {
     jobOffer.rejectedKeyWords = rejectedKeyWords || jobOffer.rejectedKeyWords;
 
     const updatedJobOffer = await jobOffer.save()
-    res.status(200).json({ message: 'Done', jobOffer:updatedJobOffer })
+    res.status(200).json({ message: 'Done', jobOffer: updatedJobOffer })
 }
 
-export const getJobOffers = async (req,res,next) =>{
+export const getJobOffers = async (req, res, next) => {
     const jobOffers = await jobOfferModel.find()
     res.status(200).json({ message: 'Done', jobOffers })
 }
 
-export const getJobOffer = async (req,res,next) =>{
-    const {jobId} = req.params
+export const getJobOffer = async (req, res, next) => {
+    const { jobId } = req.params
     const jobOffer = await jobOfferModel.findById(jobId)
     res.status(200).json({ message: 'Done', jobOffer })
 }
 
-export const deleteJobOffer = async (req,res,next) =>{
-    const {jobId} = req.params
+export const deleteJobOffer = async (req, res, next) => {
+    const { jobId } = req.params
     await jobOfferModel.findByIdAndDelete(jobId)
-    res.status(200).json({ message: 'Done'})
+    res.status(200).json({ message: 'Done' })
 }
 
 //========================================================Website APIs=======================================================
@@ -105,7 +105,7 @@ export const deleteJobOffer = async (req,res,next) =>{
 //     if (!job) {
 //         throw new Error('Job offer not found');
 //     }
-    
+
 //     const acceptedKeyWords = job.acceptedKeyWords || [];
 //     const rejectedKeyWords = job.rejectedKeyWords || [];
 
@@ -134,8 +134,8 @@ export const deleteJobOffer = async (req,res,next) =>{
 //     };
 // };
 
-export const applyToJob = async (req,res,next) =>{
-    const {jobId} = req.params
+export const applyToJob = async (req, res, next) => {
+    const { jobId } = req.params
     const {
         firstName,
         lastName,
@@ -143,13 +143,18 @@ export const applyToJob = async (req,res,next) =>{
         phoneNumber,
         address,
         portofolio,
-        linkedIn        
+        linkedIn
     } = req.body
-    if(!firstName || !lastName || !email || !phoneNumber || !address ){
+    if (!firstName || !lastName || !email || !phoneNumber || !address) {
         return next(new Error('Please Enter All Required Fields', { cause: 400 }))
     }
+    // console.log(req.body);
+
     const job = await jobOfferModel.findById(jobId)
-    if(!req.file){
+    if (!job) {
+        return next(new Error('No Jo Found', { cause: 400 }))
+    }
+    if (!req.file) {
         return next(new Error('Please Upload Your Resume', { cause: 400 }))
     }
     //filter req.file with keyWords
@@ -160,7 +165,7 @@ export const applyToJob = async (req,res,next) =>{
     const { secure_url, public_id } = await cloudinary.uploader.upload(req.file.path,
         { folder: `${process.env.PROJECT_FOLDER}/JobResumes/${job.jobTitle}/${customId}` }
     )
-    const resume = {secure_url,public_id,customId}
+    const resume = { secure_url, public_id, customId }
     const jobApplicantObj = {
         firstName,
         lastName,
@@ -176,8 +181,17 @@ export const applyToJob = async (req,res,next) =>{
     res.status(200).json({ message: 'Done', jobApplicant })
 }
 
-export const getJobApplicants = async (req,res,next) =>{
-    const {jobId} = req.params
-    const jobApplicants = await jobApplicantModel.find({jobId})
+export const getJobApplicants = async (req, res, next) => {
+    const { jobId } = req.params
+    const jobApplicants = await jobApplicantModel.find({ jobId }).select('-resume.public_id -resume.customId')
     res.status(200).json({ message: 'Done', jobApplicants })
+}
+
+export const deleteJobApplicant = async (req, res, next) => {
+    const { jobApplicantId } = req.params
+    const deletedJobApplicant = await jobApplicantModel.findByIdAndDelete( jobApplicantId )
+    if(!deletedJobApplicant){
+        return next(new Error('Failed to delete', { cause: 400 }))
+    }
+    res.status(200).json({ message: 'Done' })
 }

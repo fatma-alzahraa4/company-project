@@ -5,6 +5,8 @@ import { asyncHandler } from "../../utils/errorHandeling.js";
 import { validationCoreFunction } from "../../middlewares/validation.js";
 import { jobApisRoles } from "./apiRoles.js";
 import { isAuth } from './../../middlewares/auth.js';
+import { multerCloudFunction } from "../../services/multerCloudinary.js";
+import { allowedExtensions } from "../../utils/allowedEtensions.js";
 isAuth
 const router = Router()
 
@@ -43,8 +45,13 @@ router.get('/getJobApplicants/:jobId',
     // validationCoreFunction(adminAuthValidators.resendCodeSchema),
     asyncHandler(jobApplicationControllers.getJobApplicants),
 )
+router.delete('/deleteJobApplicant/:jobApplicantId',
+    // validationCoreFunction(adminAuthValidators.signUpSchema),
+    asyncHandler(jobApplicationControllers.deleteJobApplicant),
+);
 
 router.post('/applyToJob/:jobId',
+    multerCloudFunction(allowedExtensions.Files).single('resume'),
     // validationCoreFunction(adminAuthValidators.signUpSchema),
     asyncHandler(jobApplicationControllers.applyToJob),
 );

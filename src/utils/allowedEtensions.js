@@ -9,4 +9,5 @@ export const allowedExtensions = {
       'video/mkv', 'video/webm', 'video/mpeg', 'video/mpg', 'video/3gp', 
       'video/3g2', 'video/m4v', 'video/m2ts', 'video/mts', 'video/ts', 'video/ogv'
     ],
+    Files: ['application/pdf'],
   }
