@@ -49,7 +49,9 @@ app.use('/IP', routers.IPRouter)
 app.use('/mainService', routers.mainServiceRouter)
 app.use('/home', routers.homeRouter)
 app.use('/admin', routers.adminRouter)
-app.use('/jobApplication', routers.jobRouter)
+app.use('/jobApplication', routers.jobRouter);
+app.use('/project', routers.projectRouter);
+
 
 
 app.all('*', (req, res, next) => {
