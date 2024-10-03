@@ -28,6 +28,9 @@ export const addProject = async (req, res, next) => {
     if(status == 'InProgress' && !progressPercentage){
         return next(new Error('Please enter Progress Percentage', { cause: 400 }))
     }
+    if(status != 'InProgress' && progressPercentage){
+        return next(new Error('Progress Percentage should only be provided when the status is InProgress', { cause: 400 }));
+    }
     if (!req.file) {
         return next(new Error('Please upload project image', { cause: 400 }));
     }
@@ -89,6 +92,16 @@ export const editProject = async (req, res, next) => {
         const customId = project.image.customId
         project_Image = { secure_url, public_id, customId }
     }
+    if(status && status == 'InProgress' && !project.progressPercentage && !progressPercentage){
+        return next(new Error('Please enter Progress Percentage', { cause: 400 }))
+    }
+    else if(status && status != 'InProgress' ){
+        project.progressPercentage = undefined;
+        // return next(new Error('Progress Percentage should only be provided when the status is InProgress', { cause: 400 }));
+    }
+    else if(project.status == 'InProgress' || (status &&  status == 'InProgress' )){
+    project.progressPercentage = progressPercentage || project.progressPercentage;
+    }
     project_Image.alt = altImage || project.alt
     project.name = name || project.name
     project.clientName = clientName || project.clientName
@@ -96,7 +109,6 @@ export const editProject = async (req, res, next) => {
     project.clientLink = clientLink || project.clientLink
     project.details = details || project.details;
     project.status = status || project.status;
-    project.progressPercentage = progressPercentage || project.progressPercentage;
 
 
     project.image = { ...project_Image }
