@@ -4,7 +4,7 @@ import {convertToWebP , multerCloudFunction } from "../../services/multerCloudin
 import { allowedExtensions } from "../../utils/allowedEtensions.js"
 import { asyncHandler } from "../../utils/errorHandeling.js"
 import * as mainServiceValidators from './mainService.validation.js'
-import { validationCoreFunction } from "../../middleWares/validation.js"
+import { validationCoreFunction } from "../../middlewares/validation.js"
 const router = Router()
 
 router.post('/add',

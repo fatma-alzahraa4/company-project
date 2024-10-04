@@ -2,7 +2,7 @@ import { Router } from "express"
 import * as subServiceController from './subService.controller.js'
 import * as subServiceValidators from './subService.validation.js'
 import { asyncHandler } from "../../utils/errorHandeling.js"
-import { validationCoreFunction } from "../../middleWares/validation.js"
+import { validationCoreFunction } from "../../middlewares/validation.js"
 const router = Router()
 
 router.post('/add',
