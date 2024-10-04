@@ -2,9 +2,9 @@ import { Router } from "express";
 import * as jobApplicationControllers from './jobApplication.controller.js';
 import * as jobApplicationValidators from './jobApplication.validation.js';
 import { asyncHandler } from "../../utils/errorHandeling.js";
-import { validationCoreFunction } from "../../middlewares/validation.js";
+import { validationCoreFunction } from "../../middleWares/validation.js";
 import { jobApisRoles } from "./apiRoles.js";
-import { isAuth } from './../../middlewares/auth.js';
+import { isAuth } from '../../middleWares/auth.js';
 import { multerCloudFunction } from "../../services/multerCloudinary.js";
 import { allowedExtensions } from "../../utils/allowedEtensions.js";
 isAuth

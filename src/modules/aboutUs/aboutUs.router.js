@@ -3,7 +3,7 @@ import * as aboutController from './aboutUs.controller.js'
 import { asyncHandler } from "../../utils/errorHandeling.js";
 import { convertToWebP, multerCloudFunction } from './../../services/multerCloudinary.js';
 import { allowedExtensions } from "../../utils/allowedEtensions.js";
-import { validationCoreFunction } from "../../middlewares/validation.js";
+import { validationCoreFunction } from "../../middleWares/validation.js";
 import * as aboutValidators from './aboutUs.validation.js'
 const router = Router()
 

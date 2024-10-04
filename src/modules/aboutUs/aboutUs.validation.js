@@ -1,5 +1,5 @@
 import joi from "joi"
-import { generalFields } from "../../middlewares/validation.js"
+import { generalFields } from "../../middleWares/validation.js"
 export const addAboutSchema ={
     body:joi.object({
         mission:joi.string().min(3).required(),

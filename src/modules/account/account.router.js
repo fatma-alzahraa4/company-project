@@ -2,9 +2,9 @@ import { Router } from "express";
 import * as adminAuthController from './account.controller.js';
 import * as adminAuthValidators from './account.validation.js';
 import { asyncHandler } from "../../utils/errorHandeling.js";
-import { validationCoreFunction } from "../../middlewares/validation.js";
+import { validationCoreFunction } from "../../middleWares/validation.js";
 import { accountApisRoles } from "./apiRoles.js";
-import { isAuth } from './../../middlewares/auth.js';
+import { isAuth } from '../../middleWares/auth.js';
 isAuth
 const router = Router()
 router.post('/signUp',

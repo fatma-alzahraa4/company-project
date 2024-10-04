@@ -4,8 +4,8 @@ import * as projectValidators from './project.validation.js'
 import { asyncHandler } from './../../utils/errorHandeling.js';
 import { convertToWebP, multerCloudFunction } from './../../services/multerCloudinary.js';
 import { allowedExtensions } from './../../utils/allowedEtensions.js';
-import { validationCoreFunction } from "../../middlewares/validation.js";
-import { isAuth } from "../../middlewares/auth.js";
+import { validationCoreFunction } from "../../middleWares/validation.js";
+import { isAuth } from "../../middleWares/auth.js";
 import { projectApisRoles } from "./project.roles.js";
 const router = Router()
 
