@@ -7,7 +7,7 @@ export const projectSchema = new Schema(
             required: true,
             minlength: 2,
         },
-        image: {
+        mainImage: {
             secure_url: {
                 type: String,
                 required: true
@@ -50,7 +50,8 @@ export const projectSchema = new Schema(
             required: function () {
                 return this.status === 'InProgress';
             }
-        }
+        },
+        projectFolder:String
     },
     {
         timestamps: true,
@@ -59,4 +60,15 @@ export const projectSchema = new Schema(
     }
 )
 
+projectSchema.virtual('images',{
+    ref:'projectimage',
+    localField:'_id',
+    foreignField:'projectId',
+});
+
+projectSchema.virtual('videos',{
+    ref:'projectvideo',
+    localField:'_id',
+    foreignField:'projectId',
+})
 export const projectModel = model('project', projectSchema)

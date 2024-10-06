@@ -41,3 +41,28 @@ export const getProjectSchema = {
         projectId:generalFields._id.required(),
     }).required(),
 }
+
+export const addProjectImagesSchema = {
+    body: joi.object({
+        projectId:generalFields._id.required(),        
+        altImage: joi.string().min(3).required(),
+    }).required()
+}
+
+export const deleteProjectImageSchema = {
+    params: joi.object({
+        imageId:generalFields._id.required(),
+    }).required(),
+}
+
+export const addProjectVideosSchema = {
+    body: joi.object({
+        projectId:generalFields._id.required(),        
+    }).required()
+}
+
+export const deleteProjectVideoSchema = {
+    params: joi.object({
+        imageId:generalFields._id.required(),
+    }).required(),
+}
