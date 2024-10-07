@@ -26,19 +26,22 @@ export const generalFields = {
 const reqMethods = ['body', 'query', 'params', 'headers', 'file', 'files']
 export const validationCoreFunction = (schema) => {
   return (req, res, next) => {
-    const validationErrorArr = []
+    let validationMessage = ''
     for (const key of reqMethods) {
       if (schema[key]) {
         const validationResult = schema[key].validate(req[key], {
-          abortEarly: false,  // 3ashan validate bt5rog mn first error
+          // abortEarly: false,  // 3ashan validate bt5rog mn first error
         })
+        // if (validationResult.error) {
+        //   validationErrorArr.push(validationResult.error.details[0].message)
+        // }
         if (validationResult.error) {
-          validationErrorArr.push(validationResult.error.details[0].message)
+          validationMessage = validationResult.error.details[0].message;          
         }
       }
     }
-    if (validationErrorArr.length) {
-      req.validationErrorArr = validationErrorArr;
+    if (validationMessage) {
+      req.validationMessage = validationMessage;
       return next(new Error('', { cause: 400 }))
     }
     next()
