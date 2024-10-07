@@ -140,8 +140,8 @@ export const addProjectImages = async (req, res, next) => {
     }
     if (!req.files || req.files.length === 0) {
         return next(new Error('Please upload at least one project image', { cause: 400 }));
-    }
-    const uploadPromises = req.files.map(async (file) => {
+    }    
+    const uploadPromises = req.files['images'].map(async (file) => {
         const imageName = getFileNameWithoutExtension(file.originalname);
         const customId = `${imageName}_${nanoId()}`;
         const { secure_url, public_id } = await cloudinary.uploader.upload(file.path, {
@@ -167,7 +167,7 @@ export const addProjectImages = async (req, res, next) => {
 
 export const deleteProjectImage = async (req,res,next) =>{
     const { imageId } = req.params;
-    const deletedImage = await projectImageModel.findByIdAndDelete(imageId)
+    const deletedImage = await projectImageModel.findByIdAndDelete(imageId).populate('projectId')
     if (!deletedImage) {
         return next(new Error('failed to delete', { cause: 400 }))
     }
@@ -189,10 +189,11 @@ export const addProjectVideos = async (req, res, next) => {
     if (!req.files || req.files.length === 0) {
         return next(new Error('Please upload at least one project Video', { cause: 400 }));
     }
-    const uploadPromises = req.files.map(async (file) => {
+    const uploadPromises = req.files['videos'].map(async (file) => {
         const videoName = getFileNameWithoutExtension(file.originalname);
         const customId = `${videoName}_${nanoId()}`;
         const { secure_url, public_id } = await cloudinary.uploader.upload(file.path, {
+            resource_type: 'video',
             folder: `${process.env.PROJECT_FOLDER}/Projects/${project.projectFolder}/Videos/${customId}`,
         });
 
@@ -214,12 +215,12 @@ export const addProjectVideos = async (req, res, next) => {
 
 export const deleteProjectVideo = async (req,res,next) =>{
     const { videoId } = req.params;
-    const deletedVideo = await projectVideoModel.findByIdAndDelete(videoId)
+    const deletedVideo = await projectVideoModel.findByIdAndDelete(videoId).populate('projectId')
     if (!deletedVideo) {
         return next(new Error('failed to delete', { cause: 400 }))
     }
-    await cloudinary.uploader.destroy(deletedVideo.image.public_id)
-    await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Projects/${deletedVideo.projectId.projectFolder}/${deletedVideo.video.customId}`)
+    await cloudinary.uploader.destroy(deletedVideo.video.public_id,{ resource_type: 'video' })
+    await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Projects/${deletedVideo.projectId.projectFolder}/Videos/${deletedVideo.video.customId}`)
     return res.status(200).json({ message: 'Done' })
 
 }
@@ -230,17 +231,32 @@ export const deleteProject = async (req, res, next) => {
     if (!deletedProject) {
         return next(new Error('failed to delete', { cause: 400 }))
     }
-    const projectIMages = await projectImageModel.find({projectId})
-    const projectImagesPublicIds = projectIMages.map(p=>p.image.public_id)
-    const projectImagesIds = projectIMages.map(p=>p._id)
+    const [projectImages,projectVideos] = await Promise.all([
+        projectImageModel.find({projectId}),
+        projectVideoModel.find({projectId})
+    ])
+    const projectImagesPublicIds = projectImages.map(p=>p.image.public_id)
+    const projectImagesIds = projectImages.map(p=>p._id)
+    const projectVideosPublicIds = projectVideos.map(p=>p.video.public_id)
+    const projectVideosIds = projectVideos.map(p=>p._id)
     if (projectImagesIds.length > 0) {
-        const [deletedCloud, deletedDataBase ] =await Promise.all([
+        const [deletedCloudImages, deletedDataBase ] =await Promise.all([
             cloudinary.api.delete_resources(projectImagesPublicIds),
             projectImageModel.deleteMany({ _id: { $in: projectImagesIds } })
         ])
-        if(!deletedCloud || deletedDataBase.deletedCount <= 0){
+        if(!deletedCloudImages || deletedDataBase.deletedCount <= 0){
         return next(new Error('failed to delete images', { cause: 400 }))
         }
+    }
+    if (projectVideosIds.length > 0) {
+        const [deletedCloudVideos, deletedDataBase ] =await Promise.all([
+            cloudinary.api.delete_resources(projectVideosPublicIds,{ resource_type: 'video' }),
+            projectVideoModel.deleteMany({ _id: { $in: projectVideosIds } })
+        ])
+        if(!deletedCloudVideos || deletedDataBase.deletedCount <= 0){
+            return next(new Error('failed to delete Videos', { cause: 400 }))
+            }
+
     }
     const deletedMainImage = await cloudinary.uploader.destroy(deletedProject.mainImage.public_id)
     const deletedFolder = await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Projects/${deletedProject.projectFolder}`)

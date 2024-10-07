@@ -25,9 +25,11 @@ router.put('/edit/:projectId',
     asyncHandler(projectControllers.editProject)
 )
 
-router.post('/addImages/:projectId',
+router.post('/addImages',
     // isAuth(projectApisRoles.ADD_PROJECT_IMAGES),
-    multerCloudFunction(allowedExtensions.Image).array('images', 4),
+    multerCloudFunction(allowedExtensions.Image).fields([
+        { name: 'images', maxCount: 4 },
+    ]),
     convertToWebP,
     validationCoreFunction(projectValidators.addProjectImagesSchema),
     asyncHandler(projectControllers.addProjectImages)
@@ -39,9 +41,11 @@ router.delete('/deleteImage/:imageId',
     asyncHandler(projectControllers.deleteProjectImage)
 )
 
-router.post('/addVideos/:projectId',
+router.post('/addVideos',
     // isAuth(projectApisRoles.ADD_PROJECT_IMAGES),
-    multerCloudFunction(allowedExtensions.Videos).array('videos', 4),
+    multerCloudFunction(allowedExtensions.Videos).fields([
+        { name: 'videos', maxCount: 4 },
+    ]),
     convertToWebP,
     validationCoreFunction(projectValidators.addProjectVideosSchema),
     asyncHandler(projectControllers.addProjectVideos)

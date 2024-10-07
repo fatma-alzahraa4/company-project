@@ -77,9 +77,9 @@ export const convertToWebP = async (req, res, next) => {
       if (req.file.mimetype.startsWith('image/')) {
         await convertImageToWebP(req.file);
       }
-      // else if (req.file.mimetype.startsWith('video/')) {
-      //   await convertVideoToWebP(res,req.file);
-      // }
+      else if (req.file.mimetype.startsWith('video/')) {
+        await convertVideoToWebP(res,req.file);
+      }
       // For single video files, just call next as we don't convert videos
     } else if (req.files) {
       // Extract all fields from req.files object
@@ -92,10 +92,10 @@ export const convertToWebP = async (req, res, next) => {
         if (file.mimetype && file.mimetype.startsWith('image/')) {
           await convertImageToWebP(file);
         }
-        // else if (file.mimetype.startsWith('video/')) {
-        //   console.log("videooo");
-        //   await convertVideoToWebP(res,file);
-        // }
+        else if (file.mimetype.startsWith('video/')) {
+          console.log("videooo");
+          await convertVideoToWebP(res,file);
+        }
         // You can add handling for other file types here if needed
       }
     }

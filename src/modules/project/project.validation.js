@@ -63,6 +63,6 @@ export const addProjectVideosSchema = {
 
 export const deleteProjectVideoSchema = {
     params: joi.object({
-        imageId:generalFields._id.required(),
+        videoId:generalFields._id.required(),
     }).required(),
 }
