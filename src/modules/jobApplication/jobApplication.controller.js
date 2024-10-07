@@ -5,6 +5,8 @@ import { customAlphabet } from "nanoid";
 import { jobOfferModel } from "../../../DB/models/jobOfferModel.js"
 import cloudinary from "../../utils/cloudinaryConfigrations.js";
 import { jobApplicantModel } from "../../../DB/models/JobApplicantModel.js";
+
+
 const nanoId = customAlphabet('abcdefghijklmnopqrstuvwxyz123456890', 5)
 const getFileNameWithoutExtension = (filename) => {
     return filename.split('.').slice(0, -1).join('.');
