@@ -20,14 +20,15 @@ export const addJobOffer = async (req, res, next) => {
         address,
         employmentType,
         experienceYears,
-        jobPurpose,
-        jobResponsabilities,
-        jobRequirements,
+        jobDetails,
+        // jobPurpose,
+        // jobResponsabilities,
+        // jobRequirements,
         acceptedKeyWords,
         rejectedKeyWords,
     } = req.body
-
-    if (!jobTitle || !address || !employmentType || !experienceYears || !jobPurpose || !jobResponsabilities || !jobRequirements) {
+    // || !jobPurpose || !jobResponsabilities || !jobRequirements
+    if (!jobTitle || !address || !employmentType || !experienceYears || !jobDetails) {
         return next(new Error('Please Enter All Required Fields', { cause: 400 }))
     }
     const jobOfferObj =
@@ -36,9 +37,10 @@ export const addJobOffer = async (req, res, next) => {
         address,
         employmentType,
         experienceYears,
-        jobPurpose,
-        jobResponsabilities,
-        jobRequirements,
+        jobDetails,
+        // jobPurpose,
+        // jobResponsabilities,
+        // jobRequirements,
         acceptedKeyWords,
         rejectedKeyWords,
     }
@@ -56,9 +58,10 @@ export const editJobOffer = async (req, res, next) => {
         address,
         employmentType,
         experienceYears,
-        jobPurpose,
-        jobResponsabilities,
-        jobRequirements,
+        jobDetails,
+        // jobPurpose,
+        // jobResponsabilities,
+        // jobRequirements,
         acceptedKeyWords,
         rejectedKeyWords,
     } = req.body
@@ -69,9 +72,10 @@ export const editJobOffer = async (req, res, next) => {
     jobOffer.address = address || jobOffer.address;
     jobOffer.employmentType = employmentType || jobOffer.employmentType;
     jobOffer.experienceYears = experienceYears || jobOffer.experienceYears;
-    jobOffer.jobPurpose = jobPurpose || jobOffer.jobPurpose;
-    jobOffer.jobResponsabilities = jobResponsabilities || jobOffer.jobResponsabilities;
-    jobOffer.jobRequirements = jobRequirements || jobOffer.jobRequirements;
+    jobOffer.jobDetails = jobDetails || jobOffer.jobDetails;
+    // jobOffer.jobPurpose = jobPurpose || jobOffer.jobPurpose;
+    // jobOffer.jobResponsabilities = jobResponsabilities || jobOffer.jobResponsabilities;
+    // jobOffer.jobRequirements = jobRequirements || jobOffer.jobRequirements;
     jobOffer.acceptedKeyWords = acceptedKeyWords || jobOffer.acceptedKeyWords;
     jobOffer.rejectedKeyWords = rejectedKeyWords || jobOffer.rejectedKeyWords;
 
