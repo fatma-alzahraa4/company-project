@@ -30,9 +30,25 @@ export const addJobOffer = async (req, res, next) => {
         rejectedKeyWords,
     } = req.body
     // || !jobPurpose || !jobResponsabilities || !jobRequirements
-    if (!jobTitle || !address || !employmentType || !experienceYears || !jobDetails) {
-        return next(new Error('Please Enter All Required Fields', { cause: 400 }))
+    // if (!jobTitle || !address || !employmentType || !experienceYears || !jobDetails) {
+    //     return next(new Error('Please Enter All Required Fields', { cause: 400 }))
+    // }
+    if (!jobTitle ) {
+        return next(new Error('Please Enter jobTitle', { cause: 400 }))
     }
+    if (!address ) {
+        return next(new Error('Please Enter address', { cause: 400 }))
+    }
+    if (!employmentType ) {
+        return next(new Error('Please Enter employmentType', { cause: 400 }))
+    }
+    if (!experienceYears ) {
+        return next(new Error('Please Enter experienceYears', { cause: 400 }))
+    }
+    if (!jobDetails ) {
+        return next(new Error('Please Enter jobDetails', { cause: 400 }))
+    }
+
     const jobOfferObj =
     {
         jobTitle,
