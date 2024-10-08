@@ -272,11 +272,11 @@ export const getProjects = async (req, res, next) => {
     const projects = await projectModel.find().populate([
         {
             path:'images',
-            select:'secure_url alt'
+            select:'image.secure_url image.alt'
         },
         {
             path:'videos',
-            select:'secure_url'
+            select:'video.secure_url'
         }
     ])
     return res.status(200).json({ message: 'Done', projects })
@@ -287,11 +287,11 @@ export const getProject = async (req, res, next) => {
     const project = await projectModel.findById(projectId).populate([
         {
             path:'images',
-            select:'secure_url alt'
+            select:'image.secure_url image.alt'
         },
         {
             path:'videos',
-            select:'secure_url'
+            select:'video.secure_url'
         }
     ])
     return res.status(200).json({ message: 'Done', project })
