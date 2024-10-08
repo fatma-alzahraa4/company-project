@@ -96,9 +96,9 @@ export const editProject = async (req, res, next) => {
         project_Image = { secure_url, public_id, customId }
     }
     else {
-        const secure_url = project.image.secure_url
-        const public_id = project.image.public_id
-        const customId = project.image.customId
+        const secure_url = project.mainImage.secure_url
+        const public_id = project.mainImage.public_id
+        const customId = project.mainImage.customId
         project_Image = { secure_url, public_id, customId }
     }
     if(status && status == 'InProgress' && !project.progressPercentage && !progressPercentage){
