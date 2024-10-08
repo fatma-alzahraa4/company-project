@@ -111,7 +111,7 @@ export const editProject = async (req, res, next) => {
     else if(project.status == 'InProgress' || (status &&  status == 'InProgress' )){
     project.progressPercentage = progressPercentage || project.progressPercentage;
     }
-    project_Image.alt = altImage || project.alt
+    project_Image.alt = altImage || project.mainImage.alt
     project.name = name || project.name
     project.clientName = clientName || project.clientName
     project.projectLink = projectLink || project.projectLink
