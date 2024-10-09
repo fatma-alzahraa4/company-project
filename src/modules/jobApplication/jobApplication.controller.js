@@ -7,6 +7,7 @@ import cloudinary from "../../utils/cloudinaryConfigrations.js";
 import { jobApplicantModel } from "../../../DB/models/JobApplicantModel.js";
 
 
+
 const nanoId = customAlphabet('abcdefghijklmnopqrstuvwxyz123456890', 5)
 const getFileNameWithoutExtension = (filename) => {
     return filename.split('.').slice(0, -1).join('.');
@@ -67,7 +68,7 @@ export const editJobOffer = async (req, res, next) => {
         acceptedKeyWords,
         rejectedKeyWords,
     } = req.body
-console.log(req.body);
+    console.log(req.body);
 
     const jobOffer = await jobOfferModel.findById(jobId)
 
@@ -150,29 +151,19 @@ export const applyToJob = async (req, res, next) => {
         phoneNumber,
         address,
         portofolio,
-        linkedIn
+        linkedIn,
+        resume
     } = req.body
-    if (!firstName || !lastName || !email || !phoneNumber || !address) {
+    
+    if (!firstName || !lastName || !email || !phoneNumber || !address ||!resume) {
         return next(new Error('Please Enter All Required Fields', { cause: 400 }))
     }
-    // console.log(req.body);
-
     const job = await jobOfferModel.findById(jobId)
     if (!job) {
-        return next(new Error('No Jo Found', { cause: 400 }))
+        return next(new Error('No Job Found', { cause: 400 }))
     }
-    if (!req.file) {
-        return next(new Error('Please Upload Your Resume', { cause: 400 }))
-    }
-    //filter req.file with keyWords
-    // const keywordResult = await filterResumeByKeywords(req.file.buffer, jobId);
-    // console.log("Keyword Analysis:", keywordResult);
-    const fileName = getFileNameWithoutExtension(req.file.originalname);
-    const customId = `${fileName}_${nanoId()}`;
-    const { secure_url, public_id } = await cloudinary.uploader.upload(req.file.path,
-        { folder: `${process.env.PROJECT_FOLDER}/JobResumes/${job.jobTitle}/${customId}` }
-    )
-    const resume = { secure_url, public_id, customId }
+    const urlParts = resume.split('/');
+    const newResume = [...urlParts.slice(0, -1), 'preview'].join('/');
     const jobApplicantObj = {
         firstName,
         lastName,
@@ -182,7 +173,7 @@ export const applyToJob = async (req, res, next) => {
         portofolio,
         linkedIn,
         jobId,
-        resume
+        resume:newResume
     }
     const jobApplicant = await jobApplicantModel.create(jobApplicantObj)
     res.status(200).json({ message: 'Done', jobApplicant })
@@ -190,14 +181,14 @@ export const applyToJob = async (req, res, next) => {
 
 export const getJobApplicants = async (req, res, next) => {
     const { jobId } = req.params
-    const jobApplicants = await jobApplicantModel.find({ jobId }).select('-resume.public_id -resume.customId')
+    const jobApplicants = await jobApplicantModel.find({ jobId })
     res.status(200).json({ message: 'Done', jobApplicants })
 }
 
 export const deleteJobApplicant = async (req, res, next) => {
     const { jobApplicantId } = req.params
-    const deletedJobApplicant = await jobApplicantModel.findByIdAndDelete( jobApplicantId )
-    if(!deletedJobApplicant){
+    const deletedJobApplicant = await jobApplicantModel.findByIdAndDelete(jobApplicantId)
+    if (!deletedJobApplicant) {
         return next(new Error('Failed to delete', { cause: 400 }))
     }
     res.status(200).json({ message: 'Done' })

@@ -2,13 +2,13 @@ import { Router } from "express";
 import * as jobApplicationControllers from './jobApplication.controller.js';
 // import * as jobApplicationValidators from './jobApplication.validation.js';
 import { asyncHandler } from "../../utils/errorHandeling.js";
-import { validationCoreFunction } from "../../middleWares/validation.js";
+// import { validationCoreFunction } from "../../middleWares/validation.js";
 // import { jobApisRoles } from "./apiRoles.js";
 // import { isAuth } from '../../middleWares/auth.js';
 import { multerCloudFunction } from "../../services/multerCloudinary.js";
 import { allowedExtensions } from "../../utils/allowedEtensions.js";
 
-const router = Router()
+  const router = Router()
 
 router.post('/addJobOffer',
     // isAuth(jobApisRoles.JOB_APIS),
@@ -51,7 +51,6 @@ router.delete('/deleteJobApplicant/:jobApplicantId',
 );
 
 router.post('/applyToJob/:jobId',
-    multerCloudFunction(allowedExtensions.Files).single('resume'),
     // validationCoreFunction(adminAuthValidators.signUpSchema),
     asyncHandler(jobApplicationControllers.applyToJob),
 );
