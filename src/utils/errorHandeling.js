@@ -19,7 +19,7 @@ export const asyncHandler = (API)=>{
 export const globalResponse = (err,req,res,next)=>{
     if(err){
         if(req.validationMessage){
-            return res.status(err['cause']||400).json({message:req.validationMessage})
+            return res.status(err['cause']||400).json({message:req.validationMessage,err:'error from joi'})
         }
         return res.status(err['cause']||500).json({message:err.message})
     }
