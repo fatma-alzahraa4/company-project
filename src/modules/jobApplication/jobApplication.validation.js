@@ -1,4 +1,4 @@
-import { generalFields } from "../../middleWares/validation";
+import { generalFields } from "../../middleWares/validation.js";
 import joi from 'joi'
 
 export const addJobOfferSchema = {
