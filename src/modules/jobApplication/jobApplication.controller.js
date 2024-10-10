@@ -24,13 +24,9 @@ export const addJobOffer = async (req, res, next) => {
         employmentType,
         experienceYears,
         jobDetails,
-        // jobPurpose,
-        // jobResponsabilities,
-        // jobRequirements,
         acceptedKeyWords,
         rejectedKeyWords,
     } = req.body
-    // || !jobPurpose || !jobResponsabilities || !jobRequirements
     if (!jobTitle || !address || !employmentType || !experienceYears || !jobDetails) {
         return next(new Error('Please Enter All Required Fields', { cause: 400 }))
     }
@@ -41,9 +37,6 @@ export const addJobOffer = async (req, res, next) => {
         employmentType,
         experienceYears,
         jobDetails,
-        // jobPurpose,
-        // jobResponsabilities,
-        // jobRequirements,
         acceptedKeyWords,
         rejectedKeyWords,
     }
