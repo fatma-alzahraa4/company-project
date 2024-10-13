@@ -6,6 +6,7 @@ config({ path: resolve('./config/.env') })
 import { dbConnection } from "./DB/connection.js";
 import { globalResponse } from "./src/utils/errorHandeling.js";
 import * as routers from './src/modules/index.routes.js';
+import * as webRouters from './src/modules/website.routes.js'
 
 const app = express()
 
@@ -47,10 +48,12 @@ app.use('/client', routers.clientRouter)
 app.use('/contact', routers.contactRouter)
 app.use('/IP', routers.IPRouter)
 app.use('/mainService', routers.mainServiceRouter)
-app.use('/home', routers.homeRouter)
 app.use('/admin', routers.adminRouter)
 app.use('/jobApplication', routers.jobRouter);
 app.use('/project', routers.projectRouter);
+app.use('/webAPIs/home', webRouters.homeRouter)
+app.use('/webAPIs/project', webRouters.projectRouter)
+
 
 
 
