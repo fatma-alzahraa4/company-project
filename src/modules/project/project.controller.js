@@ -105,18 +105,18 @@ export const editProject = async (req, res, next) => {
             const secure_url1 = project.mainImage.secure_url
             const public_id1 = project.mainImage.public_id
             const customId1 = project.mainImage.customId
-            project_Image = { secure_url:secure_url1, public_id:public_id1, customId:customId1 }
+            project_Image = { secure_url: secure_url1, public_id: public_id1, customId: customId1 }
         }
         if (req.files['video']) {
             const videoFile = req.files['video'][0];
             const videoName = getFileNameWithoutExtension(videoFile.originalname);
             const customId2 = `${videoName}_${nanoId()}`;
-            if(project.video.public_id && project.video.customId){
-                await cloudinary.uploader.destroy(project.video?.public_id,{ resource_type: 'video' })
+            if (project.video.public_id && project.video.customId) {
+                await cloudinary.uploader.destroy(project.video?.public_id, { resource_type: 'video' })
                 await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Projects/${project.projectFolder}/Video/${project.video?.customId}`)
 
             }
-            const [ { secure_url:secureUrl2, public_id: publicId2 }] = await Promise.all([
+            const [{ secure_url: secureUrl2, public_id: publicId2 }] = await Promise.all([
                 cloudinary.uploader.upload(req.files['video'][0].path, {
                     resource_type: 'video',
                     folder: `${process.env.PROJECT_FOLDER}/Projects/${project.projectFolder}/Video/${customId2}`,
@@ -128,7 +128,7 @@ export const editProject = async (req, res, next) => {
             const secure_url2 = project.video.secure_url
             const public_id2 = project.video.public_id
             const customId2 = project.video.customId
-            project_Video = { secure_url:secure_url2, public_id:public_id2, customId:customId2 }
+            project_Video = { secure_url: secure_url2, public_id: public_id2, customId: customId2 }
         }
     }
     if (status && status == 'InProgress' && !project.progressPercentage && !progressPercentage) {
@@ -152,7 +152,7 @@ export const editProject = async (req, res, next) => {
     project.projectFolder = projectFolder;
 
     project.mainImage = { ...project_Image }
-    project.video = {...project_Video}
+    project.video = { ...project_Video }
 
     const updatedProject = await project.save()
     if (!updatedProject) {
@@ -230,7 +230,7 @@ export const addProjectVideo = async (req, res, next) => {
         folder: `${process.env.PROJECT_FOLDER}/Projects/${project.projectFolder}/Video/${customId}`,
     });
     const video = { secure_url, public_id, customId }
-    const updatedProject = await projectModel.findByIdAndUpdate(projectId, { video }, {new:true})
+    const updatedProject = await projectModel.findByIdAndUpdate(projectId, { video }, { new: true })
     res.status(200).json({ message: 'Done', project: updatedProject });
 }
 
@@ -252,14 +252,11 @@ export const deleteProject = async (req, res, next) => {
     if (!deletedProject) {
         return next(new Error('failed to delete', { cause: 400 }))
     }
-    const [projectImages, projectVideos] = await Promise.all([
+    const [projectImages] = await Promise.all([
         projectImageModel.find({ projectId }),
-        projectVideoModel.find({ projectId })
     ])
     const projectImagesPublicIds = projectImages.map(p => p.image.public_id)
     const projectImagesIds = projectImages.map(p => p._id)
-    const projectVideosPublicIds = projectVideos.map(p => p.video.public_id)
-    const projectVideosIds = projectVideos.map(p => p._id)
     if (projectImagesIds.length > 0) {
         const [deletedCloudImages, deletedDataBase] = await Promise.all([
             cloudinary.api.delete_resources(projectImagesPublicIds),
@@ -269,17 +266,11 @@ export const deleteProject = async (req, res, next) => {
             return next(new Error('failed to delete images', { cause: 400 }))
         }
     }
-    if (projectVideosIds.length > 0) {
-        const [deletedCloudVideos, deletedDataBase] = await Promise.all([
-            cloudinary.api.delete_resources(projectVideosPublicIds, { resource_type: 'video' }),
-            projectVideoModel.deleteMany({ _id: { $in: projectVideosIds } })
-        ])
-        if (!deletedCloudVideos || deletedDataBase.deletedCount <= 0) {
-            return next(new Error('failed to delete Videos', { cause: 400 }))
-        }
 
-    }
-    const deletedMainImage = await cloudinary.uploader.destroy(deletedProject.mainImage.public_id)
+    const [deletedCloudVideos, deletedMainImage] = await Promise.all([
+        cloudinary.uploader.destroy(deletedProject.video.public_id, { resource_type: 'video' }),
+        cloudinary.uploader.destroy(deletedProject.mainImage.public_id)
+    ])
     const deletedFolder = await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Projects/${deletedProject.projectFolder}`)
     if (!deletedMainImage || !deletedFolder) {
         return next(new Error('failed to delete main image and folder', { cause: 400 }))
