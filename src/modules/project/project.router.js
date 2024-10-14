@@ -41,14 +41,12 @@ router.delete('/deleteImage/:imageId',
     asyncHandler(projectControllers.deleteProjectImage)
 )
 
-router.post('/addVideos',
+router.post('/addVideo',
     // isAuth(projectApisRoles.ADD_PROJECT_IMAGES),
-    multerCloudFunction(allowedExtensions.Videos).fields([
-        { name: 'videos', maxCount: 4 },
-    ]),
+    multerCloudFunction(allowedExtensions.Videos).single('video'),
     convertToWebP,
     validationCoreFunction(projectValidators.addProjectVideosSchema),
-    asyncHandler(projectControllers.addProjectVideos)
+    asyncHandler(projectControllers.addProjectVideo)
 )
 
 router.delete('/deleteVideo/:videoId',

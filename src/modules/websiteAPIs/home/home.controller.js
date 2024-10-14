@@ -20,7 +20,13 @@ export const homeData = async (req, res, next) => {
             aboutModel.findOne().select('-_id whyUsTitle whyUsDesc whyUsSubtitle whyUsImage1 whyUsImage2'),
             clientModel.find({ active: true }).populate('teamId'),
             teamModel.find({ active: true }),
-            projectModel.find().select('name mainImage.secure_url mainImage.alt')
+            projectModel.find().select('name mainImage.secure_url mainImage.alt categoryId').
+            populate([
+                {
+                    path:'categoryId',
+                    select:'name brief active'
+                }
+            ])
 
     ])
     if (!company) {

@@ -22,6 +22,17 @@ export const projectSchema = new Schema(
             },
             customId: String,
         },
+        video: {
+            secure_url: {
+                type: String,
+                required: true
+            },
+            public_id: {
+                type: String,
+                required: true
+            },
+            customId: String,
+        },
         clientName: {
             type: String,
             required: true
@@ -51,6 +62,11 @@ export const projectSchema = new Schema(
                 return this.status === 'InProgress';
             }
         },
+        categoryId:{
+            type:Schema.Types.ObjectId,
+            ref:'SubService',
+            // required:true,
+        },
         projectFolder:String
     },
     {
@@ -66,9 +82,9 @@ projectSchema.virtual('images',{
     foreignField:'projectId',
 });
 
-projectSchema.virtual('videos',{
-    ref:'projectvideo',
-    localField:'_id',
-    foreignField:'projectId',
-})
+// projectSchema.virtual('videos',{
+//     ref:'projectvideo',
+//     localField:'_id',
+//     foreignField:'projectId',
+// })
 export const projectModel = model('project', projectSchema)

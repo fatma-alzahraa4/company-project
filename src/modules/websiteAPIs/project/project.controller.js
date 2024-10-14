@@ -9,6 +9,10 @@ export const getProjects = async (req, res, next) => {
         {
             path:'videos',
             select:'video.secure_url'
+        },
+        {
+            path:'categoryId',
+            select:'name brief active'
         }
     ])
     return res.status(200).json({ message: 'Done', projects })
@@ -24,6 +28,10 @@ export const getProject = async (req, res, next) => {
         {
             path:'videos',
             select:'video.secure_url'
+        },
+        {
+            path:'categoryId',
+            select:'name brief active'
         }
     ])
     return res.status(200).json({ message: 'Done', project })
