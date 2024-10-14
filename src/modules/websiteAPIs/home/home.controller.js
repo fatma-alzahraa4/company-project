@@ -17,17 +17,17 @@ export const homeData = async (req, res, next) => {
                     match: { active: true },
                 }]
             }]),
-            aboutModel.findOne().select('-_id whyUsTitle whyUsDesc whyUsSubtitle whyUsImage1 whyUsImage2'),
-            clientModel.find({ active: true }).populate('teamId'),
-            teamModel.find({ active: true }),
-            projectModel.find().select('name mainImage.secure_url mainImage.alt categoryId').
-            populate([
+        aboutModel.findOne().select('-_id whyUsTitle whyUsDesc whyUsSubtitle whyUsImage1 whyUsImage2'),
+        clientModel.find({ active: true }).populate('teamId'),
+        teamModel.find({ active: true }),
+        projectModel.find()
+            .select('mainImage.alt mainImage.secure_url name categoryId createdAt')
+            .populate([
                 {
-                    path:'categoryId',
-                    select:'name brief active'
+                    path: 'categoryId',
+                    select: 'name'
                 }
-            ])
-
+            ]),
     ])
     if (!company) {
         return next(new Error('no company data found', { cause: 400 }))
@@ -38,12 +38,11 @@ export const homeData = async (req, res, next) => {
     if (!whyUsData) {
         return next(new Error('no why us data found', { cause: 400 }))
     }
-    if(!clients){
+    if (!clients) {
         return next(new Error('no clients found', { cause: 400 }))
     }
-    if(!team){
+    if (!team) {
         return next(new Error('no team data found', { cause: 400 }))
     }
-    res.status(200).json({ message: 'Done', company,mainServices,whyUsData,clients,team, projects })
-
+    res.status(200).json({ message: 'Done', company, mainServices, whyUsData, clients, team, projects })
 }
