@@ -11,6 +11,7 @@ export const addProjectSchema = {
         status:joi.string().valid('Pending','InProgress','Completed').required(),
         progressPercentage:joi.number().min(0).max(100),
         altImage: joi.string().min(3).required(),
+        categoryId:generalFields._id,
     }).required()
 }
 
@@ -27,6 +28,8 @@ export const editProjectSchema = {
         status:joi.string().valid('Pending','InProgress','Completed'),
         progressPercentage:joi.number().min(0).max(100),
         altImage: joi.string().min(3),
+        categoryId:generalFields._id,
+
     }).required()
 }
 

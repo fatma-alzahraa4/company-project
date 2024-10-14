@@ -93,7 +93,6 @@ export const convertToWebP = async (req, res, next) => {
           await convertImageToWebP(file);
         }
         else if (file.mimetype.startsWith('video/')) {
-          console.log("videooo");
           await convertVideoToWebP(res,file);
         }
         // You can add handling for other file types here if needed
