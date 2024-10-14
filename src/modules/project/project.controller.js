@@ -292,10 +292,6 @@ export const getProjects = async (req, res, next) => {
             select: 'image.secure_url image.alt'
         },
         {
-            path: 'videos',
-            select: 'video.secure_url'
-        },
-        {
             path: 'categoryId',
             select: 'name brief active'
         }
@@ -309,10 +305,6 @@ export const getProject = async (req, res, next) => {
         {
             path: 'images',
             select: 'image.secure_url image.alt'
-        },
-        {
-            path: 'videos',
-            select: 'video.secure_url'
         },
         {
             path: 'categoryId',
