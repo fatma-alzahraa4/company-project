@@ -25,11 +25,9 @@ export const projectSchema = new Schema(
         video: {
             secure_url: {
                 type: String,
-                required: true
             },
             public_id: {
                 type: String,
-                required: true
             },
             customId: String,
         },

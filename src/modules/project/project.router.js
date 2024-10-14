@@ -8,6 +8,7 @@ import { validationCoreFunction } from "../../middleWares/validation.js";
 import { isAuth } from "../../middleWares/auth.js";
 import { projectApisRoles } from "./project.roles.js";
 const router = Router()
+const combinedExtensions = [...allowedExtensions.Image,...allowedExtensions.Videos]
 
 router.post('/add',
     // isAuth(projectApisRoles.ADD_PROJECT),
@@ -19,7 +20,10 @@ router.post('/add',
 
 router.put('/edit/:projectId',
     // isAuth(projectApisRoles.EDIT_PROJECT),
-    multerCloudFunction(allowedExtensions.Image).single('mainImage'),
+    multerCloudFunction(combinedExtensions).fields([
+        { name: 'mainImage', maxCount: 1 },
+        { name: 'video', maxCount: 1 },
+    ]),
     convertToWebP,
     validationCoreFunction(projectValidators.editProjectSchema),
     asyncHandler(projectControllers.editProject)

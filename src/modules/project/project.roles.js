@@ -6,6 +6,4 @@ export const projectApisRoles = {
     DELETE_PROJECT:[systemRoles.ADMIN,systemRoles.EDITOR],
     GET_PROJECTS:[systemRoles.ADMIN,systemRoles.EDITOR],
     GET_PROJECTS:[systemRoles.ADMIN,systemRoles.EDITOR],
-
-
 }

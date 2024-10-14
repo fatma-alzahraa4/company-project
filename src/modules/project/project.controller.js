@@ -94,7 +94,7 @@ export const editProject = async (req, res, next) => {
             const customId1 = `${imageName}_${nanoId()}`
             await cloudinary.uploader.destroy(project.mainImage.public_id)
             const [deletedFolder, { secure_url: secureUrl1, public_id: publicId1 }] = await Promise.all([
-                cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Projects/${project.projectFolder}/mainImage/${project.mainImage.customId1}`),
+                cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Projects/${project.projectFolder}/mainImage/${project.mainImage.customId}`),
                 cloudinary.uploader.upload(req.files['mainImage'][0].path, {
                     folder: `${process.env.PROJECT_FOLDER}/Projects/${projectFolder}/mainImage/${customId1}`
                 })
@@ -111,12 +111,12 @@ export const editProject = async (req, res, next) => {
             const videoFile = req.files['video'][0];
             const videoName = getFileNameWithoutExtension(videoFile.originalname);
             const customId2 = `${videoName}_${nanoId()}`;
-            await cloudinary.uploader.destroy(project.video.public_id)
+            await cloudinary.uploader.destroy(project.video.public_id,{ resource_type: 'video' })
             const [deletedFolder, { secure_url:secureUrl2, public_id: publicId2 }] = await Promise.all([
                 cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Projects/${project.projectFolder}/Video/${project.video.customId}`),
                 cloudinary.uploader.upload(req.files['video'][0].path, {
                     resource_type: 'video',
-                    folder: `${process.env.PROJECT_FOLDER}/Projects/${project.projectFolder}/Video/${customId}`,
+                    folder: `${process.env.PROJECT_FOLDER}/Projects/${project.projectFolder}/Video/${customId2}`,
                 }),
             ])
             project_Video = { secure_url: secureUrl2, public_id: publicId2, customId: customId2 }
@@ -213,14 +213,13 @@ export const addProjectVideo = async (req, res, next) => {
     if (!projectId) {
         return next(new Error('project id is required', { cause: 400 }))
     }
-    // const project = await projectModel.findById(projectId)
-    // if (!project) {
-    //     return next(new Error('no project found', { cause: 400 }))
-    // }
+    const project = await projectModel.findById(projectId)
+    if (!project) {
+        return next(new Error('no project found', { cause: 400 }))
+    }
     if (!req.file) {
         return next(new Error('Please upload project Video', { cause: 400 }));
     }
-
     const videoName = getFileNameWithoutExtension(req.file.originalname);
     const customId = `${videoName}_${nanoId()}`;
     const { secure_url, public_id } = await cloudinary.uploader.upload(req.file.path, {
@@ -228,7 +227,7 @@ export const addProjectVideo = async (req, res, next) => {
         folder: `${process.env.PROJECT_FOLDER}/Projects/${project.projectFolder}/Video/${customId}`,
     });
     const video = { secure_url, public_id, customId }
-    const updatedProject = await projectModel.findByIdAndUpdate(projectId, { video })
+    const updatedProject = await projectModel.findByIdAndUpdate(projectId, { video }, {new:true})
     res.status(200).json({ message: 'Done', project: updatedProject });
 }
 
