@@ -3,8 +3,9 @@ import { paginationFunc } from "../../../utils/pagination.js";
 
 export const getProjects = async (req, res, next) => {
     const { page, size } = req.query
-    const { limit, skip } = paginationFunc({ page, size });
-    const projects = await projectModel.find()
+    const { limit, skip } = paginationFunc({ page, size }); 
+    const [projects , projcetsCount] = await Promise.all([
+        projectModel.find()
         .select('-mainImage.public_id -mainImage.customId -updatedAt -progressPercentage -projectFolder -video.customId -video.public_id -__v')
         .populate([
             {
@@ -15,7 +16,12 @@ export const getProjects = async (req, res, next) => {
                 path: 'categoryId',
                 select: 'name'
             }
-        ]).sort({ date: -1 })
+        ])
+        .sort({ date: -1 })
+        .skip(skip)
+        .limit(limit),
+        projectModel.countDocuments(),
+    ]); 
     const formattedProjects = projects.map(project => {
         const formattedImages = project.images.map(img => ({
             secure_url: img.image.secure_url,
@@ -27,9 +33,7 @@ export const getProjects = async (req, res, next) => {
             images: formattedImages  // Replace the images array with the formatted one
         };
     });
-    const lastEdit = formattedProjects.slice(skip, skip + limit);
-    const projcetsCount = projects.length
-    return res.status(200).json({ message: 'Done', projects: lastEdit, projcetsCount })
+    return res.status(200).json({ message: 'Done', projects: formattedProjects, projcetsCount })
 }
 
 export const getProject = async (req, res, next) => {
