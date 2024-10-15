@@ -2,9 +2,12 @@ import { projectModel } from "../../../../DB/models/projectModel.js";
 import { paginationFunc } from "../../../utils/pagination.js";
 
 export const getProjects = async (req, res, next) => {
-    const {page} = req.query
-    const size = 10
+    const {page,size } = req.query
+    console.log(page,size);
+    
     const { limit, skip } = paginationFunc({ page, size });
+    console.log(limit,skip);
+    
     const projects = await projectModel.find()
     .select('-mainImage.public_id -mainImage.customId -updatedAt -progressPercentage -projectFolder -video.customId -video.public_id -__v')
     .populate([
