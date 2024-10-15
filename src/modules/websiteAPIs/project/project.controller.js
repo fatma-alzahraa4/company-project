@@ -17,11 +17,11 @@ export const getProjects = async (req, res, next) => {
                 select: 'name'
             }
         ])
-        .sort({ date: -1 })
+        .sort({ date: -1, createdAt: -1 })
         .skip(skip)
         .limit(limit),
         projectModel.countDocuments(),
-    ]); 
+    ]) 
     const formattedProjects = projects.map(project => {
         const formattedImages = project.images.map(img => ({
             secure_url: img.image.secure_url,
