@@ -12,6 +12,7 @@ export const addProjectSchema = {
         progressPercentage:joi.number().min(0).max(100),
         altImage: joi.string().min(3).required(),
         categoryId:generalFields._id,
+        date:joi.date().required(),
     }).required()
 }
 
@@ -29,6 +30,7 @@ export const editProjectSchema = {
         progressPercentage:joi.number().min(0).max(100),
         altImage: joi.string().min(3),
         categoryId:generalFields._id,
+        date:joi.date(),
 
     }).required()
 }

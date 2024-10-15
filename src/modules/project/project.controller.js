@@ -21,9 +21,10 @@ export const addProject = async (req, res, next) => {
         progressPercentage,
         categoryId,
         altImage,
+        date
     } = req.body
     const progPercen = undefined;
-    if (!name || !clientName || !projectLink || !details || !altImage || !status) {
+    if (!name || !clientName || !projectLink || !details || !altImage || !status || !date || !categoryId) {
         return next(new Error('Please enter all required data', { cause: 400 }))
     }
     if (status != 'Pending' && status != 'InProgress' && status != 'Completed') {
@@ -55,6 +56,7 @@ export const addProject = async (req, res, next) => {
         progressPercentage: progPercen,
         projectFolder,
         categoryId,
+        date,
         mainImage: { secure_url, public_id, alt: altImage, customId },
     }
     const newProject = await projectModel.create(projectObj)
@@ -76,6 +78,7 @@ export const editProject = async (req, res, next) => {
         progressPercentage,
         altImage,
         categoryId,
+        date
     } = req.body
     const project = await projectModel.findById(projectId)
     if (!project) {
@@ -149,6 +152,7 @@ export const editProject = async (req, res, next) => {
     project.details = details || project.details;
     project.status = status || project.status;
     project.categoryId = categoryId || project.categoryId;
+    project.date = date || project.date
     project.projectFolder = projectFolder;
 
     project.mainImage = { ...project_Image }

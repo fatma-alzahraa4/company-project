@@ -47,6 +47,10 @@ export const projectSchema = new Schema(
             type: String,
             required: true,
         },
+        date:{
+            type:Date,
+            required:true
+        },
         status: {
             type: String,
             enum: ['Pending', 'InProgress', 'Completed'],
@@ -63,7 +67,7 @@ export const projectSchema = new Schema(
         categoryId:{
             type:Schema.Types.ObjectId,
             ref:'SubService',
-            // required:true,
+            required:true,
         },
         projectFolder:String
     },

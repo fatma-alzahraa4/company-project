@@ -27,7 +27,9 @@ export const homeData = async (req, res, next) => {
                     path: 'categoryId',
                     select: 'name'
                 }
-            ]),
+            ]) 
+            .sort({ date: -1 }) 
+            .limit(6),
     ])
     if (!company) {
         return next(new Error('no company data found', { cause: 400 }))
