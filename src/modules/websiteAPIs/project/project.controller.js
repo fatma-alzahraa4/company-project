@@ -1,6 +1,10 @@
 import { projectModel } from "../../../../DB/models/projectModel.js";
+import { paginationFunc } from "../../../utils/pagination.js";
 
 export const getProjects = async (req, res, next) => {
+    const {page} = req.query
+    const size = 10
+    const { limit, skip } = paginationFunc({ page, size });
     const projects = await projectModel.find()
     .select('-mainImage.public_id -mainImage.customId -updatedAt -progressPercentage -projectFolder -video.customId -video.public_id -__v')
     .populate([
@@ -12,7 +16,9 @@ export const getProjects = async (req, res, next) => {
             path:'categoryId',
             select:'name'
         }
-    ])
+    ]).sort({ date: -1 }) 
+    .limit(limit)
+    .skip(skip);
     const formattedProjects = projects.map(project => {
         const formattedImages = project.images.map(img => ({
             secure_url: img.image.secure_url,
