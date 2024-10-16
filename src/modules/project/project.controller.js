@@ -4,6 +4,7 @@ import moment from 'moment';
 import { projectModel } from '../../../DB/models/projectModel.js';
 import { projectImageModel } from './../../../DB/models/projectImageModel.js';
 import { projectVideoModel } from '../../../DB/models/projectVideoModel.js';
+// import { clientRedis } from '../websiteAPIs/redis.js';
 const nanoId = customAlphabet('abcdefghijklmnopqrstuvwxyz123456890', 5)
 
 const getFileNameWithoutExtension = (filename) => {
@@ -63,6 +64,9 @@ export const addProject = async (req, res, next) => {
     if (!newProject) {
         return next(new Error('creation failed', { cause: 400 }))
     }
+    // //delete from redis
+    // clientRedis.del('homeData');
+    // clientRedis.del('projects');
     res.status(200).json({ message: 'Done', project: newProject })
 }
 
@@ -164,6 +168,9 @@ export const editProject = async (req, res, next) => {
         await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Projects/${project_Image.customId}`)
         return next(new Error('update failed', { cause: 400 }))
     }
+    // //delete from redis
+    // clientRedis.del('homeData');
+    // clientRedis.del('projects');
     res.status(200).json({ message: 'Done', project: updatedProject })
 }
 
@@ -199,7 +206,9 @@ export const addProjectImages = async (req, res, next) => {
     });
     const uploadedImagesData = await Promise.all(uploadPromises);
     const savedImages = await projectImageModel.insertMany(uploadedImagesData);
-
+    // //delete from redis
+    // clientRedis.del('homeData');
+    // clientRedis.del('projects');
     res.status(200).json({ message: 'Done', projectImages: savedImages });
 }
 
@@ -211,7 +220,10 @@ export const deleteProjectImage = async (req, res, next) => {
     }
     await cloudinary.uploader.destroy(deletedImage.image.public_id)
     await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Projects/${deletedImage.projectId.projectFolder}/Images/${deletedImage.image.customId}`)
-    return res.status(200).json({ message: 'Done' })
+    // //delete from redis
+    // clientRedis.del('homeData');
+    // clientRedis.del('projects');
+    res.status(200).json({ message: 'Done' })
 
 }
 
@@ -235,6 +247,9 @@ export const addProjectVideo = async (req, res, next) => {
     });
     const video = { secure_url, public_id, customId }
     const updatedProject = await projectModel.findByIdAndUpdate(projectId, { video }, { new: true })
+    // //delete from redis
+    // clientRedis.del('homeData');
+    // clientRedis.del('projects');
     res.status(200).json({ message: 'Done', project: updatedProject });
 }
 
@@ -246,7 +261,10 @@ export const deleteProjectVideo = async (req, res, next) => {
     }
     await cloudinary.uploader.destroy(deletedVideo.video.public_id, { resource_type: 'video' })
     await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Projects/${deletedVideo.projectId.projectFolder}/Videos/${deletedVideo.video.customId}`)
-    return res.status(200).json({ message: 'Done' })
+    // //delete from redis
+    // clientRedis.del('homeData');
+    // clientRedis.del('projects');
+    res.status(200).json({ message: 'Done' })
 
 }
 
@@ -279,7 +297,11 @@ export const deleteProject = async (req, res, next) => {
     if (!deletedMainImage || !deletedFolder) {
         return next(new Error('failed to delete main image and folder', { cause: 400 }))
     }
-    return res.status(200).json({ message: 'Done' })
+
+    // //delete from redis
+    // clientRedis.del('homeData');
+    // clientRedis.del('projects');
+    res.status(200).json({ message: 'Done' })
 }
 
 export const getProjects = async (req, res, next) => {

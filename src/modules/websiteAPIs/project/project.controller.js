@@ -1,5 +1,6 @@
 import { projectModel } from "../../../../DB/models/projectModel.js";
 import { paginationFunc } from "../../../utils/pagination.js";
+// import { clientRedis, getOrSetCache } from "../redis.js";
 
 export const getProjects = async (req, res, next) => {
     const { page, size } = req.query
@@ -61,3 +62,13 @@ export const getProject = async (req, res, next) => {
     }
     return res.status(200).json({ message: 'Done', project: formattedProject })
 }
+
+//redis
+// export const getByRedis = async (req,res,next)=>{
+//     const projects = await getOrSetCache(`projects`, async () => {
+//         const projects = await projectModel.find()
+//         const data = {projects}
+//         return data;
+//     });
+//     res.json({message:"Done" , projects})
+// }

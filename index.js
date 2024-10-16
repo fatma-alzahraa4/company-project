@@ -7,7 +7,6 @@ import { dbConnection } from "./DB/connection.js";
 import { globalResponse } from "./src/utils/errorHandeling.js";
 import * as routers from './src/modules/index.routes.js';
 import * as webRouters from './src/modules/website.routes.js'
-
 const app = express()
 
 // var whitelist = [process.env.DASHBOARDLINK,process.env.LOCALHOST]
@@ -37,6 +36,7 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+
 app.get('/', (req, res) => { res.json({ message: "hello app" }) })
 app.use(json())
 app.use('/company', routers.companyRouter)
@@ -53,6 +53,8 @@ app.use('/jobApplication', routers.jobRouter);
 app.use('/project', routers.projectRouter);
 app.use('/webAPIs/home', webRouters.homeRouter)
 app.use('/webAPIs/project', webRouters.projectRouter)
+app.use('/webAPIs/about', webRouters.aboutRouter)
+
 
 
 
@@ -64,41 +66,6 @@ app.use(globalResponse)
 
 dbConnection()
 const port = process.env.PORT || 3000
-
-
-
-// import fs from 'fs';
-// import pdf2json from 'pdf2json';
-
-// const filePath = 'D://HBS Projects//HBS webSite//company project//Ahmed osama CV (2).pdf';
-
-// const pdfParser = new pdf2json();
-
-// // Listen for parsing errors
-// pdfParser.on("pdfParser_dataError", errData => {
-//     console.error('Error parsing PDF:', errData.parserError);
-// });
-
-// pdfParser.on("pdfParser_dataReady", pdfData => {
-//     // Check if formImage and Pages exist
-//     if (!pdfData.formImage || !pdfData.formImage.Pages) {
-//         console.error('No pages found in the PDF data');
-//         return;
-//     }
-
-//     // Extract text from all pages
-//     const extractedText = pdfData.formImage.Pages.map(page => {
-//         return page.Texts.map(text => decodeURIComponent(text.R[0].T)).join(' ');
-//     }).join('\n');
-    
-//     console.log('Extracted Text:', extractedText);
-// });
-
-// // Load the PDF file
-// pdfParser.loadPDF(filePath);
-
-
-
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
 
