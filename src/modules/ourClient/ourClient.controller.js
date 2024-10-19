@@ -117,7 +117,6 @@ export const editClientData = async (req, res, next) => {
             const videoName = getFileNameWithoutExtension(video.originalname);
             const customIdVideo = `${videoName}_${nanoId()}`
             if (client.video.length) {
-                console.log("true");
                 await cloudinary.uploader.destroy(client.video.public_id, { resource_type: 'video' });
                 await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/clientsVideo/${client.customIdVideo}`)
             }

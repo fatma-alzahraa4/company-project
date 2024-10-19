@@ -1,6 +1,7 @@
 import { aboutModel } from "../../../DB/models/aboutUsModel.js"
 import { customAlphabet } from 'nanoid';
 import cloudinary from "../../utils/cloudinaryConfigrations.js";
+import { clientRedis, getOrSetCache } from "../../utils/redis.js";
 const nanoId = customAlphabet('abcdefghijklmnopqrstuvwxyz123456890', 5)
 const getFileNameWithoutExtension = (filename) => {
     return filename.split('.').slice(0, -1).join('.');
@@ -129,7 +130,7 @@ export const addAboutData = async (req, res, next) => {
 
     //new
     const { secure_url: MVImgsecureUrl, public_id: MVImgpublicId } = await cloudinary.uploader.upload(req.files['missionVisionImage'][0].path, {
-        folder: `${process.env.PROJECT_FOLDER}/about/vision&mission/${MVCustomId}`
+        folder: `${process.env.PROJECT_FOLDER}/about/visionMission/${MVCustomId}`
     });
     const { secure_url: OSImgsecureUrl1, public_id: OSImgpublicId1 } = await cloudinary.uploader.upload(req.files['ourStoryImage1'][0].path, {
         folder: `${process.env.PROJECT_FOLDER}/about/OurStory/${OSCustomId1}`
@@ -212,7 +213,6 @@ export const addAboutData = async (req, res, next) => {
 }
 
 export const editAboutData = async (req, res, next) => {
-    // const { _id } = req.params
     const {
         mission,
         missionTitle,
@@ -241,7 +241,6 @@ export const editAboutData = async (req, res, next) => {
     if (!about) {
         return next(new Error('no about exist', { cause: 400 }))
     }
-// console.log(about);
     let whyUs_Image1
     let whyUs_Image2
     let missionVision_Image
@@ -263,8 +262,12 @@ export const editAboutData = async (req, res, next) => {
             whyUs_Image1 = { secure_url: secureUrl1, public_id: publicId1, customId: customId1 }
         }
         else {
-            whyUs_Image1 = about.whyUsImage1
+            const secure_url = about.whyUsImage1.secure_url;
+            const public_id = about.whyUsImage1.public_id;
+            const customId = about.whyUsImage1.customId;
+            whyUs_Image1 = { secure_url, public_id, customId }
         }
+
         if (req.files['Image2']) {
             const file2 = req.files['Image2'][0];
             const Image2Name = getFileNameWithoutExtension(file2.originalname);
@@ -278,10 +281,12 @@ export const editAboutData = async (req, res, next) => {
             whyUs_Image2 = { secure_url: secureUrl2, public_id: publicId2, customId: customId2 }
         }
         else {
-            whyUs_Image2 = about.whyUsImage2
+            const secure_url = about.whyUsImage2.secure_url;
+            const public_id = about.whyUsImage2.public_id;
+            const customId = about.whyUsImage2.customId;
+            whyUs_Image2 = { secure_url, public_id, customId }
         }
-    
-        //new
+
         if (req.files['missionVisionImage']) {
             const MVfile = req.files['missionVisionImage'][0];
             const MVImageName = getFileNameWithoutExtension(MVfile.originalname);
@@ -295,14 +300,17 @@ export const editAboutData = async (req, res, next) => {
             missionVision_Image = { secure_url: MVImgsecureUrl, public_id: MVImgpublicId, customId: MVCustomId }
         }
         else {
-            missionVision_Image = about.missionVisionImage
+            const secure_url = about.missionVisionImage.secure_url;
+            const public_id = about.missionVisionImage.public_id;
+            const customId = about.missionVisionImage.customId;
+            missionVision_Image = { secure_url, public_id, customId }
         }
 
         if (req.files['ourStoryImage1']) {
             const OSfile1 = req.files['ourStoryImage1'][0];
             const OSImage1Name = getFileNameWithoutExtension(OSfile1.originalname);
             const OSCustomId1 = `${OSImage1Name}_${nanoId()}`
-    
+
             // await cloudinary.uploader.destroy(about.ourStoryImage1.public_id)
             // await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/about/OurStory/${about.ourStoryImage1.customId}`)
             const { secure_url: OSImgsecureUrl1, public_id: OSImgpublicId1 } = await cloudinary.uploader.upload(req.files['ourStoryImage1'][0].path, {
@@ -311,14 +319,17 @@ export const editAboutData = async (req, res, next) => {
             ourStory_Image1 = { secure_url: OSImgsecureUrl1, public_id: OSImgpublicId1, customId: OSCustomId1 }
         }
         else {
-            ourStory_Image1 = about.ourStoryImage1
+            const secure_url = about.ourStoryImage1.secure_url;
+            const public_id = about.ourStoryImage1.public_id;
+            const customId = about.ourStoryImage1.customId;
+            ourStory_Image1 = { secure_url, public_id, customId }
         }
 
         if (req.files['ourStoryImage2']) {
             const OSfile2 = req.files['ourStoryImage2'][0];
             const OSImage2Name = getFileNameWithoutExtension(OSfile2.originalname);
             const OSCustomId2 = `${OSImage2Name}_${nanoId()}`
-    
+
             // await cloudinary.uploader.destroy(about.ourStoryImage2.public_id)
             // await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/about/OurStory/${about.ourStoryImage2.customId}`)
             const { secure_url: OSImgsecureUrl2, public_id: OSImgpublicId2 } = await cloudinary.uploader.upload(req.files['ourStoryImage2'][0].path, {
@@ -327,14 +338,17 @@ export const editAboutData = async (req, res, next) => {
             ourStory_Image2 = { secure_url: OSImgsecureUrl2, public_id: OSImgpublicId2, customId: OSCustomId2 }
         }
         else {
-            ourStory_Image2 = about.ourStoryImage2
+            const secure_url = about.ourStoryImage2.secure_url;
+            const public_id = about.ourStoryImage2.public_id;
+            const customId = about.ourStoryImage2.customId;
+            ourStory_Image2 = { secure_url, public_id, customId }
         }
 
         if (req.files['ourValueImage']) {
             const OVfile = req.files['ourValueImage'][0];
             const OVImageName = getFileNameWithoutExtension(OVfile.originalname);
             const OVCustomId = `${OVImageName}_${nanoId()}`
-    
+
             // await cloudinary.uploader.destroy(about.ourValueImage.public_id)
             // await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/about/OurValue/${about.ourValueImage.customId}`)
             const { secure_url: OVImgsecureUrl, public_id: OVImgpublicId } = await cloudinary.uploader.upload(req.files['ourValueImage'][0].path, {
@@ -343,112 +357,78 @@ export const editAboutData = async (req, res, next) => {
             ourValue_Image = { secure_url: OVImgsecureUrl, public_id: OVImgpublicId, customId: OVCustomId }
         }
         else {
-            ourValue_Image = about.ourValueImage
+            const secure_url = about.ourValueImage.secure_url;
+            const public_id = about.ourValueImage.public_id;
+            const customId = about.ourValueImage.customId;
+            ourValue_Image = { secure_url, public_id, customId }
         }
 
     }
+    
+    else {
+        const secure_url_whyUsImage1 = about.whyUsImage1.secure_url;
+        const public_id_whyUsImage1 = about.whyUsImage1.public_id;
+        const customId_whyUsImage1 = about.whyUsImage1.customId;
+        whyUs_Image1 = { secure_url: secure_url_whyUsImage1, public_id: public_id_whyUsImage1, customId: customId_whyUsImage1 }
 
-    else {
-        whyUs_Image1 = about.whyUsImage1
-        whyUs_Image2 = about.whyUsImage2
-        missionVision_Image = about.missionVisionImage
-        ourStory_Image1 = about.ourStoryImage1
-        ourStory_Image2 = about.ourStoryImage2
-        ourValue_Image = about.ourValueImage
-    }
+        const secure_url_whyUsImage2 = about.whyUsImage2.secure_url;
+        const public_id_whyUsImage2 = about.whyUsImage2.public_id;
+        const customId_whyUsImage2 = about.whyUsImage2.customId;
+        whyUs_Image2 = { secure_url: secure_url_whyUsImage2, public_id: public_id_whyUsImage2, customId: customId_whyUsImage2 }
 
+        const secure_url_missionVisionImage = about.missionVisionImage.secure_url;
+        const public_id_missionVisionImage = about.missionVisionImage.public_id;
+        const customId_missionVisionImage = about.missionVisionImage.customId;
+        missionVision_Image = { secure_url: secure_url_missionVisionImage, public_id: public_id_missionVisionImage, customId: customId_missionVisionImage }
 
-    if (!mission) {
-        about.mission = about.mission
-    }
-    else {
-        about.mission = mission
-    }
-    if (!vission) {
-        about.vission = about.vission
-    }
-    else {
-        about.vission = vission
-    }
-    if (!ourStory) {
-        about.ourStory = about.ourStory
-    }
-    else {
-        about.ourStory = ourStory
-    }
-    if (!ourValue) {
-        about.ourValue = about.ourValue
-    }
-    else {
-        about.ourValue = ourValue
-    }
-    if (!whyUsTitle) {
-        about.whyUsTitle = about.whyUsTitle
-    }
-    else {
-        about.whyUsTitle = whyUsTitle
-    }
-    if (!whyUsDesc) {
-        about.whyUsDesc = about.whyUsDesc
-    }
-    else {
-        about.whyUsDesc = whyUsDesc
-    }
-    if (!metaDesc) {
-        about.metaDesc = about.metaDesc
-    }
-    else {
-        about.metaDesc = metaDesc
-    }
-    if (!metaKeyWords) {
-        about.metaKeyWords = about.metaKeyWords
-    }
-    else {
-        about.metaKeyWords = metaKeyWords
-    }
-    about.missionTitle = missionTitle || about.missionTitle
-    about.vissionTitle = vissionTitle || about.vissionTitle
-    about.ourStoryTitle = ourStoryTitle || about.ourStoryTitle
-    about.ourValueTitle = ourValueTitle || about.ourValueTitle
-    about.whyUsSubtitle = whyUsSubtitle || about.whyUsSubtitle
-    about.howWeWorkMainTitle = howWeWorkMainTitle || about.howWeWorkMainTitle
-    if (whyUsImage1Alt) {
-        about.whyUsImage1 = { ...whyUs_Image1, alt: whyUsImage1Alt }
-    }
-    else {
-        about.whyUsImage1 = whyUs_Image1
-    }
-    if (whyUsImage2Alt) {
-        about.whyUsImage2 = { ...whyUs_Image2, alt: whyUsImage2Alt }
-    }
-    else {
-        about.whyUsImage2 = whyUs_Image2
+        const secure_url_ourStoryImage1 = about.ourStoryImage1.secure_url;
+        const public_id_ourStoryImage1 = about.ourStoryImage1.public_id;
+        const customId_ourStoryImage1 = about.ourStoryImage1.customId;
+        ourStory_Image1 = { secure_url: secure_url_ourStoryImage1, public_id: public_id_ourStoryImage1, customId: customId_ourStoryImage1 }
+
+        const secure_url_ourStoryImage2 = about.ourStoryImage2.secure_url;
+        const public_id_ourStoryImage2 = about.ourStoryImage2.public_id;
+        const customId_ourStoryImage2 = about.ourStoryImage2.customId;
+        ourStory_Image2 = { secure_url: secure_url_ourStoryImage2, public_id: public_id_ourStoryImage2, customId: customId_ourStoryImage2 }
+
+        const secure_url_ourValueImage = about.ourValueImage.secure_url;
+        const public_id_ourValueImage = about.ourValueImage.public_id;
+        const customId_ourValueImage = about.ourValueImage.customId;
+        ourValue_Image = { secure_url: secure_url_ourValueImage, public_id: public_id_ourValueImage, customId: customId_ourValueImage }
     }
 
-    if (missionVisionAlt) {
-        about.missionVisionImage = { ...missionVision_Image, alt: missionVisionAlt }
-    }
-    else {
-        about.missionVisionImage = missionVision_Image
-    }
+    about.mission = mission || about.mission;
+    about.vission = vission || about.vission;
+    about.ourStory = ourStory || about.ourStory;
+    about.ourValue = ourValue || about.ourValue;
+    about.whyUsTitle = whyUsTitle || about.whyUsTitle;
+    about.whyUsDesc = whyUsDesc || about.whyUsDesc;
+    about.metaDesc = metaDesc || about.metaDesc;
+    about.metaKeyWords = metaKeyWords || about.metaKeyWords;
+    about.missionTitle = missionTitle || about.missionTitle;
+    about.vissionTitle = vissionTitle || about.vissionTitle;
+    about.ourStoryTitle = ourStoryTitle || about.ourStoryTitle;
+    about.ourValueTitle = ourValueTitle || about.ourValueTitle;
+    about.whyUsSubtitle = whyUsSubtitle || about.whyUsSubtitle;
+    about.howWeWorkMainTitle = howWeWorkMainTitle || about.howWeWorkMainTitle;
 
-    if (ourStoryAlt) {
-        about.ourStoryImage1 = { ...ourStory_Image1, alt: ourStoryAlt }
-        about.ourStoryImage2 = { ...ourStory_Image2, alt: ourStoryAlt }
-    }
-    else {
-        about.ourStoryImage1 = ourStory_Image1
-        about.ourStoryImage2 = ourStory_Image2
-    }
+    whyUs_Image1.alt = whyUsImage1Alt || about.whyUsImage1.alt
+    about.whyUsImage1 = whyUs_Image1;
+   
+    whyUs_Image2.alt = whyUsImage2Alt || about.whyUsImage2.alt
+    about.whyUsImage2 = whyUs_Image2;
 
-    if (ourValueAlt) {
-        about.ourValueImage = { ...ourValue_Image, alt: ourValueAlt }
-    }
-    else {
-        about.ourValueImage = ourValue_Image
-    }
+    missionVision_Image.alt = missionVisionAlt || about.missionVisionImage.alt
+    about.missionVisionImage = missionVision_Image;
 
+    ourStory_Image1.alt = ourStoryAlt || about.ourStoryImage1.alt
+    about.ourStoryImage1 = ourStory_Image1;
 
+    ourStory_Image2.alt = ourStoryAlt || about.ourStoryImage2.alt
+    about.ourStoryImage2 = ourStory_Image2;
+
+    ourValue_Image.alt = ourValueAlt || about.ourValueImage.alt
+    about.ourValueImage = ourValue_Image;
 
     if (howWeWorkArr) {
         for (let i = 0; i < howWeWorkArr.length; i++) {
@@ -494,6 +474,10 @@ export const editAboutData = async (req, res, next) => {
         return next(new Error('update failed', { cause: 400 }))
 
     }
+    clientRedis.del('homeData');
+    clientRedis.del('aboutDashBoard');
+    clientRedis.del('whyUsDataDashBoard');
+    clientRedis.del('aboutWebsite');
     res.status(200).json({ message: 'Done', updatedAbout })
 }
 
@@ -504,7 +488,7 @@ export const deleteAbout = async (req, res, next) => {
         return next(new Error('failed to delete', { cause: 400 }))
     }
     await cloudinary.api.delete_resources([
-        deletedAbout.whyUsImage1.public_id, 
+        deletedAbout.whyUsImage1.public_id,
         deletedAbout.whyUsImage2.public_id,
         deletedAbout.missionVisionImage.public_id,
         deletedAbout.ourStoryImage1.public_id,
@@ -528,17 +512,25 @@ export const deleteAbout = async (req, res, next) => {
 
 
 export const getAbout = async (req, res, next) => {
-    const about = await aboutModel.findOne()
-    if (!about) {
-        return next(new Error('failed to get about comapny data', { cause: 400 }))
-    }
-    return res.status(200).json({ message: 'Done', about })
+    const about = await getOrSetCache('aboutDashBoard', async () => {
+        const about = await aboutModel.findOne()
+        if (!about) {
+            return next(new Error('failed to get about comapny data', { cause: 400 }))
+        }
+        const data = { about };
+        return data
+    })
+    return res.status(200).json({ message: 'Done', ...about })
 }
 
 export const getWhyUsData = async (req, res, next) => {
-    const whyUsData = await aboutModel.findOne().select('-_id whyUs whyUsImage1 whyUsImage2')
-    if (!whyUsData) {
-        return next(new Error('failed to get why Us data', { cause: 400 }))
-    }
-    return res.status(200).json({ message: 'Done', whyUsData })
+    const whyUsData = await getOrSetCache('whyUsDataDashBoard', async () => {
+        const whyUsData = await aboutModel.findOne().select('-_id whyUs whyUsImage1 whyUsImage2')
+        if (!whyUsData) {
+            return next(new Error('failed to get why Us data', { cause: 400 }))
+        }
+        const data = { whyUsData }
+        return data
+    })
+    return res.status(200).json({ message: 'Done', ...whyUsData })
 }

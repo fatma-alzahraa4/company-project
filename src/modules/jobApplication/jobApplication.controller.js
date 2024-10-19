@@ -1,17 +1,6 @@
-import { customAlphabet } from "nanoid";
-// import pdfParse from 'pdf-parse';  
-// import pdfParse from 'pdf-parse';
-// import fs from 'fs'; 
 import { jobOfferModel } from "../../../DB/models/jobOfferModel.js"
-import cloudinary from "../../utils/cloudinaryConfigrations.js";
 import { jobApplicantModel } from "../../../DB/models/JobApplicantModel.js";
-
-
-
-const nanoId = customAlphabet('abcdefghijklmnopqrstuvwxyz123456890', 5)
-const getFileNameWithoutExtension = (filename) => {
-    return filename.split('.').slice(0, -1).join('.');
-};
+import { clientRedis, getOrSetCache } from "../../utils/redis.js";
 
 
 //========================================================Dashboard APIs=======================================================
@@ -44,6 +33,7 @@ export const addJobOffer = async (req, res, next) => {
     if (!jobOffer) {
         return next(new Error('creation failed', { cause: 400 }))
     }
+    clientRedis.del('jobOffers');
     res.status(200).json({ message: 'Done', jobOffer })
 }
 
@@ -55,34 +45,30 @@ export const editJobOffer = async (req, res, next) => {
         employmentType,
         experienceYears,
         jobDetails,
-        // jobPurpose,
-        // jobResponsabilities,
-        // jobRequirements,
         acceptedKeyWords,
         rejectedKeyWords,
     } = req.body
-    console.log(req.body);
-
     const jobOffer = await jobOfferModel.findById(jobId)
-
     jobOffer.jobTitle = jobTitle || jobOffer.jobTitle;
     jobOffer.address = address || jobOffer.address;
     jobOffer.employmentType = employmentType || jobOffer.employmentType;
     jobOffer.experienceYears = experienceYears || jobOffer.experienceYears;
     jobOffer.jobDetails = jobDetails || jobOffer.jobDetails;
-    // jobOffer.jobPurpose = jobPurpose || jobOffer.jobPurpose;
-    // jobOffer.jobResponsabilities = jobResponsabilities || jobOffer.jobResponsabilities;
-    // jobOffer.jobRequirements = jobRequirements || jobOffer.jobRequirements;
     jobOffer.acceptedKeyWords = acceptedKeyWords || jobOffer.acceptedKeyWords;
     jobOffer.rejectedKeyWords = rejectedKeyWords || jobOffer.rejectedKeyWords;
 
     const updatedJobOffer = await jobOffer.save()
+    clientRedis.del('jobOffers');
     res.status(200).json({ message: 'Done', jobOffer: updatedJobOffer })
 }
 
 export const getJobOffers = async (req, res, next) => {
-    const jobOffers = await jobOfferModel.find()
-    res.status(200).json({ message: 'Done', jobOffers })
+    const jobOffers = await getOrSetCache('jobOffers', async ()=>{
+        const jobOffers = await jobOfferModel.find()
+        const data = {jobOffers}
+        return data
+    })
+    res.status(200).json({ message: 'Done', ...jobOffers })
 }
 
 export const getJobOffer = async (req, res, next) => {
@@ -93,7 +79,12 @@ export const getJobOffer = async (req, res, next) => {
 
 export const deleteJobOffer = async (req, res, next) => {
     const { jobId } = req.params
-    await jobOfferModel.findByIdAndDelete(jobId)
+    const [deletedJob,deletedApplicants] = await Promise.all([
+        jobOfferModel.findByIdAndDelete(jobId),
+        jobApplicantModel.deleteMany({jobId})
+    ]) 
+    clientRedis.del('jobOffers');
+    clientRedis.del(`jobApplicants_${jobId}`);
     res.status(200).json({ message: 'Done' })
 }
 
@@ -169,13 +160,18 @@ export const applyToJob = async (req, res, next) => {
         resume:newResume
     }
     const jobApplicant = await jobApplicantModel.create(jobApplicantObj)
+    clientRedis.del(`jobApplicants_${jobId}`);
     res.status(200).json({ message: 'Done', jobApplicant })
 }
 
 export const getJobApplicants = async (req, res, next) => {
     const { jobId } = req.params
-    const jobApplicants = await jobApplicantModel.find({ jobId })
-    res.status(200).json({ message: 'Done', jobApplicants })
+    const jobApplicants = await getOrSetCache(`jobApplicants_${jobId}`, async ()=>{
+        const jobApplicants = await jobApplicantModel.find({ jobId })
+        const data = {jobApplicants}
+        return data
+    })
+    res.status(200).json({ message: 'Done', ...jobApplicants })
 }
 
 export const deleteJobApplicant = async (req, res, next) => {

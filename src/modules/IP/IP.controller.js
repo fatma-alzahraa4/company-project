@@ -1,4 +1,5 @@
 import { IPModel } from "../../../DB/models/IPModel.js"
+import { clientRedis, getOrSetCache } from "../../utils/redis.js"
 
 export const newIPAddress = async(req,res,next)=>{
     const {iPAddress,time} = req.body
@@ -9,11 +10,16 @@ export const newIPAddress = async(req,res,next)=>{
     if(!newIP){
         return next(new Error('creation failed', { cause: 400 }))
     }
+    clientRedis.del('IPAddressesDashBoard');
     res.status(200).json({ message: 'Done', newIP })
 }
 
 export const getIPAddresses = async (req,res,next)=>{
-    const IPAddresses = await IPModel.find()
-    res.status(200).json({ message: 'Done', IPAddresses })
+    const IPAddresses = await getOrSetCache('IPAddressesDashBoard', async ()=>{
+        const IPAddresses = await IPModel.find()
+        const data = {IPAddresses}
+        return data
+    })
+    res.status(200).json({ message: 'Done', ...IPAddresses })
 
 }

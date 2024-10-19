@@ -1,5 +1,7 @@
 import Redis from 'ioredis';
 export const clientRedis = new Redis({
+  // port :6379,
+  // host:"127.0.0.1",
     port: 14599,
     host: 'redis-14599.c328.europe-west3-1.gce.redns.redis-cloud.com',
     password: 'kyWXJ3zpRXB4Z8LJza9gpvTk3KT3bK7D',
@@ -18,4 +20,3 @@ export const getOrSetCache = async (key, cb) => {
       });
   });
 }
-

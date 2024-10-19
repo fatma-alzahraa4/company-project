@@ -10,7 +10,6 @@ import { mainServiceModel } from "../../../DB/models/mainServiceModel.js";
 
 export const addServiceData = async (req, res, next) => {
     const { name, mainServiceId } = req.body
-    console.log(name,mainServiceId);
     if (!name) {
         return next(new Error('Please enter a name for service', { cause: 400 }))
     }

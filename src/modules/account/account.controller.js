@@ -259,7 +259,6 @@ export const resetPassword = async (req, res, next) => {
     if (!isCodeMatch) {
         return next(new Error('the code doesnot match', { cause: 400 }))
     }
-    console.log(isCodeMatch);
     const hashedPassword = pkg.hashSync(newPassword, +process.env.SALT_ROUNDS)
     const changePasswordTime = Date.now()
     const resetedAdmin = await accountModel.findByIdAndUpdate(admin._id, { password: hashedPassword, forgetCode: null, changePasswordTime }, { new: true })

@@ -2,11 +2,12 @@ import { companyModel } from "../../../DB/models/CompanyModel.js"
 import { customAlphabet } from 'nanoid';
 import cloudinary from "../../utils/cloudinaryConfigrations.js";
 import moment from 'moment';
+import { clientRedis, getOrSetCache } from "../../utils/redis.js";
 const nanoId = customAlphabet('abcdefghijklmnopqrstuvwxyz123456890', 5)
 
 const getFileNameWithoutExtension = (filename) => {
     return filename.split('.').slice(0, -1).join('.');
-  };
+};
 
 export const addCompanyData = async (req, res, next) => {
     const {
@@ -59,8 +60,8 @@ export const addCompanyData = async (req, res, next) => {
         logo: `${process.env.PROJECT_FOLDER}/Company/${customId1}`,
         contactImage: `${process.env.PROJECT_FOLDER}/contactImages/${customId2}`
     };
-    
-    
+
+
 
     const companyObj = {
         companyName,
@@ -68,7 +69,7 @@ export const addCompanyData = async (req, res, next) => {
         phoneNum,
         landLine,
         mapLink,
-        logo: { secure_url:secureUrl1, public_id:publicId1, alt :altLogo ,customId:customId1},
+        logo: { secure_url: secureUrl1, public_id: publicId1, alt: altLogo, customId: customId1 },
         Facebook,
         Instagram,
         Twitter,
@@ -79,7 +80,7 @@ export const addCompanyData = async (req, res, next) => {
         metaKeyWords,
         address,
         slogan,
-        contactUsImage: { secure_url:secureUrl2, public_id:publicId2, alt :altContact ,customId:customId2},
+        contactUsImage: { secure_url: secureUrl2, public_id: publicId2, alt: altContact, customId: customId2 },
 
     }
     const newCompany = await companyModel.create(companyObj)
@@ -134,7 +135,10 @@ export const editCompanyData = async (req, res, next) => {
             Company_logo = { secure_url: secureUrl1, public_id: publicId1, customId: customId1 }
         }
         else {
-            Company_logo = company.logo
+            const secure_url = company.logo.secure_url;
+            const public_id = company.logo.public_id;
+            const customId = company.logo.customId;
+            Company_logo = { secure_url, public_id, customId }
         }
         if (req.files['contactUsImage']) {
             const file2 = req.files['contactUsImage'][0];
@@ -149,112 +153,45 @@ export const editCompanyData = async (req, res, next) => {
             contact_Image = { secure_url: secureUrl2, public_id: publicId2, customId: customId2 }
         }
         else {
-            contact_Image = company.contactUsImage
+            const secure_url = company.contactUsImage.secure_url;
+            const public_id = company.contactUsImage.public_id;
+            const customId = company.contactUsImage.customId;
+            contact_Image = { secure_url, public_id, customId }
         }
     }
-    else{
-        Company_logo = company.logo
-        contact_Image = company.contactUsImage
+    else {
+        const secure_url1 = company.logo.secure_url;
+        const public_id1 = company.logo.public_id;
+        const customId1 = company.logo.customId;
+
+        const secure_url2 = company.contactUsImage.secure_url;
+        const public_id2 = company.contactUsImage.public_id;
+        const customId2 = company.contactUsImage.customId;
+
+        Company_logo = { secure_url: secure_url1, public_id: public_id1, customId: customId1 }
+        contact_Image = { secure_url: secure_url2, public_id: public_id2, customId: customId2 }
     }
 
-    if (!companyName) {
-        company.companyName = company.companyName
-    }
-    else {
-        company.companyName = companyName
-    }
-    if (!email) {
-        company.email = company.email
-    }
-    else {
-        company.email = email
-    }
-    if (!phoneNum) {
-        company.phoneNum = company.phoneNum
-    }
-    else {
-        company.phoneNum = phoneNum
-    }
-    if (!landLine) {
-        company.landLine = company.landLine
-    }
-    else {
-        company.landLine = landLine
-    }
-    if (!mapLink) {
-        company.mapLink = company.mapLink
-    }
-    else {
-        company.mapLink = mapLink
-    }
-    if (!Facebook) {
-        company.Facebook = company.Facebook
-    }
-    else {
-        company.Facebook = Facebook
-    }
-    if (!Instagram) {
-        company.Instagram = company.Instagram
-    }
-    else {
-        company.Instagram = Instagram
-    }
-    if (!Twitter) {
-        company.Twitter = company.Twitter
-    }
-    else {
-        company.Twitter = Twitter
-    }
-    if (!SnapChat) {
-        company.SnapChat = company.SnapChat
-    }
-    else {
-        company.SnapChat = SnapChat
-    }
-    if (!Linkedin) {
-        company.Linkedin = company.Linkedin
-    }
-    else {
-        company.Linkedin = Linkedin
-    }
-    if (!Tiktok) {
-        company.Tiktok = company.Tiktok
-    }
-    else {
-        company.Tiktok = Tiktok
-    }
-    if (!metaDesc) {
-        company.metaDesc = company.metaDesc
-    }
-    else {
-        company.metaDesc = metaDesc
-    }
-    if (!metaKeyWords) {
-        company.metaKeyWords = company.metaKeyWords
-    }
-    else {
-        company.metaKeyWords = metaKeyWords
-    }
-    if(address){
-        company.address = address
-    }
-    if (!altLogo) {
-        const sameAlt = company.logo.alt
-        // console.log(sameAlt);
-        company.logo = {...Company_logo,alt:sameAlt}
-    }
-    else {
-        company.logo = {...Company_logo,alt:altLogo}
-    }
-    if (!altContact) {
-        const sameAlt = company.contactUsImage.alt
-        // console.log(sameAlt);
-        company.contactUsImage = {...contact_Image,alt:sameAlt}
-    }
-    else {
-        company.contactUsImage = {...contact_Image,alt:altContact}
-    }
-    company.slogan = slogan || company.slogan
+    company.companyName = companyName || company.companyName;
+    company.email = email || company.email;
+    company.phoneNum = phoneNum || company.phoneNum;
+    company.landLine = landLine || company.landLine;
+    company.mapLink = mapLink || company.mapLink;
+    company.Facebook = Facebook || company.Facebook;
+    company.Instagram = Instagram || company.Instagram;
+    company.Twitter = Twitter || company.Twitter;
+    company.SnapChat = SnapChat || company.SnapChat;
+    company.Linkedin = Linkedin || company.Linkedin;
+    company.Tiktok = Tiktok || company.Tiktok;
+    company.metaDesc = metaDesc || company.metaDesc;
+    company.metaKeyWords = metaKeyWords || company.metaKeyWords;
+    company.address = address || company.address;
+    company.slogan = slogan || company.slogan;
+
+    Company_logo.alt = altLogo || company.logo.alt;
+    contact_Image.alt = altContact || company.contactUsImage.alt;
+    company.logo = Company_logo;
+    company.contactUsImage = contact_Image;
 
 
 
@@ -265,6 +202,8 @@ export const editCompanyData = async (req, res, next) => {
         return next(new Error('update failed', { cause: 400 }))
 
     }
+    clientRedis.del('homeData');
+    clientRedis.del('companyDataDashboard');
     res.status(200).json({ message: 'Done', updatedCompany })
 }
 
@@ -283,9 +222,13 @@ export const deleteCompany = async (req, res, next) => {
 
 
 export const getCompany = async (req, res, next) => {
-    const company = await companyModel.findOne()
-    if (!company) {
-        return next(new Error('failed to get company data', { cause: 400 }))
-    }
-    return res.status(200).json({ message: 'Done', company })
+    const company = await getOrSetCache('companyDataDashboard', async () => {
+        const company = await companyModel.findOne()
+        if (!company) {
+            return next(new Error('failed to get company data', { cause: 400 }))
+        }
+        const data = { company }
+        return data
+    })
+    return res.status(200).json({ message: 'Done', ...company })
 }
