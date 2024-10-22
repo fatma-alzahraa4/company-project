@@ -42,26 +42,18 @@ export const addCompanyData = async (req, res, next) => {
     }
 
     const file1 = req.files['logo'][0];
-    const file2 = req.files['contactUsImage'][0];
-
     const logoName = getFileNameWithoutExtension(file1.originalname);
-    const contactImageName = getFileNameWithoutExtension(file2.originalname);
-    // const customId = `${fileName}_${moment().format('DD/MM/YYYY/_HH:mm:ss')}`;
     const customId1 = `${logoName}_${nanoId()}`
-    const customId2 = `${contactImageName}_${nanoId()}`
     const { secure_url: secureUrl1, public_id: publicId1 } = await cloudinary.uploader.upload(req.files['logo'][0].path, {
         folder: `${process.env.PROJECT_FOLDER}/Company/${customId1}`
     });
+    
+    const file2 = req.files['contactUsImage'][0];
+    const contactImageName = getFileNameWithoutExtension(file2.originalname);
+    const customId2 = `${contactImageName}_${nanoId()}`
     const { secure_url: secureUrl2, public_id: publicId2 } = await cloudinary.uploader.upload(req.files['contactUsImage'][0].path, {
         folder: `${process.env.PROJECT_FOLDER}/contactImages/${customId2}`
     });
-
-    req.imagePaths = {
-        logo: `${process.env.PROJECT_FOLDER}/Company/${customId1}`,
-        contactImage: `${process.env.PROJECT_FOLDER}/contactImages/${customId2}`
-    };
-
-
 
     const companyObj = {
         companyName,
@@ -85,14 +77,17 @@ export const addCompanyData = async (req, res, next) => {
     }
     const newCompany = await companyModel.create(companyObj)
     if (!newCompany) {
-        // console.log("creation failed");
-        return next(new Error('creation failed', { cause: 400 }))
+        const uploadedFolders =[
+            `${process.env.PROJECT_FOLDER}/Company/${customId1}`,
+            `${process.env.PROJECT_FOLDER}/contactImages/${customId2}`
+        ] 
+        await cloudinary.api.delete_resources([publicId1, publicId2]);
+        await Promise.all(uploadedFolders.map(folder => cloudinary.api.delete_folder(folder)));
+        return next(new Error('Failed to create company', { cause: 400 }));
     }
-    // console.log(newCompany);
     res.status(200).json({ message: 'Done', newCompany })
 
 }
-
 
 export const editCompanyData = async (req, res, next) => {
     const {
@@ -116,11 +111,12 @@ export const editCompanyData = async (req, res, next) => {
     } = req.body
     const company = await companyModel.findOne()
     if (!company) {
-        return next(new Error('no company exist', { cause: 400 }))
+        return next(new Error('No company found in the database. Please ensure that the company exists.', { cause: 404  }))
     }
 
-    let Company_logo
-    let contact_Image
+    let Company_logo,  contact_Image;
+    let uploadedPublicIds = [];
+    let uploadedFolders = [];
     if (req.files) {
         if (req.files['logo']) {
             const file1 = req.files['logo'][0];
@@ -128,10 +124,14 @@ export const editCompanyData = async (req, res, next) => {
             const customId1 = `${logoName}_${nanoId()}`
 
             await cloudinary.uploader.destroy(company.logo.public_id)
-            await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Company/${company.logo.customId}`)
-            const { secure_url: secureUrl1, public_id: publicId1 } = await cloudinary.uploader.upload(req.files['logo'][0].path, {
-                folder: `${process.env.PROJECT_FOLDER}/Company/${customId1}`
-            });
+            const [deletedFolder , { secure_url: secureUrl1, public_id: publicId1 }] = await Promise.all([
+                cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Company/${company.logo.customId}`),
+                cloudinary.uploader.upload(req.files['logo'][0].path, {
+                    folder: `${process.env.PROJECT_FOLDER}/Company/${customId1}`
+                }),
+            ]);
+            uploadedPublicIds.push(publicId1);
+            uploadedFolders.push(`${process.env.PROJECT_FOLDER}/Company/${customId1}`);
             Company_logo = { secure_url: secureUrl1, public_id: publicId1, customId: customId1 }
         }
         else {
@@ -146,10 +146,14 @@ export const editCompanyData = async (req, res, next) => {
             const customId2 = `${contactImageName}_${nanoId()}`
 
             await cloudinary.uploader.destroy(company.contactUsImage.public_id)
-            await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/contactImages/${company.contactUsImage.customId}`)
-            const { secure_url: secureUrl2, public_id: publicId2 } = await cloudinary.uploader.upload(req.files['contactUsImage'][0].path, {
-                folder: `${process.env.PROJECT_FOLDER}/contactImages/${customId2}`
-            });
+            const [deletedFolder, { secure_url: secureUrl2, public_id: publicId2 }] = await Promise.all([
+                cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/contactImages/${company.contactUsImage.customId}`),
+                cloudinary.uploader.upload(req.files['contactUsImage'][0].path, {
+                    folder: `${process.env.PROJECT_FOLDER}/contactImages/${customId2}`
+                }),
+            ])
+            uploadedPublicIds.push(publicId2);
+            uploadedFolders.push(`${process.env.PROJECT_FOLDER}/contactImages/${customId2}`);
             contact_Image = { secure_url: secureUrl2, public_id: publicId2, customId: customId2 }
         }
         else {
@@ -188,19 +192,24 @@ export const editCompanyData = async (req, res, next) => {
     company.address = address || company.address;
     company.slogan = slogan || company.slogan;
 
-    Company_logo.alt = altLogo || company.logo.alt;
-    contact_Image.alt = altContact || company.contactUsImage.alt;
-    company.logo = Company_logo;
-    company.contactUsImage = contact_Image;
-
-
+    company.logo =  {
+        ...Company_logo,
+        alt: altLogo || company.logo.alt,
+    };
+    company.contactUsImage =  {
+        ...contact_Image,
+        alt: altContact || company.contactUsImage.alt,
+    }
 
     const updatedCompany = await company.save()
     if (!updatedCompany) {
-        await cloudinary.uploader.destroy(public_id)
-        await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Company/${customId}`)
-        return next(new Error('update failed', { cause: 400 }))
-
+        if (uploadedPublicIds.length > 0) {
+            await cloudinary.api.delete_resources(uploadedPublicIds);
+        }
+        if (uploadedFolders.length > 0) {
+            await Promise.all(uploadedFolders.map(folder => cloudinary.api.delete_folder(folder)));
+        }
+        return next(new Error('Failed to update the company information. Please try again later.', { cause: 400 }));
     }
     clientRedis.del('homeData');
     clientRedis.del('companyDataDashboard');
@@ -208,14 +217,18 @@ export const editCompanyData = async (req, res, next) => {
 }
 
 export const deleteCompany = async (req, res, next) => {
-    // const { companyId } = req.params
-    // const company = await companyModel.findById(companyId)
     const deletedCompany = await companyModel.findOneAndDelete()
     if (!deletedCompany) {
-        return next(new Error('failed to delete', { cause: 400 }))
+        return next(new Error('Failed to delete the company. No company found in database.', { cause: 404 }));
     }
-    await cloudinary.uploader.destroy(deletedCompany.logo.public_id)
-    await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Company/${deletedCompany.customId}`)
+    await Promise.all([
+        cloudinary.uploader.destroy(deletedCompany.logo.public_id),
+        cloudinary.uploader.destroy(deletedCompany.contactUsImage.public_id),
+    ]);
+    await Promise.all([
+        cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Company/${deletedCompany.logo.customId}`),
+        cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/contactImages/${deletedCompany.contactUsImage.customId}`)    
+    ]);
     return res.status(200).json({ message: 'Done', deletedCompany })
 
 }
@@ -225,7 +238,7 @@ export const getCompany = async (req, res, next) => {
     const company = await getOrSetCache('companyDataDashboard', async () => {
         const company = await companyModel.findOne()
         if (!company) {
-            return next(new Error('failed to get company data', { cause: 400 }))
+            return next(new Error('Failed to retrieve company data. No company found in the database.', { cause: 404 }));
         }
         const data = { company }
         return data

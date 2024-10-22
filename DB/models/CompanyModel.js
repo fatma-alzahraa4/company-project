@@ -27,38 +27,37 @@ export const companySchema = new Schema({
             type: String,
             required: true
         },
-        alt:{
-            type:String,
-            // maxlength: 100,
+        alt: {
+            type: String,
             required: true
         },
-        customId:String,
+        customId: String,
     },
     landLine: {
         type: String,
         minlength: 4,
         // maxlength: 15
     },
-    address:{
-        type:String,
-        required:true,
+    address: {
+        type: String,
+        required: true,
         // maxlength:200
     },
     mapLink: {
         type: String
     },
-    metaDesc:{
-        type:String,
+    metaDesc: {
+        type: String,
         // maxlength: 200,
         required: true,
     },
-    metaKeyWords:{
-        type:String,
+    metaKeyWords: {
+        type: String,
         // maxlength: 250,
     },
-    slogan:{
-        type:String,
-        required:true
+    slogan: {
+        type: String,
+        required: true
     },
     contactUsImage: {
         secure_url: {
@@ -69,11 +68,11 @@ export const companySchema = new Schema({
             type: String,
             required: true
         },
-        alt:{
-            type:String,
+        alt: {
+            type: String,
             required: true
         },
-        customId:String,
+        customId: String,
     },
     Facebook: String,
     Instagram: String,

@@ -16,9 +16,18 @@ export const addJobOffer = async (req, res, next) => {
         acceptedKeyWords,
         rejectedKeyWords,
     } = req.body
-    if (!jobTitle || !address || !employmentType || !experienceYears || !jobDetails) {
-        return next(new Error('Please Enter All Required Fields', { cause: 400 }))
-    }
+    const requiredInputs = [
+        'jobTitle',
+        'address',
+        'employmentType',
+        'experienceYears',
+        'jobDetails',
+    ];
+    requiredInputs.forEach(input => {
+        if (!req.body[`${input}`]) {
+            return next(new Error(`Missing required field: ${input}`, { cause: 400 }));
+        }
+    });
     const jobOfferObj =
     {
         jobTitle,
@@ -31,7 +40,7 @@ export const addJobOffer = async (req, res, next) => {
     }
     const jobOffer = await jobOfferModel.create(jobOfferObj)
     if (!jobOffer) {
-        return next(new Error('creation failed', { cause: 400 }))
+        return next(new Error('Failed to create job offer', { cause: 400 }));
     }
     clientRedis.del('jobOffers');
     res.status(200).json({ message: 'Done', jobOffer })
@@ -49,6 +58,9 @@ export const editJobOffer = async (req, res, next) => {
         rejectedKeyWords,
     } = req.body
     const jobOffer = await jobOfferModel.findById(jobId)
+    if(!jobOffer){
+        return next(new Error('Job offer not found. Please verify the ID and try again.', { cause: 404 }));
+    }
     jobOffer.jobTitle = jobTitle || jobOffer.jobTitle;
     jobOffer.address = address || jobOffer.address;
     jobOffer.employmentType = employmentType || jobOffer.employmentType;
@@ -58,6 +70,9 @@ export const editJobOffer = async (req, res, next) => {
     jobOffer.rejectedKeyWords = rejectedKeyWords || jobOffer.rejectedKeyWords;
 
     const updatedJobOffer = await jobOffer.save()
+    if(!updatedJobOffer){
+        return next(new Error('Failed to update job offer', { cause: 400 }));
+    }
     clientRedis.del('jobOffers');
     res.status(200).json({ message: 'Done', jobOffer: updatedJobOffer })
 }
@@ -83,6 +98,9 @@ export const deleteJobOffer = async (req, res, next) => {
         jobOfferModel.findByIdAndDelete(jobId),
         jobApplicantModel.deleteMany({jobId})
     ]) 
+    if(!deletedJob){
+        return next(new Error('Failed to delete the job offer. Please verify the ID and try again.', { cause: 404 }));
+    }
     clientRedis.del('jobOffers');
     clientRedis.del(`jobApplicants_${jobId}`);
     res.status(200).json({ message: 'Done' })
@@ -138,13 +156,22 @@ export const applyToJob = async (req, res, next) => {
         linkedIn,
         resume
     } = req.body
-    
-    if (!firstName || !lastName || !email || !phoneNumber || !address ||!resume) {
-        return next(new Error('Please Enter All Required Fields', { cause: 400 }))
-    }
+    const requiredInputs = [
+        'firstName',
+        'lastName',
+        'email',
+        'phoneNumber',
+        'address',
+        'resume',
+    ];
+    requiredInputs.forEach(input => {
+        if (!req.body[`${input}`]) {
+            return next(new Error(`Missing required field: ${input}`, { cause: 400 }));
+        }
+    });
     const job = await jobOfferModel.findById(jobId)
     if (!job) {
-        return next(new Error('No Job Found', { cause: 400 }))
+        return next(new Error('job offer not found. Please verify the ID and try again.', { cause: 404 }));
     }
     const urlParts = resume.split('/');
     const newResume = [...urlParts.slice(0, -1), 'preview'].join('/');
@@ -178,7 +205,7 @@ export const deleteJobApplicant = async (req, res, next) => {
     const { jobApplicantId } = req.params
     const deletedJobApplicant = await jobApplicantModel.findByIdAndDelete(jobApplicantId)
     if (!deletedJobApplicant) {
-        return next(new Error('Failed to delete', { cause: 400 }))
+        return next(new Error('Failed to delete the job applicant. Please verify the ID and try again.', { cause: 400 }))
     }
     res.status(200).json({ message: 'Done' })
 }

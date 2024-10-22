@@ -21,18 +21,6 @@ const jobOfferSchema = new Schema(
             type: String,
             required: true,
         },
-        // jobPurpose: {
-        //     type: String,
-        //     required: true,
-        // },
-        // jobResponsabilities: {
-        //     type: String,
-        //     required: true,
-        // },
-        // jobRequirements: {
-        //     type: String,
-        //     required: true,
-        // },
         acceptedKeyWords:[{
             type: String,
             // required: true,

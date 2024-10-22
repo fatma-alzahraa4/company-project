@@ -28,7 +28,7 @@ router.post('/add',
     convertToWebP,
     validationCoreFunction(aboutValidators.addAboutSchema),
     asyncHandler(aboutController.addAboutData),
-    aboutController.addAboutData)
+)
 
 
 router.put('/edit',

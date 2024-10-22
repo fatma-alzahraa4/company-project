@@ -4,7 +4,7 @@ import moment from 'moment';
 import { projectModel } from '../../../DB/models/projectModel.js';
 import { projectImageModel } from './../../../DB/models/projectImageModel.js';
 import { projectVideoModel } from '../../../DB/models/projectVideoModel.js';
-// import { clientRedis } from '../websiteAPIs/redis.js';
+import { clientRedis, getOrSetCache } from '../../utils/redis.js';
 const nanoId = customAlphabet('abcdefghijklmnopqrstuvwxyz123456890', 5)
 
 const getFileNameWithoutExtension = (filename) => {
@@ -25,9 +25,21 @@ export const addProject = async (req, res, next) => {
         date
     } = req.body
     const progPercen = undefined;
-    if (!name || !clientName || !projectLink || !details || !altImage || !status || !date || !categoryId) {
-        return next(new Error('Please enter all required data', { cause: 400 }))
-    }
+    const requiredInputs = [
+        'name',
+        'clientName',
+        'projectLink',
+        'details',
+        'altImage',
+        'status',
+        'date',
+        'categoryId',
+    ];
+    requiredInputs.forEach(input => {
+        if (!req.body[`${input}`]) {
+            return next(new Error(`Missing required field: ${input}`, { cause: 400 }));
+        }
+    });
     if (status != 'Pending' && status != 'InProgress' && status != 'Completed') {
         return next(new Error('Please enter valid status', { cause: 400 }))
     }
@@ -39,7 +51,7 @@ export const addProject = async (req, res, next) => {
         // return next(new Error('Progress Percentage should only be provided when the status is InProgress', { cause: 400 }));
     }
     if (!req.file) {
-        return next(new Error('Please upload project image', { cause: 400 }));
+        return next(new Error('Please upload project image', { cause: 400 }))
     }
     const projectFolder = `${name}_${nanoId()}`
     const imageName = getFileNameWithoutExtension(req.file.originalname);
@@ -62,11 +74,13 @@ export const addProject = async (req, res, next) => {
     }
     const newProject = await projectModel.create(projectObj)
     if (!newProject) {
-        return next(new Error('creation failed', { cause: 400 }))
+        return next(new Error('Failed to create project. Please try again.', { cause: 400 }));
     }
-    // //delete from redis
-    // clientRedis.del('homeData');
-    // clientRedis.del('projects');
+
+    clientRedis.del('homeData');
+    clientRedis.del('projectsWebsite');
+    clientRedis.del('projectsDashBoard');
+
     res.status(200).json({ message: 'Done', project: newProject })
 }
 
@@ -86,7 +100,7 @@ export const editProject = async (req, res, next) => {
     } = req.body
     const project = await projectModel.findById(projectId)
     if (!project) {
-        return next(new Error('no project exist', { cause: 400 }))
+        return next(new Error('Project not found. Please verify the ID and try again.', { cause: 404 }));
     }
     let projectFolder = project.projectFolder
     if (name) {
@@ -166,22 +180,30 @@ export const editProject = async (req, res, next) => {
     if (!updatedProject) {
         await cloudinary.uploader.destroy(project_Image.public_id)
         await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Projects/${project_Image.customId}`)
-        return next(new Error('update failed', { cause: 400 }))
+        return next(new Error('Failed to update project. Please try again later.', { cause: 400 }));
     }
-    // //delete from redis
-    // clientRedis.del('homeData');
-    // clientRedis.del('projects');
+    
+    clientRedis.del('homeData');
+    clientRedis.del('projectsWebsite');
+    clientRedis.del('projectsDashBoard');
+    
     res.status(200).json({ message: 'Done', project: updatedProject })
 }
 
 export const addProjectImages = async (req, res, next) => {
     const { projectId, altImage } = req.body;
-    if (!projectId) {
-        return next(new Error('project id is required', { cause: 400 }))
-    }
+    const requiredInputs = [
+        'projectId',
+        'altImage',
+    ];
+    requiredInputs.forEach(input => {
+        if (!req.body[`${input}`]) {
+            return next(new Error(`Missing required field: ${input}`, { cause: 400 }));
+        }
+    });
     const project = await projectModel.findById(projectId)
     if (!project) {
-        return next(new Error('no project found', { cause: 400 }))
+        return next(new Error('Project not found. Please verify the ID and try again.', { cause: 404 }));
     }
     if (!req.files || req.files.length === 0) {
         return next(new Error('Please upload at least one project image', { cause: 400 }));
@@ -206,9 +228,11 @@ export const addProjectImages = async (req, res, next) => {
     });
     const uploadedImagesData = await Promise.all(uploadPromises);
     const savedImages = await projectImageModel.insertMany(uploadedImagesData);
-    // //delete from redis
-    // clientRedis.del('homeData');
-    // clientRedis.del('projects');
+    
+    clientRedis.del('homeData');
+    clientRedis.del('projectsWebsite');
+    clientRedis.del('projectsDashBoard');
+    
     res.status(200).json({ message: 'Done', projectImages: savedImages });
 }
 
@@ -216,25 +240,32 @@ export const deleteProjectImage = async (req, res, next) => {
     const { imageId } = req.params;
     const deletedImage = await projectImageModel.findByIdAndDelete(imageId).populate('projectId')
     if (!deletedImage) {
-        return next(new Error('failed to delete', { cause: 400 }))
+        return next(new Error('Failed to delete project image. project image not exist.', { cause: 400 }))
     }
     await cloudinary.uploader.destroy(deletedImage.image.public_id)
     await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Projects/${deletedImage.projectId.projectFolder}/Images/${deletedImage.image.customId}`)
-    // //delete from redis
-    // clientRedis.del('homeData');
-    // clientRedis.del('projects');
+    
+    clientRedis.del('homeData');
+    clientRedis.del('projectsWebsite');
+    clientRedis.del('projectsDashBoard');
+    
     res.status(200).json({ message: 'Done' })
 
 }
 
 export const addProjectVideo = async (req, res, next) => {
     const { projectId } = req.body;
-    if (!projectId) {
-        return next(new Error('project id is required', { cause: 400 }))
-    }
+    const requiredInputs = [
+        'projectId',
+    ];
+    requiredInputs.forEach(input => {
+        if (!req.body[`${input}`]) {
+            return next(new Error(`Missing required field: ${input}`, { cause: 400 }));
+        }
+    });
     const project = await projectModel.findById(projectId)
     if (!project) {
-        return next(new Error('no project found', { cause: 400 }))
+        return next(new Error('Project not found. Please verify the ID and try again.', { cause: 404 }));
     }
     if (!req.file) {
         return next(new Error('Please upload project Video', { cause: 400 }));
@@ -247,9 +278,11 @@ export const addProjectVideo = async (req, res, next) => {
     });
     const video = { secure_url, public_id, customId }
     const updatedProject = await projectModel.findByIdAndUpdate(projectId, { video }, { new: true })
-    // //delete from redis
-    // clientRedis.del('homeData');
-    // clientRedis.del('projects');
+
+    clientRedis.del('homeData');
+    clientRedis.del('projectsWebsite');
+    clientRedis.del('projectsDashBoard');
+
     res.status(200).json({ message: 'Done', project: updatedProject });
 }
 
@@ -261,9 +294,11 @@ export const deleteProjectVideo = async (req, res, next) => {
     }
     await cloudinary.uploader.destroy(deletedVideo.video.public_id, { resource_type: 'video' })
     await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Projects/${deletedVideo.projectId.projectFolder}/Videos/${deletedVideo.video.customId}`)
-    // //delete from redis
-    // clientRedis.del('homeData');
-    // clientRedis.del('projects');
+   
+    clientRedis.del('homeData');
+    clientRedis.del('projectsWebsite');
+    clientRedis.del('projectsDashBoard');
+
     res.status(200).json({ message: 'Done' })
 
 }
@@ -295,27 +330,32 @@ export const deleteProject = async (req, res, next) => {
     ])
     const deletedFolder = await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Projects/${deletedProject.projectFolder}`)
     if (!deletedMainImage || !deletedFolder) {
-        return next(new Error('failed to delete main image and folder', { cause: 400 }))
+        return next(new Error('Failed to delete main image and folder. Try again later', { cause: 400 }))
     }
 
-    // //delete from redis
-    // clientRedis.del('homeData');
-    // clientRedis.del('projects');
+    clientRedis.del('homeData');
+    clientRedis.del('projectsWebsite');
+    clientRedis.del('projectsDashBoard');
+
     res.status(200).json({ message: 'Done' })
 }
 
 export const getProjects = async (req, res, next) => {
-    const projects = await projectModel.find().populate([
-        {
-            path: 'images',
-            select: 'image.secure_url image.alt'
-        },
-        {
-            path: 'categoryId',
-            select: 'name brief active'
-        }
-    ])
-    return res.status(200).json({ message: 'Done', projects })
+    const projects = await getOrSetCache('projectsDashBoard', async()=>{
+        const projects = await projectModel.find().populate([
+            {
+                path: 'images',
+                select: 'image.secure_url image.alt'
+            },
+            {
+                path: 'categoryId',
+                select: 'name brief active'
+            }
+        ])
+        const data = {projects}
+        return data;
+    })
+    return res.status(200).json({ message: 'Done', ...projects })
 }
 
 export const getProject = async (req, res, next) => {

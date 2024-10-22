@@ -16,7 +16,7 @@ export const contact = async (req, res, next) => {
     } = req.body
     const isSubServiceExist = await subServiceModel.findOne({ name: subService })
     if (!isSubServiceExist) {
-        return next(new Error('no subService Found', { cause: 400 }))
+        return next(new Error('No sub-service found with the provided name.', { cause: 404 }));
     }
     const contactObj =
     {
@@ -29,37 +29,40 @@ export const contact = async (req, res, next) => {
     }
     const contactInfo = await contactModel.create(contactObj)
     if (!contactInfo) {
-        return next(new Error('creation failed', { cause: 400 }))
+        return next(new Error('Failed to create contact information.', { cause: 400 }));
     }
-    const isEmailToPersonSent = sendEmailService(
-        {
-            to: CompanyEmail,
-            subject: `Welcome ${companyName}`,
-            message: emailTemplatePerson({
-                name: companyName,
+    const [isEmailToPersonSent, isEmailToCompanySent] = await Promise.all([
+        sendEmailService(
+            {
+                to: CompanyEmail,
+                subject: `Welcome ${companyName}`,
+                message: emailTemplatePerson({
+                    name: companyName,
+                }),
             }),
-        })
+
+        sendEmailService(
+            {
+                to: process.env.NODE_MAILER_USER,
+                subject: `new Company Contacts US`,
+                message: emailTemplateCompany({
+                    companyName: companyName,
+                    companyEmail: CompanyEmail,
+                    phoneNum: phoneNum,
+                    note: note,
+                    IPaddress: IP,
+                    subService: subService,
+                    link: 'https://www.mailslurp.com/blog/nodemailer-npm/',
+                    linkData: 'Click here to go to dashboard',
+                    subject: 'notification email new company contacts US',
+                }),
+            }),
+    ])
     if (!isEmailToPersonSent) {
-        return next(new Error('fail to send email', { cause: 400 }))
+        return next(new Error('Failed to send welcome email to the company representative.', { cause: 400 }));
     }
-    const isEmailToCompanySent = sendEmailService(
-        {
-            to: process.env.NODE_MAILER_USER,
-            subject: `new Company Contacts US`,
-            message: emailTemplateCompany({
-                companyName: companyName,
-                companyEmail: CompanyEmail,
-                phoneNum: phoneNum,
-                note: note,
-                IPaddress: IP,
-                subService: subService,
-                link: 'https://www.mailslurp.com/blog/nodemailer-npm/',
-                linkData: 'Click here to go to dashboard',
-                subject: 'notification email new company contacts US',
-            }),
-        })
     if (!isEmailToCompanySent) {
-        return next(new Error('fail to send email', { cause: 400 }))
+        return next(new Error('Failed to send notification email to the company.', { cause: 400 }));
     }
     clientRedis.del('contactUsersDashBoard');
     res.status(200).json({ message: 'Done', contactInfo })
@@ -68,9 +71,6 @@ export const contact = async (req, res, next) => {
 export const getContactUsers = async (req, res, next) => {
     const contactUsers = await getOrSetCache('contactUsersDashBoard', async () => {
         const contactUsers = await contactModel.find()
-        if (!contactUsers) {
-            return next(new Error('fail to get users', { cause: 400 }))
-        }
         const data = { contactUsers }
         return data
     })

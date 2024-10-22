@@ -26,11 +26,11 @@ export const aboutSchema = new Schema({
             type: String,
             required: true
         },
-        customId: String,
         alt: {
             type: String,
             required: true,
-        }
+        },
+        customId: String,
     },
     ourStory: {
         type: String,
@@ -49,11 +49,11 @@ export const aboutSchema = new Schema({
             type: String,
             required: true
         },
-        customId: String,
         alt: {
             type: String,
             required: true,
-        }
+        },
+        customId: String,
     },
     ourStoryImage2:{
         secure_url: {
@@ -64,11 +64,11 @@ export const aboutSchema = new Schema({
             type: String,
             required: true
         },
-        customId: String,
         alt: {
             type: String,
             required: true,
-        }
+        },
+        customId: String,
     },
     ourValue: {
         type: String,
@@ -87,11 +87,11 @@ export const aboutSchema = new Schema({
             type: String,
             required: true
         },
-        customId: String,
         alt: {
             type: String,
             required: true,
-        }
+        },
+        customId: String,
     },
     whyUsTitle: {
         type: String,
@@ -114,12 +114,11 @@ export const aboutSchema = new Schema({
             type: String,
             required: true
         },
-        customId: String,
         alt: {
             type: String,
             required: true,
-            // maxlength: 100
-        }
+        },
+        customId: String,
     },
     whyUsImage2: {
         secure_url: {
@@ -130,12 +129,11 @@ export const aboutSchema = new Schema({
             type: String,
             required: true
         },
-        customId: String,
         alt: {
             type: String,
             required: true,
-            // maxlength: 100
-        }
+        },
+        customId: String,
     },
     metaDesc: {
         type: String,

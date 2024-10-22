@@ -5,7 +5,7 @@ import { getOrSetCache } from "../../../utils/redis.js";
 export const getProjects = async (req, res, next) => {
     const { page, size } = req.query
     const { limit, skip } = paginationFunc({ page, size }); 
-    // const projects = await getOrSetCache(`projectsWebsite`, async () => {
+    const projects = await getOrSetCache(`projectsWebsite`, async () => {
         const [projects , projcetsCount] = await Promise.all([
             projectModel.find()
             .select('-mainImage.public_id -mainImage.customId -updatedAt -progressPercentage -projectFolder -video.customId -video.public_id -__v')
@@ -19,9 +19,7 @@ export const getProjects = async (req, res, next) => {
                     select: 'name'
                 }
             ])
-            .sort({ date: -1, createdAt: -1 })
-            .skip(skip)
-            .limit(limit),
+            .sort({ date: -1, createdAt: -1 }),
             projectModel.countDocuments(),
         ]) 
         const formattedProjects = projects.map(project => {
@@ -31,14 +29,17 @@ export const getProjects = async (req, res, next) => {
             }));
     
             return {
-                ...project.toObject(),  // Convert the Mongoose document to a plain object
-                images: formattedImages  // Replace the images array with the formatted one
+                ...project.toObject(),
+                images: formattedImages
             };
         })
-    //     const data = {projects:formattedProjects, projcetsCount}
-    //     return data;
-    // });
-    res.json({message:"Done" ,projects:formattedProjects, projcetsCount})
+        const data = {projects:formattedProjects, projcetsCount}
+        return data;
+    });
+    const projectsFromRedis = {...projects}
+      const paginatedProjects = projectsFromRedis.projects.slice(skip,( +skip + +limit));
+
+    res.json({message:"Done" ,projects:paginatedProjects, projcetsCount:projectsFromRedis.projcetsCount})
 }
 
 export const getProject = async (req, res, next) => {

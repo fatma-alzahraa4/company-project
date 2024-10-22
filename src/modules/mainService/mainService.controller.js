@@ -2,6 +2,7 @@ import { serviceModel } from "../../../DB/models/serviceModel.js"
 import { customAlphabet } from 'nanoid';
 import cloudinary from "../../utils/cloudinaryConfigrations.js";
 import { mainServiceModel } from "../../../DB/models/mainServiceModel.js";
+import { clientRedis, getOrSetCache } from "../../utils/redis.js";
 const nanoId = customAlphabet('abcdefghijklmnopqrstuvwxyz123456890', 5)
 const getFileNameWithoutExtension = (filename) => {
     return filename.split('.').slice(0, -1).join('.');
@@ -9,9 +10,15 @@ const getFileNameWithoutExtension = (filename) => {
 
 export const addMainServiceData = async (req, res, next) => {
     const { name, alt } = req.body
-    if (!name) {
-        return next(new Error('Please enter a name for main service', { cause: 400 }))
-    }
+    const requiredInputs = [
+        'name',
+        'alt',
+    ];
+    requiredInputs.forEach(input => {
+        if (!req.body[`${input}`]) {
+            return next(new Error(`Missing required field: ${input}`, { cause: 400 }));
+        }
+    });
     const fileName = getFileNameWithoutExtension(req.file.originalname);
     const customId = `${fileName}_${nanoId()}`;
     if (!req.file) {
@@ -20,8 +27,6 @@ export const addMainServiceData = async (req, res, next) => {
     const { secure_url, public_id } = await cloudinary.uploader.upload(req.file.path,
         { folder: `${process.env.PROJECT_FOLDER}/mainService/${customId}` }
     )
-    req.imagePath = `${process.env.PROJECT_FOLDER}/mainService/${customId}`
-
     const mainServiceObj = {
         name,
         icon: { secure_url, public_id, alt },
@@ -29,8 +34,14 @@ export const addMainServiceData = async (req, res, next) => {
     }
     const newMainService = await mainServiceModel.create(mainServiceObj)
     if (!newMainService) {
-        return next(new Error('creation failed', { cause: 400 }))
+        await cloudinary.uploader.destroy(public_id)
+        await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/team/${customId}`)
+        return next(new Error('Failed to create main service. Please try again.', { cause: 400 }));
     }
+
+    clientRedis.del('homeData');
+    clientRedis.del('mainServicesDashBoard:active');
+    clientRedis.del('mainServicesDashBoard:all');
     res.status(200).json({ message: 'Done', newMainService })
 
 }
@@ -40,23 +51,26 @@ export const editMainService = async (req, res, next) => {
     const { name, alt } = req.body
     const mainService = await mainServiceModel.findById(mainServiceId)
     if (!mainService) {
-        return next(new Error('no main service exist', { cause: 400 }))
+        return next(new Error('Main service not found. Please verify the ID and try again.', { cause: 404 }));
     }
 
-    const customId = nanoId()
-    let mainService_icon
+    let mainService_icon;
+    let uploadedPublicIds = [];
+    let uploadedFolders = [];
     if (req.file) {
         const fileName = getFileNameWithoutExtension(req.file.originalname);
         const customId = `${fileName}_${nanoId()}`;
-
         await cloudinary.uploader.destroy(mainService.icon.public_id)
-        await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/mainService/${mainService.customId}`)
-        const { secure_url, public_id } = await cloudinary.uploader.upload(req.file.path,
-            { folder: `${process.env.PROJECT_FOLDER}/mainService/${customId}` }
-        )
+        const [deletedFolder, { secure_url, public_id }] = await Promise.all([
+            cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/mainService/${mainService.customId}`),
+            cloudinary.uploader.upload(req.file.path,
+                { folder: `${process.env.PROJECT_FOLDER}/mainService/${customId}` }
+            )
+        ]);
+        uploadedPublicIds.push(public_id);
+        uploadedFolders.push(`${process.env.PROJECT_FOLDER}/mainService/${customId}`);
         mainService_icon = { secure_url, public_id }
         mainService.customId = customId
-        req.imagePath = `${process.env.PROJECT_FOLDER}/mainService/${customId}`
     }
     else {
         const secure_url = mainService.icon.secure_url;
@@ -64,27 +78,25 @@ export const editMainService = async (req, res, next) => {
         mainService_icon = { secure_url, public_id }
         mainService.customId = mainService.customId
     }
-    if (!name) {
-        mainService.name = mainService.name
-    }
-    else {
-        mainService.name = name
-    }
-    if (!alt) {
-        mainService.icon = { ...mainService_icon, alt: mainService.icon.alt }
-    }
-    else {
-        mainService.icon = { ...mainService_icon, alt }
-    }
 
+    mainService.name = name || mainService.name
+    mainService_icon.alt = alt || mainService.icon.alt
+    mainService.icon = mainService_icon
 
     const updatedMainService = await mainService.save()
     if (!updatedMainService) {
-        await cloudinary.uploader.destroy(public_id)
-        await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/mainService/${customId}`)
-        return next(new Error('update failed', { cause: 400 }))
+        if (uploadedPublicIds.length > 0) {
+            await cloudinary.api.delete_resources(uploadedPublicIds);
+        }
+        if (uploadedFolders.length > 0) {
+            await Promise.all(uploadedFolders.map(folder => cloudinary.api.delete_folder(folder)));
+        }
+        return next(new Error('Failed to update the main service. Please try again later.', { cause: 400 }));
 
     }
+    clientRedis.del('homeData');
+    clientRedis.del('mainServicesDashBoard:active');
+    clientRedis.del('mainServicesDashBoard:all');
     res.status(200).json({ message: 'Done', updatedMainService })
 }
 
@@ -92,45 +104,55 @@ export const deleteMainService = async (req, res, next) => {
     const { mainServiceId } = req.params
     const deletedMainService = await mainServiceModel.findOneAndUpdate({ _id: mainServiceId, active: true }, { active: false }, { new: true })
     if (!deletedMainService) {
-        return next(new Error('failed to delete', { cause: 400 }))
+        return next(new Error('Failed to delete main service. main service may not exist or is already inactive.', { cause: 404 }))
     }
     // await cloudinary.uploader.destroy(deletedMainService.icon.public_id)
     // await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/mainService/${deletedMainService.customId}`)
+    
+    clientRedis.del('homeData');
+    clientRedis.del('mainServicesDashBoard:active');
+    clientRedis.del('mainServicesDashBoard:all');
+    
     return res.status(200).json({ message: 'Done', deletedMainService })
 
 }
 
 export const getMainServices = async (req, res, next) => {
     const { notActive } = req.query
-    if (!notActive) {
-        const mainServices = await mainServiceModel.find({ active: true }).populate([
-            {
-                path: 'services',
-                populate: [{
-                    path: 'subServices',
-                }]
-            }])
 
-        if (!mainServices) {
-            return next(new Error('failed to get main services', { cause: 400 }))
-        }
-        return res.status(200).json({ message: 'Done', mainServices })
-    }
-    else {
-        if (notActive == 'true') {
-            const mainServices = await mainServiceModel.find().populate([
+    if (!notActive || notActive === 'false') {
+        const mainServices = await getOrSetCache('mainServicesDashBoard:active', async () => {
+            const mainServices = await mainServiceModel.find({ active: true }).populate([
                 {
                     path: 'services',
                     populate: [{
                         path: 'subServices',
                     }]
-                }])
+                }]);
+            const data = { mainServices }
+            return data
+        });
 
-            if (!mainServices) {
-                return next(new Error('failed to get main services', { cause: 400 }))
-            }
-            return res.status(200).json({ message: 'Done', mainServices })
+        return res.status(200).json({ message: 'Done', ...mainServices })
+    }
+
+    else {
+        if (notActive == 'true') {
+            const mainServices = await getOrSetCache('mainServicesDashBoard:all', async () => {
+                const mainServices = await mainServiceModel.find().populate([
+                    {
+                        path: 'services',
+                        populate: [{
+                            path: 'subServices',
+                        }]
+                    }]);
+                const data = { mainServices };
+                return data
+            });
+
+            return res.status(200).json({ message: 'Done', ...mainServices })
         }
+
         else {
             return next(new Error('wrong query', { cause: 400 }))
         }
