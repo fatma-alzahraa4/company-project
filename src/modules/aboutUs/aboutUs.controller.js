@@ -703,11 +703,11 @@ export const editAboutData = async (req, res, next) => {
     if (howWeWorkArr) {
         for (let i = 0; i < howWeWorkArr.length; i++) {
             let hWork = howWeWorkArr[i];
-
-            // if (!hWork) {
-            //     console.error(`hWork is undefined at index ${i}`);
-            //     continue; // Skip this iteration
-            // }
+            
+            if (!hWork) {
+                console.error(`hWork is undefined at index ${i}`);
+                continue; // Skip this iteration
+            }
 
             if (req.files && req.files[`howWeWorkImage${i + 1}`]) {
                 const file = req.files[`howWeWorkImage${i + 1}`][0];
