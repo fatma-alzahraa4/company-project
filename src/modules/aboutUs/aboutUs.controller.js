@@ -722,7 +722,7 @@ if (howWeWorkArr) {
                 secure_url: secure_url,
                 public_id: public_id,
                 customId: customId,
-                alt: howWeWorkAlt
+                alt: howWeWorkAlt || about.howWeWork[0].image.alt || about.howWeWork[1].image.alt || about.howWeWork[2].image.alt || about.howWeWork[3].image.alt
             };
 
             uploadedPublicIds.push(public_id);
