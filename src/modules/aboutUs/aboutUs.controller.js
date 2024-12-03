@@ -664,40 +664,82 @@ export const editAboutData = async (req, res, next) => {
     about.ourValueImage = ourValue_Image;
 console.log('abouthowWeWorkArr',about.howWeWork);
 
-    if (howWeWorkArr) {
-        for (let i = 0; i < howWeWorkArr.length; i++) {
-            let hWork = howWeWorkArr[i];
-console.log('hwork',hWork);
+//     if (howWeWorkArr) {
+//         for (let i = 0; i < howWeWorkArr.length; i++) {
+//             let hWork = howWeWorkArr[i];
+// console.log('hwork',hWork);
 
-            if (req.files && req.files[`howWeWorkImage${i + 1}`]) {
-                const file = req.files[`howWeWorkImage${i + 1}`][0];
-                const imageName = getFileNameWithoutExtension(file.originalname);
-                const customId = `${imageName}_${nanoId()}`;
+//             if (req.files && req.files[`howWeWorkImage${i + 1}`]) {
+//                 const file = req.files[`howWeWorkImage${i + 1}`][0];
+//                 const imageName = getFileNameWithoutExtension(file.originalname);
+//                 const customId = `${imageName}_${nanoId()}`;
 
-                const { secure_url, public_id } = await cloudinary.uploader.upload(file.path, {
-                    folder: `${process.env.PROJECT_FOLDER}/howWeWork/${customId}`
-                });
+//                 const { secure_url, public_id } = await cloudinary.uploader.upload(file.path, {
+//                     folder: `${process.env.PROJECT_FOLDER}/howWeWork/${customId}`
+//                 });
 
-                hWork.image = {
-                    secure_url: secure_url,
-                    public_id: public_id,
-                    customId: customId,
-                    alt: howWeWorkAlt
-                };
+//                 hWork.image = {
+//                     secure_url: secure_url,
+//                     public_id: public_id,
+//                     customId: customId,
+//                     alt: howWeWorkAlt
+//                 };
 
-                uploadedPublicIds.push(public_id);
-                uploadedFolders.push(`${process.env.PROJECT_FOLDER}/howWeWork/${customId}`);
+//                 uploadedPublicIds.push(public_id);
+//                 uploadedFolders.push(`${process.env.PROJECT_FOLDER}/howWeWork/${customId}`);
 
-            } else if (about.howWeWork[i]) {
-                hWork.image = about.howWeWork[i].image;
-            }
-            hWork.title = hWork.title || about.howWeWork[i].title;
-            hWork.desc = hWork.desc || about.howWeWork[i].desc;
-        }
-        console.log('howWeWorkArr',howWeWorkArr);
+//             } else if (about.howWeWork[i]) {
+//                 hWork.image = about.howWeWork[i].image;
+//             }
+//             hWork.title = hWork.title || about.howWeWork[i].title;
+//             hWork.desc = hWork.desc || about.howWeWork[i].desc;
+//         }
+//         console.log('howWeWorkArr',howWeWorkArr);
         
-        about.howWeWork = howWeWorkArr;
+//         about.howWeWork = howWeWorkArr;
+//     }
+
+if (howWeWorkArr) {
+    for (let i = 0; i < howWeWorkArr.length; i++) {
+        let hWork = howWeWorkArr[i];
+        console.log('hWork:', hWork);
+
+        if (!hWork) {
+            console.error(`hWork is undefined at index ${i}`);
+            continue; // Skip this iteration
+        }
+
+        if (req.files && req.files[`howWeWorkImage${i + 1}`]) {
+            const file = req.files[`howWeWorkImage${i + 1}`][0];
+            const imageName = getFileNameWithoutExtension(file.originalname);
+            const customId = `${imageName}_${nanoId()}`;
+
+            const { secure_url, public_id } = await cloudinary.uploader.upload(file.path, {
+                folder: `${process.env.PROJECT_FOLDER}/howWeWork/${customId}`
+            });
+
+            hWork.image = {
+                secure_url: secure_url,
+                public_id: public_id,
+                customId: customId,
+                alt: howWeWorkAlt
+            };
+
+            uploadedPublicIds.push(public_id);
+            uploadedFolders.push(`${process.env.PROJECT_FOLDER}/howWeWork/${customId}`);
+        } else if (about.howWeWork[i]) {
+            hWork.image = about.howWeWork[i].image;
+        } else {
+            console.warn(`No file or existing image found for index ${i}`);
+        }
+
+        hWork.title = hWork.title || (about.howWeWork[i] && about.howWeWork[i].title);
+        hWork.desc = hWork.desc || (about.howWeWork[i] && about.howWeWork[i].desc);
     }
+    console.log('Updated howWeWorkArr:', howWeWorkArr);
+
+    about.howWeWork = howWeWorkArr;
+}
 
     const updatedAbout = await about.save()
     if (!updatedAbout) {
