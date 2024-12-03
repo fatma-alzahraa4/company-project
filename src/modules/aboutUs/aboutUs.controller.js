@@ -703,7 +703,7 @@ export const editAboutData = async (req, res, next) => {
     if (howWeWorkArr) {
         for (let i = 0; i < howWeWorkArr.length; i++) {
             let hWork = howWeWorkArr[i];
-            
+
             if (!hWork) {
                 console.error(`hWork is undefined at index ${i}`);
                 continue; // Skip this iteration
@@ -742,11 +742,15 @@ export const editAboutData = async (req, res, next) => {
 
         // Merge updated elements into the existing array
         about.howWeWork = about.howWeWork.map((existing, index) => {
+            console.log('Merge updated',how_we_work_arr_empty[index] || existing);
+            
             return how_we_work_arr_empty[index] || existing;
         });
 
         // If howWeWorkArr has more elements than about.howWeWork, add them
         if (how_we_work_arr_empty.length > about.howWeWork.length) {
+            console.log('lasrtcase');
+            
             about.howWeWork.push(...how_we_work_arr_empty.slice(about.howWeWork.length));
         }
         console.log('Updated how_we_work_arr_empty:', how_we_work_arr_empty);
