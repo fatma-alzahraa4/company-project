@@ -4,9 +4,8 @@ import { generalFields } from "../../middleWares/validation.js"
 export const addProjectSchema = {
     body: joi.object({
         name: joi.string().min(3).required(),
-        clientName: joi.string().min(3).required(),
         projectLink: joi.string().uri().required(),
-        clientLink: joi.string().uri(),
+        clientId:generalFields._id.required(),
         details: joi.string().min(3).required(),
         status:joi.string().valid('Pending','InProgress','Completed').required(),
         progressPercentage:joi.number().min(0).max(100),
@@ -22,9 +21,8 @@ export const editProjectSchema = {
     }).required(),
     body: joi.object({
         name: joi.string().min(3),
-        clientName: joi.string().min(3),
         projectLink: joi.string().uri(),
-        clientLink: joi.string().uri(),
+        clientId:generalFields._id,
         details: joi.string().min(3),
         status:joi.string().valid('Pending','InProgress','Completed'),
         progressPercentage:joi.number().min(0).max(100),

@@ -11,6 +11,10 @@ export const clientSchema = new Schema({
     details:{
         type:String
     },
+    companyLink: {
+        type: String,
+        // required: true
+    },
     logo: {
         secure_url: {
             type: String,
@@ -22,28 +26,19 @@ export const clientSchema = new Schema({
         },
         alt:{
             type:String,
-            // maxlength: 100,
             required: true
-        }
-    },
-    customIdImage:String,
-    video:{
-        secure_url: {
-            type: String,
         },
-        public_id: {
-            type: String,
-        },
-        // alt:{
-        //     type:String,
-        //     maxlength: 100,
-        // }
+        customId:String,
     },
-    customIdVideo:String,
     teamId:[{
         type:Schema.Types.ObjectId,
         ref:'Team',
     }],
+    isExpertise:{
+        type:Boolean,
+        required:true,
+        default:false
+    },
     active:{
         type:Boolean,
         required:true,

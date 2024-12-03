@@ -3,9 +3,11 @@ import { generalFields } from "../../middleWares/validation.js"
 export const addClientSchema ={
     body:joi.object({
         companyName:joi.string().min(3).required(),
+        companyLink:joi.string().uri(),
         details:joi.string().min(3),
+        isExpertise:joi.boolean(),
         teamId:joi.array().items(generalFields._id),
-        altImage:joi.string().min(3).required(),  
+        altImage:joi.string().min(3).required(),
     }).required()
 }
 
@@ -15,9 +17,11 @@ export const editClientSchema ={
     }).required(),
     body:joi.object({
         companyName:joi.string().min(3),
+        companyLink:joi.string().uri(),
         details:joi.string().min(3),
+        isExpertise:joi.boolean(),
         teamId:joi.array().items(generalFields._id),
-        altImage:joi.string().min(3),  
+        altImage:joi.string().min(3),
     }).required()
 }
 

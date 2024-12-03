@@ -685,7 +685,7 @@ export const editAboutData = async (req, res, next) => {
                 uploadedFolders.push(`${process.env.PROJECT_FOLDER}/howWeWork/${customId}`);
 
             } else if (about.howWeWork[i]) {
-                hWork.image = about.howWeWork[i].image;
+                hWork?.image = about.howWeWork[i].image;
             }
             hWork.title = hWork.title || about.howWeWork[i].title;
             hWork.desc = hWork.desc || about.howWeWork[i].desc;

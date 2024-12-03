@@ -2,9 +2,9 @@ import { aboutModel } from "../../../../DB/models/aboutUsModel.js";
 import { companyModel } from "../../../../DB/models/CompanyModel.js"
 import { teamModel } from "../../../../DB/models/OurTeamModel.js";
 import { mainServiceModel } from '../../../../DB/models/mainServiceModel.js';
-import { clientModel } from '../../../../DB/models/OurClientModel.js';
 import { projectModel } from "../../../../DB/models/projectModel.js";
 import { getOrSetCache } from "../../../utils/redis.js";
+import { clientModel } from "../../../../DB/models/clientModel.js";
 
 export const homeData = async (req, res, next) => {
     const homeData = await getOrSetCache(`homeData`, async () => {
@@ -24,7 +24,14 @@ export const homeData = async (req, res, next) => {
                     }]
                 }]),
             aboutModel.findOne().select('-_id whyUsTitle whyUsDesc whyUsSubtitle whyUsImage1.secure_url whyUsImage1.alt whyUsImage2.secure_url whyUsImage2.alt '),
-            clientModel.find({ active: true }).populate('teamId'),
+            clientModel.find({ active: true }).select('-updatedAt -__v -active -logo.public_id -logo.customId')
+            .populate([
+                {
+                    path:'teamId',
+                    match: { active: true },
+                    select:'-active -updatedAt -__v -image.customId -image.public_id'
+                }
+            ]),
             teamModel.find({ active: true }).select('-image.public_id -image.customId -__v -updatedAt'),
             projectModel.find()
                 .select('mainImage.alt mainImage.secure_url name categoryId createdAt')
@@ -32,6 +39,10 @@ export const homeData = async (req, res, next) => {
                     {
                         path: 'categoryId',
                         select: 'name'
+                    },
+                    {
+                        path: 'clientId',
+                        select: 'companyName companyLink logo.secure_url logo.alt active'
                     }
                 ]) 
                 .sort({ date: -1 }) 
@@ -40,19 +51,9 @@ export const homeData = async (req, res, next) => {
         if (!company) {
             return next(new Error('No company data found in the database. Please ensure that the company data exists.', { cause: 404  }))
         }
-        // if (!mainServices) {
-        //     return next(new Error('No mainServices found in the database. Please ensure that the mainServices exists.', { cause: 404  }))
-        // }
         if (!whyUsData) {
             return next(new Error('No whyUs data found in the database. Please ensure that the whyUs data exists.', { cause: 404  }))
         }
-        // if (!clients) {
-        //     return next(new Error('no clients found', { cause: 400 }))
-        // }
-        // if (!team) {
-        //     return next(new Error('no team data found', { cause: 400 }))
-        // }
-
         const data = {company,mainServices,whyUsData, clients, team, projects}
         return data;
     })

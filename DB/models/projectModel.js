@@ -31,15 +31,12 @@ export const projectSchema = new Schema(
             },
             customId: String,
         },
-        clientName: {
-            type: String,
-            required: true
+        clientId:{
+            type:Schema.Types.ObjectId,
+            ref:'Client',
+            required:true,
         },
         projectLink: {
-            type: String,
-            required: true
-        },
-        clientLink: {
             type: String,
             required: true
         },

@@ -46,6 +46,8 @@ export const addTeamMember = async (req, res, next) => {
     }
     clientRedis.del('homeData');
     clientRedis.del('teamDashBoard');
+    clientRedis.del('clientsDashBoard:active');
+    clientRedis.del('clientsDashBoard:all');
     res.status(200).json({ message: 'Done', newTeamMember })
 }
 
@@ -102,6 +104,8 @@ export const editTeamMember = async (req, res, next) => {
     }
     clientRedis.del('homeData');
     clientRedis.del('teamDashBoard');
+    clientRedis.del('clientsDashBoard:active');
+    clientRedis.del('clientsDashBoard:all');
     res.status(200).json({ message: 'Done', updatedTeam })
 }
 
@@ -115,6 +119,8 @@ export const deleteTeamMember = async (req, res, next) => {
     // await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/team/${deletedMember.image.customId}`)
     clientRedis.del('homeData');
     clientRedis.del('teamDashBoard');
+    clientRedis.del('clientsDashBoard:active');
+    clientRedis.del('clientsDashBoard:all');
     return res.status(200).json({ message: 'Done', deletedMember })
 
 }

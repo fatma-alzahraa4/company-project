@@ -17,6 +17,10 @@ export const getProjects = async (req, res, next) => {
                 {
                     path: 'categoryId',
                     select: 'name'
+                },
+                {
+                    path: 'clientId',
+                    select: 'companyName companyLink logo.secure_url logo.alt active'
                 }
             ])
             .sort({ date: -1, createdAt: -1 }),
@@ -54,6 +58,10 @@ export const getProject = async (req, res, next) => {
             {
                 path: 'categoryId',
                 select: 'name'
+            },
+            {
+                path: 'clientId',
+                select: 'companyName companyLink logo.secure_url logo.alt active'
             }
         ])
     const formattedImages = project.images.map(img => ({

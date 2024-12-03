@@ -14,9 +14,8 @@ const getFileNameWithoutExtension = (filename) => {
 export const addProject = async (req, res, next) => {
     const {
         name,
-        clientName,
+        clientId,
         projectLink,
-        clientLink,
         details,
         status,
         progressPercentage,
@@ -27,7 +26,7 @@ export const addProject = async (req, res, next) => {
     const progPercen = undefined;
     const requiredInputs = [
         'name',
-        'clientName',
+        'clientId',
         'projectLink',
         'details',
         'altImage',
@@ -61,9 +60,8 @@ export const addProject = async (req, res, next) => {
     });
     const projectObj = {
         name,
-        clientName,
+        clientId,
         projectLink,
-        clientLink,
         details,
         status,
         progressPercentage: progPercen,
@@ -88,9 +86,8 @@ export const editProject = async (req, res, next) => {
     const { projectId } = req.params;
     const {
         name,
-        clientName,
+        clientId,
         projectLink,
-        clientLink,
         details,
         status,
         progressPercentage,
@@ -164,9 +161,8 @@ export const editProject = async (req, res, next) => {
     }
     project_Image.alt = altImage || project.mainImage.alt;
     project.name = name || project.name
-    project.clientName = clientName || project.clientName
+    project.clientId = clientId || project.clientId
     project.projectLink = projectLink || project.projectLink
-    project.clientLink = clientLink || project.clientLink
     project.details = details || project.details;
     project.status = status || project.status;
     project.categoryId = categoryId || project.categoryId;
@@ -350,6 +346,10 @@ export const getProjects = async (req, res, next) => {
             {
                 path: 'categoryId',
                 select: 'name brief active'
+            },
+            {
+                path: 'clientId',
+                select: 'companyName companyLink logo.secure_url logo.alt active'
             }
         ])
         const data = {projects}
@@ -368,6 +368,10 @@ export const getProject = async (req, res, next) => {
         {
             path: 'categoryId',
             select: 'name brief active'
+        },
+        {
+            path: 'clientId',
+            select: 'companyName companyLink logo.secure_url logo.alt active'
         }
     ])
     return res.status(200).json({ message: 'Done', project })

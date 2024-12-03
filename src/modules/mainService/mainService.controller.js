@@ -19,11 +19,11 @@ export const addMainServiceData = async (req, res, next) => {
             return next(new Error(`Missing required field: ${input}`, { cause: 400 }));
         }
     });
-    const fileName = getFileNameWithoutExtension(req.file.originalname);
-    const customId = `${fileName}_${nanoId()}`;
     if (!req.file) {
         return next(new Error('Please upload icon for main service', { cause: 400 }))
     }
+    const fileName = getFileNameWithoutExtension(req.file.originalname);
+    const customId = `${fileName}_${nanoId()}`;
     const { secure_url, public_id } = await cloudinary.uploader.upload(req.file.path,
         { folder: `${process.env.PROJECT_FOLDER}/mainService/${customId}` }
     )
@@ -106,8 +106,8 @@ export const deleteMainService = async (req, res, next) => {
     if (!deletedMainService) {
         return next(new Error('Failed to delete main service. main service may not exist or is already inactive.', { cause: 404 }))
     }
-    // await cloudinary.uploader.destroy(deletedMainService.icon.public_id)
-    // await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/mainService/${deletedMainService.customId}`)
+    await cloudinary.uploader.destroy(deletedMainService.icon.public_id)
+    await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/mainService/${deletedMainService.customId}`)
     
     clientRedis.del('homeData');
     clientRedis.del('mainServicesDashBoard:active');
