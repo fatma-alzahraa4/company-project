@@ -734,6 +734,8 @@ export const editAboutData = async (req, res, next) => {
 
             hWork.title = hWork.title || about.howWeWork[i]?.title;
             hWork.desc = hWork.desc || about.howWeWork[i]?.desc;
+            howWeWorkArr[i] = hWork; 
+
             console.log('hWork:', hWork);
         }
 
