@@ -699,14 +699,15 @@ export const editAboutData = async (req, res, next) => {
     //         about.howWeWork = howWeWorkArr;
     //     }
 
+    let how_we_work_arr_empty = []
     if (howWeWorkArr) {
         for (let i = 0; i < howWeWorkArr.length; i++) {
             let hWork = howWeWorkArr[i];
 
-            if (!hWork) {
-                console.error(`hWork is undefined at index ${i}`);
-                continue; // Skip this iteration
-            }
+            // if (!hWork) {
+            //     console.error(`hWork is undefined at index ${i}`);
+            //     continue; // Skip this iteration
+            // }
 
             if (req.files && req.files[`howWeWorkImage${i + 1}`]) {
                 const file = req.files[`howWeWorkImage${i + 1}`][0];
@@ -731,26 +732,26 @@ export const editAboutData = async (req, res, next) => {
             } else {
                 console.warn(`No file or existing image found for index ${i}`);
             }
-
+            
             hWork.title = hWork.title || about.howWeWork[i]?.title;
             hWork.desc = hWork.desc || about.howWeWork[i]?.desc;
-            howWeWorkArr[i] = hWork; 
+            console.log(`hWork:${i}`, hWork);
+            how_we_work_arr_empty.push(hWork) ; 
 
-            console.log('hWork:', hWork);
         }
 
         // Merge updated elements into the existing array
         about.howWeWork = about.howWeWork.map((existing, index) => {
-            return howWeWorkArr[index] || existing;
+            return how_we_work_arr_empty[index] || existing;
         });
 
         // If howWeWorkArr has more elements than about.howWeWork, add them
-        if (howWeWorkArr.length > about.howWeWork.length) {
-            about.howWeWork.push(...howWeWorkArr.slice(about.howWeWork.length));
+        if (how_we_work_arr_empty.length > about.howWeWork.length) {
+            about.howWeWork.push(...how_we_work_arr_empty.slice(about.howWeWork.length));
         }
-        console.log('Updated howWeWorkArr:', howWeWorkArr);
+        console.log('Updated how_we_work_arr_empty:', how_we_work_arr_empty);
 
-        about.howWeWork = howWeWorkArr;
+        about.howWeWork = how_we_work_arr_empty;
     }
 
     const updatedAbout = await about.save()
