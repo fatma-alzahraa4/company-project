@@ -736,6 +736,15 @@ if (howWeWorkArr) {
         hWork.title = hWork.title || (about.howWeWork[i] && about.howWeWork[i].title);
         hWork.desc = hWork.desc || (about.howWeWork[i] && about.howWeWork[i].desc);
     }
+        // Merge updated elements into the existing array
+        about.howWeWork = about.howWeWork.map((existing, index) => {
+            return howWeWorkArr[index] || existing;
+        });
+    
+        // If howWeWorkArr has more elements than about.howWeWork, add them
+        if (howWeWorkArr.length > about.howWeWork.length) {
+            about.howWeWork.push(...howWeWorkArr.slice(about.howWeWork.length));
+        }
     console.log('Updated howWeWorkArr:', howWeWorkArr);
 
     about.howWeWork = howWeWorkArr;
