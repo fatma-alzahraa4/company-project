@@ -451,6 +451,8 @@ export const editAboutData = async (req, res, next) => {
         ourStoryAlt,
         ourValueAlt
     } = req.body
+    console.log('body',howWeWorkArr);
+    
     const about = await aboutModel.findOne()
     if (!about) {
         return next(new Error('No about found in the database. Please ensure that the about exists.', { cause: 404 }))
