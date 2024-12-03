@@ -660,11 +660,12 @@ export const editAboutData = async (req, res, next) => {
     about.ourStoryImage2 = ourStory_Image2;
     ourValue_Image.alt = ourValueAlt || about.ourValueImage.alt
     about.ourValueImage = ourValue_Image;
+console.log('abouthowWeWorkArr',about.howWeWork);
 
     if (howWeWorkArr) {
         for (let i = 0; i < howWeWorkArr.length; i++) {
             let hWork = howWeWorkArr[i];
-console.log(hWork);
+console.log('hwork',hWork);
 
             if (req.files && req.files[`howWeWorkImage${i + 1}`]) {
                 const file = req.files[`howWeWorkImage${i + 1}`][0];
@@ -691,7 +692,7 @@ console.log(hWork);
             hWork.title = hWork.title || about.howWeWork[i].title;
             hWork.desc = hWork.desc || about.howWeWork[i].desc;
         }
-        console.log(howWeWorkArr);
+        console.log('howWeWorkArr',howWeWorkArr);
         
         about.howWeWork = howWeWorkArr;
     }
