@@ -734,8 +734,8 @@ export const editAboutData = async (req, res, next) => {
 
             hWork.title = hWork.title || about.howWeWork[i]?.title;
             hWork.desc = hWork.desc || about.howWeWork[i]?.desc;
+            console.log('hWork:', hWork);
         }
-        console.log('hWork:', hWork);
 
         // Merge updated elements into the existing array
         about.howWeWork = about.howWeWork.map((existing, index) => {
