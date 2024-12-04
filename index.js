@@ -21,7 +21,7 @@ const app = express()
 //   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT'],
 //   credentials: true,
 // }
-const allowedOrigins = [process.env.DASHBOARDLINK, process.env.LOCALHOST, process.env.WEBSITELINK, process.env.WEB_LINK, process.env.DASHBOARDLINK2];
+const allowedOrigins = [process.env.DASHBOARDLINK, process.env.LOCALHOST, process.env.WEBSITELINK, process.env.WEB_LINK, process.env.DASHBOARDLINK2, process.env.DASHBOARDLINK3];
 
 const corsOptions = {
   origin: (origin, callback) => {
