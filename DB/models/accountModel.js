@@ -31,6 +31,15 @@ const accountSchema = new Schema(
             enum:['admin','editor','customerService']
 
         },
+        profileImage: {
+            secure_url: {
+                type: String,
+            },
+            public_id: {
+                type: String,
+            },
+            customId: String,
+        },
         // ipAddresses:[
         //     {
         //         type:String,

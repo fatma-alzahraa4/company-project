@@ -147,3 +147,38 @@ export const changeRoleSchema = {
         role:joi.string().min(5).max(15).valid('editor','customerService').required()
     }).required()
 };
+
+export const updateProfileSchema ={
+    body:joi.object({
+        firstName: joi
+        .string()
+        .min(2)
+        .max(30)
+        .messages({
+            'string.min': 'First name should have a minimum length of 2 characters',
+            'string.max': 'First name should not exceed 30 characters',
+        }),
+    lastName: joi
+        .string()
+        .min(2)
+        .max(30)
+        .messages({
+            'string.min': 'Last name should have a minimum length of 2 characters',
+            'string.max': 'Last name should not exceed 30 characters',
+        }),
+    phoneNumber: generalFields.phoneNumbers.messages({
+        'string.pattern.base': 'Phone number must be a valid Egyptian phone number',
+    }),
+        // altImage: joi.object({
+        //     en: joi.string().messages({
+        //         'string.base': '"en" should be a string',
+        //     }),
+        //     ar: joi.string().messages({
+        //         'string.base': '"ar" should be a string',
+        //     })
+        // }).messages({
+        //     'object.base': '"altImage" must be an object',
+        // }),
+    }).required().options({presence:"optional"})
+
+}

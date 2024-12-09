@@ -4,6 +4,13 @@ import { sendEmailService } from "../../services/sendEmail.js";
 import { generateToken, verifyToken } from '../../utils/tokenFunction.js';
 import { isTempEmail } from '../../utils/blockTempEmailDomains.js';
 import { accountModel } from './../../../DB/models/accountModel.js';
+import cloudinary from '../../utils/cloudinaryConfigrations.js';
+import { clientRedis } from './../../utils/redis.js';
+
+const nanoIdImage = customAlphabet('abcdefghijklmnopqrstuvwxyz123456890', 5)
+const getFileNameWithoutExtension = (filename) => {
+    return filename.split('.').slice(0, -1).join('.');
+};
 const nanoId = customAlphabet('012345689', 4)
 
 //TODO Uncomment Send Email Service
@@ -300,11 +307,98 @@ export const changePassword = async (req, res, next) => {
         lastName: resetedAdmin.lastName,
         email: resetedAdmin.email,
         phoneNumber: resetedAdmin.phoneNumber,
+        profileImage: {
+            secure_url: resetedAdmin.profileImage.secure_url,
+            // alt: updatedUser.profileImage.alt,
+        },
         token: resetedAdmin.token,
     }
     res.status(200).json({ message: 'Done', admin: response })
 }
 
+//=========================================== add profile picture=====================================
+
+export const updateProfile = async (req, res, next) => {
+    const { _id } = req.authAccount
+    const {
+        firstName,
+        lastName,
+        phoneNumber,
+    } = req.body
+    const user = await accountModel.findOne({ _id })
+    if (!user) {
+        return next(new Error('no user', { cause: 401 }))
+    }
+    if (phoneNumber) {
+        const isUserDuplicate = await accountModel.findOne({ phoneNumber })
+        if (isUserDuplicate) {
+            return next(new Error('User already registered with same phone', { cause: 409 }))
+        }
+        user.phoneNumber = phoneNumber
+    }
+    let uploadedPublicId, uploadedFolder;
+    let profile_image;
+    if (req.file) {
+        if (user.profileImage.public_id) {
+            await cloudinary.uploader.destroy(user.profileImage.public_id);
+            await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Profile/${user.profileImage.customId}`)
+        }
+
+        const imageName = getFileNameWithoutExtension(req.file.originalname);
+        const customId = `${imageName}_${nanoIdImage()}`
+        const { secure_url, public_id } = await cloudinary.uploader.upload(req.file.path,
+            {
+                folder: `${process.env.PROJECT_FOLDER}/Profile/${customId}`
+            })
+        profile_image = {
+            secure_url,
+            public_id,
+            customId,
+        }
+        uploadedPublicId = public_id;
+        uploadedFolder = `${process.env.PROJECT_FOLDER}/Profile/${customId}`
+    }
+    else {
+        profile_image = user.profileImage
+    }
+
+    user.firstName = firstName || user.firstName;
+    user.lastName = lastName || user.lastName;
+    user.profileImage = profile_image;
+    const updatedUser = await user.save();
+    if (!updatedUser) {
+        await cloudinary.uploader.destroy(uploadedPublicId)
+        await cloudinary.api.delete_folder(uploadedFolder)
+        return next(new Error('Failed to update', { cause: 400 }))
+    }
+
+    clientRedis.del('reviewsWebsite');
+    res.status(200).json({
+        message: 'Done', user: {
+            // userId: updatedUser._id,
+            firstName: updatedUser.firstName,
+            lastName: updatedUser.lastName,
+            email: updatedUser.email,
+            phoneNumber: updatedUser.phoneNumber,
+            profileImage: {
+                secure_url: updatedUser.profileImage.secure_url,
+                // alt: updatedUser.profileImage.alt,
+            },
+            token: updatedUser.token,
+            role:updatedUser.role
+        }
+    })
+}
+
+//========================================== get profile ================================================
+
+export const getProfile = async (req, res, next) => {
+    const { _id } = req.authAccount
+    const user = await accountModel.findById(_id).select('firstName lastName email phoneNumber profileImage.secure_url -_id')
+    res.status(200).json({
+        message: 'Done', user
+    })
+}
 //============================================== logOut ==============================================
 
 export const logOut = async (req, res, next) => {
@@ -383,7 +477,17 @@ export const addAccount = async (req, res, next) => {
     res.status(200).json({ message: 'Done', account:response})
 }
 
-//============================================== change account password ==============================================
+//============================================== get website users ==============================================
+
+export const getAllDashboardUsers = async (req,res,next) => {
+    const users = await accountModel.find(                    
+        { $or: [{ role: 'editor' }, { role: 'customerService' }] },
+    ).select('firstName lastName email phoneNumber profileImage.secure_url role createdAt')
+    res.status(200).json({ message: 'Done', dashboardUsers: users })
+
+}
+
+//============================================== delete account ==============================================
 // export const changeaccountPassword = async (req, res, next) => {
 //     const { _id } = req.authAdmin
 //     const {email, oldPassword, newPassword } = req.body
@@ -417,16 +521,14 @@ export const addAccount = async (req, res, next) => {
 
 
 export const deleteAccount = async (req, res, next) => {
-    const { email } = req.body
-    if(!email){
-        return next(new Error('Email is required', { cause: 400 }))
-    }
+    const { userId } = req.params
+
     const deletedAccount = await accountModel.findOneAndDelete(
         {
             $and:
                 [
-                    { email },
-                    { $or: [{ role:'editor' }, { role:'customerService' }] },
+                    { _id:userId },
+                    { $or: [{ role: 'editor' }, { role: 'customerService' }] },
                 ]
         }
     )
