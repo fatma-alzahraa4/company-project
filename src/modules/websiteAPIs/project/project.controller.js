@@ -8,7 +8,7 @@ export const getProjects = async (req, res, next) => {
     const projects = await getOrSetCache(`projectsWebsite`, async () => {
         const [projects , projcetsCount] = await Promise.all([
             projectModel.find()
-            .select('-mainImage.public_id -mainImage.customId -updatedAt -progressPercentage -projectFolder -video.customId -video.public_id -__v')
+            .select('-mainImage.public_id -mainImage.customId -updatedAt -progressPercentage -projectFolder -__v')
             .populate([
                 {
                     path: 'images',
@@ -49,7 +49,7 @@ export const getProjects = async (req, res, next) => {
 export const getProject = async (req, res, next) => {
     const { projectId } = req.params;
     const project = await projectModel.findById(projectId)
-        .select('-mainImage.public_id -mainImage.customId -updatedAt -progressPercentage -projectFolder -video.customId -video.public_id -__v')
+        .select('-mainImage.public_id -mainImage.customId -updatedAt -progressPercentage -projectFolder -__v')
         .populate([
             {
                 path: 'images',

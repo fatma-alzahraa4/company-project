@@ -12,6 +12,7 @@ export const addProjectSchema = {
         altImage: joi.string().min(3).required(),
         categoryId:generalFields._id,
         date:joi.date().required(),
+        video: joi.string().uri(),
     }).required()
 }
 
@@ -29,6 +30,7 @@ export const editProjectSchema = {
         altImage: joi.string().min(3),
         categoryId:generalFields._id,
         date:joi.date(),
+        video: joi.string().uri(),
 
     }).required()
 }

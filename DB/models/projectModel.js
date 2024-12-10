@@ -22,15 +22,7 @@ export const projectSchema = new Schema(
             },
             customId: String,
         },
-        video: {
-            secure_url: {
-                type: String,
-            },
-            public_id: {
-                type: String,
-            },
-            customId: String,
-        },
+        video: String,
         clientId:{
             type:Schema.Types.ObjectId,
             ref:'Client',

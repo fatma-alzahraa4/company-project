@@ -18,12 +18,9 @@ router.post('/add',
     asyncHandler(projectControllers.addProject)
 )
 
-router.put('/edit/:projectId',
+router.put('/edit/:projectId', 
     // isAuth(projectApisRoles.EDIT_PROJECT),
-    multerCloudFunction(combinedExtensions).fields([
-        { name: 'mainImage', maxCount: 1 },
-        { name: 'video', maxCount: 1 },
-    ]),
+    multerCloudFunction(allowedExtensions.Image).single('mainImage'),
     convertToWebP,
     validationCoreFunction(projectValidators.editProjectSchema),
     asyncHandler(projectControllers.editProject)
@@ -45,19 +42,19 @@ router.delete('/deleteImage/:imageId',
     asyncHandler(projectControllers.deleteProjectImage)
 )
 
-router.post('/addVideo',
-    // isAuth(projectApisRoles.ADD_PROJECT_IMAGES),
-    multerCloudFunction(allowedExtensions.Videos).single('video'),
-    convertToWebP,
-    validationCoreFunction(projectValidators.addProjectVideosSchema),
-    asyncHandler(projectControllers.addProjectVideo)
-)
+// router.post('/addVideo',
+//     // isAuth(projectApisRoles.ADD_PROJECT_IMAGES),
+//     multerCloudFunction(allowedExtensions.Videos).single('video'),
+//     convertToWebP,
+//     validationCoreFunction(projectValidators.addProjectVideosSchema),
+//     asyncHandler(projectControllers.addProjectVideo)
+// )
 
-router.delete('/deleteVideo/:videoId',
-    // isAuth(projectApisRoles.DELETE_PROJECT_IMAGES),
-    validationCoreFunction(projectValidators.deleteProjectVideoSchema),
-    asyncHandler(projectControllers.deleteProjectVideo)
-)
+// router.delete('/deleteVideo/:videoId',
+//     // isAuth(projectApisRoles.DELETE_PROJECT_IMAGES),
+//     validationCoreFunction(projectValidators.deleteProjectVideoSchema),
+//     asyncHandler(projectControllers.deleteProjectVideo)
+// )
 
 router.delete('/delete/:projectId',
     // isAuth(projectApisRoles.DELETE_PROJECT),
