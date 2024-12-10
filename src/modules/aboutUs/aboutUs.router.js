@@ -45,7 +45,7 @@ router.put('/edit',
         { name: 'howWeWorkImage2', maxCount: 1 },
         { name: 'howWeWorkImage3', maxCount: 1 },
         { name: 'howWeWorkImage4', maxCount: 1 },
-        ]),
+    ]),
     convertToWebP,
     validationCoreFunction(aboutValidators.editAboutSchema),
     asyncHandler(aboutController.editAboutData),
@@ -66,5 +66,24 @@ router.get('/getWhyUs',
     asyncHandler(aboutController.getWhyUsData),
     aboutController.getWhyUsData)
 
+//how we work
+router.post('/addHowWeWork',
+    multerCloudFunction(allowedExtensions.Image).single('image'),
+    convertToWebP,
+    // validationCoreFunction(aboutValidators.addMainServiceSchema),
+    asyncHandler(aboutController.addHowWeWork),
+)
+
+router.put('/editHowWeWork/:howWeWorkId',
+    multerCloudFunction(allowedExtensions.Image).single('image'),
+    convertToWebP,
+    // validationCoreFunction(aboutValidators.addMainServiceSchema),
+    asyncHandler(aboutController.editHowWeWork),
+)
+
+router.delete('/deleteHowWeWork/:howWeWorkId',
+    // validationCoreFunction(aboutValidators.addMainServiceSchema),
+    asyncHandler(aboutController.deleteHowWeWork),
+)
 
 export default router

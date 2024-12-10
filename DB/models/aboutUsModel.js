@@ -1,5 +1,31 @@
 import { model, Schema } from "mongoose";
 
+export const howWeWorkSchema = new Schema({
+    title: {
+        type: String,
+        required: true,
+    },
+    desc: {
+        type: String,
+        required: true,
+    },
+    image: {
+        secure_url: {
+            type: String,
+            required: true
+        },
+        public_id: {
+            type: String,
+            required: true
+        },
+        alt: {
+            type: String,
+            required: true,
+        },
+        customId: String,
+    }
+})
+
 export const aboutSchema = new Schema({
     mission: {
         type: String,
@@ -17,7 +43,7 @@ export const aboutSchema = new Schema({
         type: String,
         required: true,
     },
-    missionVisionImage:{
+    missionVisionImage: {
         secure_url: {
             type: String,
             required: true
@@ -40,7 +66,7 @@ export const aboutSchema = new Schema({
         type: String,
         required: true,
     },
-   ourStoryImage1:{
+    ourStoryImage1: {
         secure_url: {
             type: String,
             required: true
@@ -55,7 +81,7 @@ export const aboutSchema = new Schema({
         },
         customId: String,
     },
-    ourStoryImage2:{
+    ourStoryImage2: {
         secure_url: {
             type: String,
             required: true
@@ -78,7 +104,7 @@ export const aboutSchema = new Schema({
         type: String,
         required: true,
     },
-    ourValueImage:{
+    ourValueImage: {
         secure_url: {
             type: String,
             required: true
@@ -148,32 +174,10 @@ export const aboutSchema = new Schema({
         type: String,
         required: true,
     },
-    howWeWork: [{
-        title: {
-            type: String,
-            required: true,
-        },
-        desc: {
-            type: String,
-            required: true,
-        },
-        image:{
-            secure_url: {
-                type: String,
-                required: true
-            },
-            public_id: {
-                type: String,
-                required: true
-            },
-            alt: {
-                type: String,
-                required: true,
-            },
-            customId: String,
-        }
-    }]
+    howWeWork: [howWeWorkSchema]
 },
-    { timestamps: true })
+    { timestamps: true }
+)
+
 
 export const aboutModel = model('About', aboutSchema)

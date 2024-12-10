@@ -84,6 +84,10 @@ export const getservices = async (req, res, next) => {
         const services = await getOrSetCache('servicesDashBoard:active', async () => {
             const services = await serviceModel.find({ active: true }).populate([
                 {
+                    path: 'mainServiceId',
+                    select:'name'
+                },
+                {
                     path: 'subServices',
                 }]);
             const data = { services }
@@ -95,6 +99,10 @@ export const getservices = async (req, res, next) => {
         if (notActive == 'true') {
             const services = await getOrSetCache('servicesDashBoard:all', async () => {
                 const services = await serviceModel.find().populate([
+                    {
+                        path: 'mainServiceId',
+                        select:'name'
+                    },
                     {
                         path: 'subServices',
                     }]);

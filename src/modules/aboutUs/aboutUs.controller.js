@@ -7,211 +7,6 @@ const getFileNameWithoutExtension = (filename) => {
     return filename.split('.').slice(0, -1).join('.');
 };
 
-// export const addAboutData = async (req, res, next) => {
-//     const {
-//         mission,
-//         missionTitle,
-//         vission,
-//         vissionTitle,
-//         ourStory,
-//         ourStoryTitle,
-//         ourValue,
-//         ourValueTitle,
-//         whyUsTitle,
-//         whyUsDesc,
-//         whyUsSubtitle,
-//         whyUsImage1Alt,
-//         whyUsImage2Alt,
-//         howWeWorkMainTitle,
-//         howWeWorkArr,
-//         howWeWorkAlt,
-//         metaDesc,
-//         metaKeyWords,
-//         //new
-//         missionVisionAlt,
-//         ourStoryAlt,
-//         ourValueAlt
-//     } = req.body
-
-//     // await aboutModel.deleteMany()
-//     if (!req.files['Image1']) {
-//         return next(new Error('Please upload image 1', { cause: 400 }));
-//     }
-//     if (!req.files['Image2']) {
-//         return next(new Error('Please upload image 2', { cause: 400 }));
-//     }
-//     if (!req.files['howWeWorkImage1']) {
-//         return next(new Error('Please upload how work image 1', { cause: 400 }));
-//     }
-//     if (!req.files['howWeWorkImage2']) {
-//         return next(new Error('Please upload how work image 2', { cause: 400 }));
-//     }
-//     if (!req.files['howWeWorkImage3']) {
-//         return next(new Error('Please upload how work image 3', { cause: 400 }));
-//     }
-//     if (!req.files['howWeWorkImage4']) {
-//         return next(new Error('Please upload how work image 4', { cause: 400 }));
-//     }
-//     //new
-//     if (!req.files['missionVisionImage']) {
-//         return next(new Error('Please upload mission and vision image ', { cause: 400 }));
-//     }
-//     if (!req.files['ourStoryImage1']) {
-//         return next(new Error('Please upload Our Story Image 1', { cause: 400 }));
-//     }
-//     if (!req.files['ourStoryImage2']) {
-//         return next(new Error('Please upload Our Story Image 2', { cause: 400 }));
-//     }
-//     if (!req.files['ourValueImage']) {
-//         return next(new Error('Please upload Our Value Image ', { cause: 400 }));
-//     }
-
-
-
-
-//     const file1 = req.files['Image1'][0];
-//     const file2 = req.files['Image2'][0];
-//     const hwfile1 = req.files['howWeWorkImage1'][0];
-//     const hwfile2 = req.files['howWeWorkImage2'][0];
-//     const hwfile3 = req.files['howWeWorkImage3'][0];
-//     const hwfile4 = req.files['howWeWorkImage4'][0];
-//     //new
-//     const MVfile = req.files['missionVisionImage'][0];
-//     const OSfile1 = req.files['ourStoryImage1'][0];
-//     const OSfile2 = req.files['ourStoryImage2'][0];
-//     const OVfile = req.files['ourValueImage'][0];
-
-
-
-//     const Image1Name = getFileNameWithoutExtension(file1.originalname);
-//     const Image2Name = getFileNameWithoutExtension(file2.originalname);
-//     const hwImage1Name = getFileNameWithoutExtension(hwfile1.originalname);
-//     const hwImage2Name = getFileNameWithoutExtension(hwfile2.originalname);
-//     const hwImage3Name = getFileNameWithoutExtension(hwfile3.originalname);
-//     const hwImage4Name = getFileNameWithoutExtension(hwfile4.originalname);
-//     //new
-//     const MVImageName = getFileNameWithoutExtension(MVfile.originalname);
-//     const OSImage1Name = getFileNameWithoutExtension(OSfile1.originalname);
-//     const OSImage2Name = getFileNameWithoutExtension(OSfile2.originalname);
-//     const OVImageName = getFileNameWithoutExtension(OVfile.originalname);
-
-
-//     const customId1 = `${Image1Name}_${nanoId()}`
-//     const customId2 = `${Image2Name}_${nanoId()}`
-//     const hwCustomId1 = `${hwImage1Name}_${nanoId()}`
-//     const hwCustomId2 = `${hwImage2Name}_${nanoId()}`
-//     const hwCustomId3 = `${hwImage3Name}_${nanoId()}`
-//     const hwCustomId4 = `${hwImage4Name}_${nanoId()}`
-//     //new
-//     const MVCustomId = `${MVImageName}_${nanoId()}`
-//     const OSCustomId1 = `${OSImage1Name}_${nanoId()}`
-//     const OSCustomId2 = `${OSImage2Name}_${nanoId()}`
-//     const OVCustomId = `${OVImageName}_${nanoId()}`
-
-
-//     const { secure_url: secureUrl1, public_id: publicId1 } = await cloudinary.uploader.upload(req.files['Image1'][0].path, {
-//         folder: `${process.env.PROJECT_FOLDER}/whyUs/${customId1}`
-//     });
-//     const { secure_url: secureUrl2, public_id: publicId2 } = await cloudinary.uploader.upload(req.files['Image2'][0].path, {
-//         folder: `${process.env.PROJECT_FOLDER}/whyUs/${customId2}`
-//     });
-//     const { secure_url: hwImgsecureUrl1, public_id: hwImgpublicId1 } = await cloudinary.uploader.upload(req.files['howWeWorkImage1'][0].path, {
-//         folder: `${process.env.PROJECT_FOLDER}/howWeWork/${hwCustomId1}`
-//     });
-//     const { secure_url: hwImgsecureUrl2, public_id: hwImgpublicId2 } = await cloudinary.uploader.upload(req.files['howWeWorkImage2'][0].path, {
-//         folder: `${process.env.PROJECT_FOLDER}/howWeWork/${hwCustomId2}`
-//     });
-//     const { secure_url: hwImgsecureUrl3, public_id: hwImgpublicId3 } = await cloudinary.uploader.upload(req.files['howWeWorkImage3'][0].path, {
-//         folder: `${process.env.PROJECT_FOLDER}/howWeWork/${hwCustomId3}`
-//     });
-//     const { secure_url: hwImgsecureUrl4, public_id: hwImgpublicId4 } = await cloudinary.uploader.upload(req.files['howWeWorkImage4'][0].path, {
-//         folder: `${process.env.PROJECT_FOLDER}/howWeWork/${hwCustomId4}`
-//     });
-
-//     //new
-//     const { secure_url: MVImgsecureUrl, public_id: MVImgpublicId } = await cloudinary.uploader.upload(req.files['missionVisionImage'][0].path, {
-//         folder: `${process.env.PROJECT_FOLDER}/about/visionMission/${MVCustomId}`
-//     });
-//     const { secure_url: OSImgsecureUrl1, public_id: OSImgpublicId1 } = await cloudinary.uploader.upload(req.files['ourStoryImage1'][0].path, {
-//         folder: `${process.env.PROJECT_FOLDER}/about/OurStory/${OSCustomId1}`
-//     });
-//     const { secure_url: OSImgsecureUrl2, public_id: OSImgpublicId2 } = await cloudinary.uploader.upload(req.files['ourStoryImage2'][0].path, {
-//         folder: `${process.env.PROJECT_FOLDER}/about/OurStory/${OSCustomId2}`
-//     });
-//     const { secure_url: OVImgsecureUrl, public_id: OVImgpublicId } = await cloudinary.uploader.upload(req.files['ourValueImage'][0].path, {
-//         folder: `${process.env.PROJECT_FOLDER}/about/OurValue/${OVCustomId}`
-//     });
-
-//     req.imagePaths = {
-//         image1: `${process.env.PROJECT_FOLDER}/whyUs/${customId1}`,
-//         image2: `${process.env.PROJECT_FOLDER}/whyUs/${customId2}`,
-//         hwImage1: `${process.env.PROJECT_FOLDER}/howWeWork/${hwCustomId1}`,
-//         hwImage2: `${process.env.PROJECT_FOLDER}/howWeWork/${hwCustomId2}`,
-//         hwImage3: `${process.env.PROJECT_FOLDER}/howWeWork/${hwCustomId3}`,
-//         hwImage4: `${process.env.PROJECT_FOLDER}/howWeWork/${hwCustomId4}`,
-
-//     };
-
-
-//     let howArr = [];
-//     if (howWeWorkArr && howWeWorkArr.length) {
-//         const imageUrls = [
-//             { secure_url: hwImgsecureUrl1, public_id: hwImgpublicId1, customId: hwCustomId1, alt: howWeWorkAlt },
-//             { secure_url: hwImgsecureUrl2, public_id: hwImgpublicId2, customId: hwCustomId2, alt: howWeWorkAlt },
-//             { secure_url: hwImgsecureUrl3, public_id: hwImgpublicId3, customId: hwCustomId3, alt: howWeWorkAlt },
-//             { secure_url: hwImgsecureUrl4, public_id: hwImgpublicId4, customId: hwCustomId4, alt: howWeWorkAlt }
-//         ];
-
-//         for (let i = 0; i < howWeWorkArr.length; i++) {
-//             let hWork = howWeWorkArr[i];
-//             hWork.image = imageUrls[i];
-
-//             howArr.push({
-//                 title: hWork.title,
-//                 desc: hWork.desc,
-//                 image: hWork.image
-//             });
-//         }
-//     }
-
-//     const aboutObj = {
-//         mission,
-//         missionTitle,
-//         vission,
-//         vissionTitle,
-//         ourStory,
-//         ourStoryTitle,
-//         ourValue,
-//         ourValueTitle,
-//         whyUsTitle,
-//         whyUsDesc,
-//         whyUsSubtitle,
-//         metaDesc,
-//         metaKeyWords,
-//         howWeWorkMainTitle,
-//         howWeWork: howArr,
-//         whyUsImage1: { secure_url: secureUrl1, public_id: publicId1, customId: customId1, alt: whyUsImage1Alt },
-//         whyUsImage2: { secure_url: secureUrl2, public_id: publicId2, customId: customId2, alt: whyUsImage2Alt },
-//         //neww
-//         missionVisionImage: { secure_url: MVImgsecureUrl, public_id: MVImgpublicId, customId: MVCustomId, alt: missionVisionAlt },
-//         ourStoryImage1: { secure_url: OSImgsecureUrl1, public_id: OSImgpublicId1, customId: OSCustomId1, alt: ourStoryAlt },
-//         ourStoryImage2: { secure_url: OSImgsecureUrl2, public_id: OSImgpublicId2, customId: OSCustomId2, alt: ourStoryAlt },
-//         ourValueImage: { secure_url: OVImgsecureUrl, public_id: OVImgpublicId, customId: OVCustomId, alt: ourValueAlt },
-
-//     }
-//     const newAbout = await aboutModel.create(aboutObj)
-//     if (!newAbout) {
-//         await cloudinary.api.delete_resources([publicId1, publicId2]);
-//         await Promise.all([
-//             cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/whyUs/${newAbout.whyUsImage1.customId}`),
-//             cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/whyUs/${newAbout.whyUsImage2.customId}`)
-//         ]);
-//         return next(new Error('creation failed', { cause: 400 }))
-//     }
-//     res.status(200).json({ message: 'Done', newAbout })
-
-// }
-
 export const addAboutData = async (req, res, next) => {
     const {
         mission,
@@ -425,7 +220,6 @@ export const addAboutData = async (req, res, next) => {
     return res.status(200).json({ message: 'Done', newAbout });
 };
 
-
 export const editAboutData = async (req, res, next) => {
     const {
         mission,
@@ -442,8 +236,8 @@ export const editAboutData = async (req, res, next) => {
         whyUsImage1Alt,
         whyUsImage2Alt,
         howWeWorkMainTitle,
-        howWeWorkArr,
-        howWeWorkAlt,
+        // howWeWorkArr,
+        // howWeWorkAlt,
         metaDesc,
         metaKeyWords,
         //new
@@ -451,7 +245,6 @@ export const editAboutData = async (req, res, next) => {
         ourStoryAlt,
         ourValueAlt
     } = req.body
-    console.log('body', howWeWorkArr);
 
     const about = await aboutModel.findOne()
     if (!about) {
@@ -662,103 +455,104 @@ export const editAboutData = async (req, res, next) => {
     about.ourStoryImage2 = ourStory_Image2;
     ourValue_Image.alt = ourValueAlt || about.ourValueImage.alt
     about.ourValueImage = ourValue_Image;
-    console.log('abouthowWeWorkArr', about.howWeWork);
 
-    //     if (howWeWorkArr) {
-    //         for (let i = 0; i < howWeWorkArr.length; i++) {
-    //             let hWork = howWeWorkArr[i];
-    // console.log('hwork',hWork);
+    // console.log('abouthowWeWorkArr', about.howWeWork);
 
-    //             if (req.files && req.files[`howWeWorkImage${i + 1}`]) {
-    //                 const file = req.files[`howWeWorkImage${i + 1}`][0];
-    //                 const imageName = getFileNameWithoutExtension(file.originalname);
-    //                 const customId = `${imageName}_${nanoId()}`;
+    // //     if (howWeWorkArr) {
+    // //         for (let i = 0; i < howWeWorkArr.length; i++) {
+    // //             let hWork = howWeWorkArr[i];
+    // // console.log('hwork',hWork);
 
-    //                 const { secure_url, public_id } = await cloudinary.uploader.upload(file.path, {
-    //                     folder: `${process.env.PROJECT_FOLDER}/howWeWork/${customId}`
-    //                 });
+    // //             if (req.files && req.files[`howWeWorkImage${i + 1}`]) {
+    // //                 const file = req.files[`howWeWorkImage${i + 1}`][0];
+    // //                 const imageName = getFileNameWithoutExtension(file.originalname);
+    // //                 const customId = `${imageName}_${nanoId()}`;
 
-    //                 hWork.image = {
-    //                     secure_url: secure_url,
-    //                     public_id: public_id,
-    //                     customId: customId,
-    //                     alt: howWeWorkAlt
-    //                 };
+    // //                 const { secure_url, public_id } = await cloudinary.uploader.upload(file.path, {
+    // //                     folder: `${process.env.PROJECT_FOLDER}/howWeWork/${customId}`
+    // //                 });
 
-    //                 uploadedPublicIds.push(public_id);
-    //                 uploadedFolders.push(`${process.env.PROJECT_FOLDER}/howWeWork/${customId}`);
+    // //                 hWork.image = {
+    // //                     secure_url: secure_url,
+    // //                     public_id: public_id,
+    // //                     customId: customId,
+    // //                     alt: howWeWorkAlt
+    // //                 };
 
-    //             } else if (about.howWeWork[i]) {
-    //                 hWork.image = about.howWeWork[i].image;
-    //             }
-    //             hWork.title = hWork.title || about.howWeWork[i].title;
-    //             hWork.desc = hWork.desc || about.howWeWork[i].desc;
-    //         }
-    //         console.log('howWeWorkArr',howWeWorkArr);
+    // //                 uploadedPublicIds.push(public_id);
+    // //                 uploadedFolders.push(`${process.env.PROJECT_FOLDER}/howWeWork/${customId}`);
 
-    //         about.howWeWork = howWeWorkArr;
+    // //             } else if (about.howWeWork[i]) {
+    // //                 hWork.image = about.howWeWork[i].image;
+    // //             }
+    // //             hWork.title = hWork.title || about.howWeWork[i].title;
+    // //             hWork.desc = hWork.desc || about.howWeWork[i].desc;
+    // //         }
+    // //         console.log('howWeWorkArr',howWeWorkArr);
+
+    // //         about.howWeWork = howWeWorkArr;
+    // //     }
+
+    // const updatedIndices = []; // Array to track modified indices
+
+    // for (let i = 0; i < howWeWorkArr.length; i++) {
+    //     let hWork = howWeWorkArr[i];
+
+    //     if (!hWork) {
+    //         console.error(`hWork is undefined at index ${i}`);
+    //         continue; // Skip this iteration
     //     }
 
-    const updatedIndices = []; // Array to track modified indices
+    //     if (req.files && req.files[`howWeWorkImage${i + 1}`]) {
+    //         const file = req.files[`howWeWorkImage${i + 1}`][0];
+    //         const imageName = getFileNameWithoutExtension(file.originalname);
+    //         const customId = `${imageName}_${nanoId()}`;
 
-    for (let i = 0; i < howWeWorkArr.length; i++) {
-        let hWork = howWeWorkArr[i];
-    
-        if (!hWork) {
-            console.error(`hWork is undefined at index ${i}`);
-            continue; // Skip this iteration
-        }
-    
-        if (req.files && req.files[`howWeWorkImage${i + 1}`]) {
-            const file = req.files[`howWeWorkImage${i + 1}`][0];
-            const imageName = getFileNameWithoutExtension(file.originalname);
-            const customId = `${imageName}_${nanoId()}`;
-    
-            const { secure_url, public_id } = await cloudinary.uploader.upload(file.path, {
-                folder: `${process.env.PROJECT_FOLDER}/howWeWork/${customId}`
-            });
-    
-            hWork.image = {
-                secure_url: secure_url,
-                public_id: public_id,
-                customId: customId,
-                alt: howWeWorkAlt || about.howWeWork[i]?.image?.alt || "default-alt"
-            };
-    
-            uploadedPublicIds.push(public_id);
-            uploadedFolders.push(`${process.env.PROJECT_FOLDER}/howWeWork/${customId}`);
-            updatedIndices.push(i); // Mark this index as updated
-        } else if (about.howWeWork[i]) {
-            hWork.image = about.howWeWork[i].image;
-        } else {
-            console.warn(`No file or existing image found for index ${i}`);
-        }
-    
-        hWork.title = hWork.title || about.howWeWork[i]?.title;
-        hWork.desc = hWork.desc || about.howWeWork[i]?.desc;
-    
-        // Check if title or description differs from existing
-        if (
-            hWork.title !== about.howWeWork[i]?.title ||
-            hWork.desc !== about.howWeWork[i]?.desc
-        ) {
-            updatedIndices.push(i); // Mark this index as updated
-        }
-    
-        console.log(`hWork at index ${i}:`, hWork);
-    }
-    
-    // Update only modified elements in about.howWeWork
-    updatedIndices.forEach((index) => {
-        about.howWeWork[index] = howWeWorkArr[index];
-    });
-    
-    // If howWeWorkArr has more elements than about.howWeWork, append them
-    if (howWeWorkArr.length > about.howWeWork.length) {
-        about.howWeWork.push(...howWeWorkArr.slice(about.howWeWork.length));
-    }
-    
-    
+    //         const { secure_url, public_id } = await cloudinary.uploader.upload(file.path, {
+    //             folder: `${process.env.PROJECT_FOLDER}/howWeWork/${customId}`
+    //         });
+
+    //         hWork.image = {
+    //             secure_url: secure_url,
+    //             public_id: public_id,
+    //             customId: customId,
+    //             alt: howWeWorkAlt || about.howWeWork[i]?.image?.alt || "default-alt"
+    //         };
+
+    //         uploadedPublicIds.push(public_id);
+    //         uploadedFolders.push(`${process.env.PROJECT_FOLDER}/howWeWork/${customId}`);
+    //         updatedIndices.push(i); // Mark this index as updated
+    //     } else if (about.howWeWork[i]) {
+    //         hWork.image = about.howWeWork[i].image;
+    //     } else {
+    //         console.warn(`No file or existing image found for index ${i}`);
+    //     }
+
+    //     hWork.title = hWork.title || about.howWeWork[i]?.title;
+    //     hWork.desc = hWork.desc || about.howWeWork[i]?.desc;
+
+    //     // Check if title or description differs from existing
+    //     if (
+    //         hWork.title !== about.howWeWork[i]?.title ||
+    //         hWork.desc !== about.howWeWork[i]?.desc
+    //     ) {
+    //         updatedIndices.push(i); // Mark this index as updated
+    //     }
+
+    //     console.log(`hWork at index ${i}:`, hWork);
+    // }
+
+    // // Update only modified elements in about.howWeWork
+    // updatedIndices.forEach((index) => {
+    //     about.howWeWork[index] = howWeWorkArr[index];
+    // });
+
+    // // If howWeWorkArr has more elements than about.howWeWork, append them
+    // if (howWeWorkArr.length > about.howWeWork.length) {
+    //     about.howWeWork.push(...howWeWorkArr.slice(about.howWeWork.length));
+    // }
+
+
     const updatedAbout = await about.save()
     if (!updatedAbout) {
         if (uploadedPublicIds.length > 0) {
@@ -776,10 +570,6 @@ export const editAboutData = async (req, res, next) => {
     clientRedis.del('aboutWebsite');
     res.status(200).json({ message: 'Done', updatedAbout })
 }
-
-
-// Function to handle image processing
-
 
 export const deleteAbout = async (req, res, next) => {
     const deletedAbout = await aboutModel.findOneAndDelete()
@@ -821,7 +611,6 @@ export const deleteAbout = async (req, res, next) => {
 
 }
 
-
 export const getAbout = async (req, res, next) => {
     const about = await getOrSetCache('aboutDashBoard', async () => {
         const about = await aboutModel.findOne()
@@ -845,3 +634,146 @@ export const getWhyUsData = async (req, res, next) => {
     })
     return res.status(200).json({ message: 'Done', ...whyUsData })
 }
+
+export const addHowWeWork = async (req, res, next) => {
+    const { title, desc, altImage } = req.body
+    const requiredInputs = [
+        'title',
+        'desc',
+        'altImage'
+    ];
+    requiredInputs.forEach(input => {
+        if (!req.body[`${input}`]) {
+            return next(new Error(`Missing required field: ${input}`, { cause: 400 }));
+        }
+    });
+    if (!req.file) {
+        return next(new Error('Please upload how we work image', { cause: 400 }))
+    }
+    const fileName = getFileNameWithoutExtension(req.file.originalname);
+    const customId = `${fileName}_${nanoId()}`;
+    const { secure_url, public_id } = await cloudinary.uploader.upload(req.file.path,
+        { folder: `${process.env.PROJECT_FOLDER}/howWeWork/${customId}` }
+    )
+    let uploadedPublicId = public_id;
+    let uploadedFolder = `${process.env.PROJECT_FOLDER}/howWeWork/${customId}`;
+    const imageData = { secure_url, public_id, alt: altImage, customId }
+    const updatedAbout = await aboutModel.findOneAndUpdate(
+        {},
+        { $push: { howWeWork: { title, desc, image: imageData } } },
+        { new: true }
+    );
+    if (!updatedAbout) {
+        await cloudinary.uploader.destroy(uploadedPublicId);
+        await cloudinary.api.delete_folder(uploadedFolder);
+
+        return next(new Error('Failed to add how we work data. Please try again later', { cause: 400 }))
+    }
+    clientRedis.del('homeData');
+    clientRedis.del('aboutDashBoard');
+    clientRedis.del('aboutWebsite');
+    res.status(200).json({ message: 'Done', updatedAbout })
+}
+
+export const editHowWeWork = async (req, res, next) => {
+    const { howWeWorkId } = req.params;
+    const { title, desc, altImage } = req.body;
+
+    let howWeWork_Image = null;
+
+    // Find the document
+    const aboutDocument = await aboutModel.findOne({ "howWeWork._id": howWeWorkId });
+    if (!aboutDocument) {
+        return next(new Error('HowWeWork element not found.', { cause: 404 }));
+    }
+
+    // Find the target element in the array
+    const targetElement = aboutDocument.howWeWork.find(item => item._id.toString() === howWeWorkId);
+    if (!targetElement) {
+        return next(new Error('HowWeWork element not found.', { cause: 404 }));
+    }
+    console.log("1", targetElement);
+
+    // Update image if a new file is provided
+    if (req.file) {
+        const imageName = getFileNameWithoutExtension(req.file.originalname);
+        const customId = `${imageName}_${nanoId()}`;
+
+        // Delete the old image from Cloudinary
+        await cloudinary.uploader.destroy(targetElement.image.public_id);
+
+        // Upload the new image
+        const { secure_url, public_id } = await cloudinary.uploader.upload(req.file.path, {
+            folder: `${process.env.PROJECT_FOLDER}/howWeWork/${customId}`
+        });
+
+        howWeWork_Image = {
+            secure_url,
+            public_id,
+            customId,
+            alt: altImage || targetElement.image.alt
+
+        };
+
+        targetElement.image = howWeWork_Image; // Update the image in the target element
+    }
+
+    // Update other fields
+    if (title) targetElement.title = title;
+    if (desc) targetElement.desc = desc;
+    console.log("2", targetElement);
+
+    // Save the updated document
+    const updatedAbout = await aboutDocument.save();
+
+    // Clear Redis cache
+    clientRedis.del('homeData');
+    clientRedis.del('aboutDashBoard');
+    clientRedis.del('aboutWebsite');
+    if (!updatedAbout) {
+        if (howWeWork_Image) {
+            await cloudinary.uploader.destroy(howWeWork_Image.public_id);
+            await cloudinary.api.delete_folder(howWeWork_Image.customId);
+        }
+        return next(new Error('Failed to edit how we work data. Please try again later', { cause: 400 }))
+    }
+    res.status(200).json({ message: 'Done', updatedAbout: aboutDocument });
+};
+
+export const deleteHowWeWork = async (req, res, next) => {
+    const { howWeWorkId } = req.params;
+
+    // Find the parent document that contains the howWeWork element
+    const aboutDocument = await aboutModel.findOne({ "howWeWork._id": howWeWorkId });
+    if (!aboutDocument) {
+        return next(new Error('HowWeWork element not found.', { cause: 404 }));
+    }
+
+    // Locate the target element for cleanup (e.g., image removal)
+    const targetElement = aboutDocument.howWeWork.find(item => item._id.toString() === howWeWorkId);
+    if (!targetElement) {
+        return next(new Error('HowWeWork element not found.', { cause: 404 }));
+    }
+
+    // Remove associated image from Cloudinary
+    await cloudinary.uploader.destroy(targetElement.image.public_id);
+    await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/howWeWork/${targetElement.image.customId}`);
+
+    // Remove the howWeWork element
+    const updatedAbout = await aboutModel.findOneAndUpdate(
+        { "howWeWork._id": howWeWorkId },
+        { $pull: { howWeWork: { _id: howWeWorkId } } },
+        { new: true }
+    );
+
+    if (!updatedAbout) {
+        return next(new Error('Failed to delete HowWeWork element. Please try again.', { cause: 400 }));
+    }
+
+    // Clear Redis cache
+    clientRedis.del('homeData');
+    clientRedis.del('aboutDashBoard');
+    clientRedis.del('aboutWebsite');
+
+    res.status(200).json({ message: 'Done', updatedAbout });
+};

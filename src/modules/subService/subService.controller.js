@@ -84,7 +84,12 @@ export const getSubServices = async (req, res, next) => {
     const { notActive } = req.query
     if (!notActive || notActive === 'false') {
         const subServices = await getOrSetCache ('subServicesDashBoard:active' , async()=>{
-            const subServices = await subServiceModel.find({ active: true })
+            const subServices = await subServiceModel.find({ active: true }).populate([
+                {
+                    path: 'serviceId',
+                    select:'name'
+                },
+            ])
             const data = {subServices}
             return data
         })
@@ -93,7 +98,12 @@ export const getSubServices = async (req, res, next) => {
     else {
         if (notActive == 'true') {
             const subServices = await getOrSetCache ('subServicesDashBoard:all', async ()=>{
-                const subServices = await subServiceModel.find()
+                const subServices = await subServiceModel.find().populate([
+                    {
+                        path: 'serviceId',
+                        select:'name'
+                    },
+                ])
                 const data = {subServices}
                 return subServices
             })
