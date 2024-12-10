@@ -345,11 +345,11 @@ export const getProjects = async (req, res, next) => {
             },
             {
                 path: 'categoryId',
-                select: 'name brief active'
+                select: 'name active'
             },
             {
                 path: 'clientId',
-                select: 'companyName companyLink logo.secure_url logo.alt active'
+                select: 'companyName active'
             }
         ])
         const data = {projects}
