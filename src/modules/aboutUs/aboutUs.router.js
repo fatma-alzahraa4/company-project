@@ -5,10 +5,13 @@ import { convertToWebP, multerCloudFunction } from './../../services/multerCloud
 import { allowedExtensions } from "../../utils/allowedEtensions.js";
 import { validationCoreFunction } from "../../middleWares/validation.js";
 import * as aboutValidators from './aboutUs.validation.js'
+import { isAuth } from "../../middleWares/auth.js";
+import { aboutRoles } from "./about.roles.js";
 const router = Router()
 
 
 router.post('/add',
+    isAuth(aboutRoles.ALL_APIS),
     multerCloudFunction(allowedExtensions.Image).fields([
         { name: 'Image1', maxCount: 1 },
         { name: 'Image2', maxCount: 1 },
@@ -32,6 +35,7 @@ router.post('/add',
 
 
 router.put('/edit',
+    isAuth(aboutRoles.ALL_APIS),
     multerCloudFunction(allowedExtensions.Image).fields([
         { name: 'Image1', maxCount: 1 },
         { name: 'Image2', maxCount: 1 },
@@ -49,25 +53,29 @@ router.put('/edit',
     convertToWebP,
     validationCoreFunction(aboutValidators.editAboutSchema),
     asyncHandler(aboutController.editAboutData),
-    aboutController.editAboutData)
+)
 
 
 router.delete('/delete',
+    isAuth(aboutRoles.ALL_APIS),
     // validationCoreFunction(aboutValidators.deleteAboutSchema),
     asyncHandler(aboutController.deleteAbout),
-    aboutController.deleteAbout)
+)
 
 
 router.get('/get',
+    isAuth(aboutRoles.ALL_APIS),
     asyncHandler(aboutController.getAbout),
-    aboutController.getAbout)
+)
 
 router.get('/getWhyUs',
+    isAuth(aboutRoles.ALL_APIS),
     asyncHandler(aboutController.getWhyUsData),
-    aboutController.getWhyUsData)
+)
 
 //how we work
 router.post('/addHowWeWork',
+    isAuth(aboutRoles.ALL_APIS),
     multerCloudFunction(allowedExtensions.Image).single('image'),
     convertToWebP,
     // validationCoreFunction(aboutValidators.addMainServiceSchema),
@@ -75,6 +83,7 @@ router.post('/addHowWeWork',
 )
 
 router.put('/editHowWeWork/:howWeWorkId',
+    isAuth(aboutRoles.ALL_APIS),
     multerCloudFunction(allowedExtensions.Image).single('image'),
     convertToWebP,
     // validationCoreFunction(aboutValidators.addMainServiceSchema),
@@ -82,6 +91,7 @@ router.put('/editHowWeWork/:howWeWorkId',
 )
 
 router.delete('/deleteHowWeWork/:howWeWorkId',
+    isAuth(aboutRoles.ALL_APIS),
     // validationCoreFunction(aboutValidators.addMainServiceSchema),
     asyncHandler(aboutController.deleteHowWeWork),
 )

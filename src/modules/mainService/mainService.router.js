@@ -5,30 +5,36 @@ import { allowedExtensions } from "../../utils/allowedEtensions.js"
 import { asyncHandler } from "../../utils/errorHandeling.js"
 import * as mainServiceValidators from './mainService.validation.js'
 import { validationCoreFunction } from "../../middleWares/validation.js"
+import { isAuth } from "../../middleWares/auth.js"
+import { mainServiceRoles } from "./mainService.roles.js"
 const router = Router()
 
 router.post('/add',
+    isAuth(mainServiceRoles.ALL_APIS),
     multerCloudFunction(allowedExtensions.Image).single('icon'),
     convertToWebP,
     validationCoreFunction(mainServiceValidators.addMainServiceSchema),
     asyncHandler(mainServiceController.addMainServiceData),
-    mainServiceController.addMainServiceData)
+)
 
 router.put('/edit/:mainServiceId',
+    isAuth(mainServiceRoles.ALL_APIS),
     multerCloudFunction(allowedExtensions.Image).single('icon'),
     convertToWebP,
     validationCoreFunction(mainServiceValidators.editMainServiceSchema),
     asyncHandler(mainServiceController.editMainService),
-    mainServiceController.editMainService)
+)
 
 router.patch('/delete/:mainServiceId',
+    isAuth(mainServiceRoles.ALL_APIS),
     validationCoreFunction(mainServiceValidators.deleteMainServiceSchema),
     asyncHandler(mainServiceController.deleteMainService),
-    mainServiceController.deleteMainService)
+)
 
 router.get('/get',
+    isAuth(mainServiceRoles.ALL_APIS),
     validationCoreFunction(mainServiceValidators.getMainServiceSchema),
     asyncHandler(mainServiceController.getMainServices),
-    mainServiceController.getMainServices)
+)
 
 export default router

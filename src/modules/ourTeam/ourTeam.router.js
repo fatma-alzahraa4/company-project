@@ -5,31 +5,37 @@ import { convertToWebP, multerCloudFunction } from './../../services/multerCloud
 import { allowedExtensions } from "../../utils/allowedEtensions.js";
 import * as teamValidators from './ourTeam.validation.js'
 import { validationCoreFunction } from "../../middleWares/validation.js";
+import { isAuth } from "../../middleWares/auth.js";
+import { teamRoles } from "./ourTeam.roles.js";
 const router = Router()
 
 router.post('/add',
+    isAuth(teamRoles.ALL_APIS),
     multerCloudFunction(allowedExtensions.Image).single('image'),
     convertToWebP,
     validationCoreFunction(teamValidators.addTeamSchema),
     asyncHandler(teamController.addTeamMember),
-    teamController.addTeamMember)
+)
 
 router.put('/edit/:memberId',
+    isAuth(teamRoles.ALL_APIS),
     multerCloudFunction(allowedExtensions.Image).single('image'),
     convertToWebP,
     validationCoreFunction(teamValidators.editTeamSchema),
     asyncHandler(teamController.editTeamMember),
-    teamController.editTeamMember)
+)
 
 router.patch('/delete/:memberId',
+    isAuth(teamRoles.ALL_APIS),
     validationCoreFunction(teamValidators.deleteTeamSchema),
     asyncHandler(teamController.deleteTeamMember),
-    teamController.deleteTeamMember)
+)
 
 router.get('/get',
+    isAuth(teamRoles.ALL_APIS),
     validationCoreFunction(teamValidators.getTeamSchema),
     asyncHandler(teamController.getTeam),
-    teamController.getTeam)
+)
 
 
 export default router

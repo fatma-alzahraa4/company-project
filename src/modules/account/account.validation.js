@@ -130,11 +130,8 @@ export const addAccountSchema = {
 };
 
 export const deleteAccountSchema = {
-    body: joi.object({
-        email: generalFields.email.required().messages({
-            'string.empty': 'Email is required',
-            'string.email': 'Invalid email format',
-        })
+    params: joi.object({
+        userId: generalFields._id.required()
     }).required()
 };
 
@@ -179,6 +176,17 @@ export const updateProfileSchema ={
         // }).messages({
         //     'object.base': '"altImage" must be an object',
         // }),
+    }).required().options({presence:"optional"})
+
+}
+
+export const changeUserPassSchema ={
+    params: joi.object({
+        userId:generalFields._id.required(),
+    }).required(),
+    body:joi.object({
+        newPassword:generalFields.password,
+        oldPassword:generalFields.password
     }).required().options({presence:"optional"})
 
 }

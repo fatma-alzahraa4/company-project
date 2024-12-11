@@ -5,9 +5,12 @@ import { convertToWebP, multerCloudFunction } from '../../services/multerCloudin
 import { allowedExtensions } from "../../utils/allowedEtensions.js";
 import * as clientValidators from './client.validation.js'
 import { validationCoreFunction } from "../../middleWares/validation.js";
+import { isAuth } from "../../middleWares/auth.js";
+import { clientRoles } from "./client.roles.js";
 const router = Router()
 
 router.post('/add',
+    isAuth(clientRoles.ALL_APIS),
     multerCloudFunction(allowedExtensions.Image).single('logo'),
     convertToWebP,
     validationCoreFunction(clientValidators.addClientSchema),
@@ -16,6 +19,7 @@ router.post('/add',
 
 
 router.put('/edit/:clientId',
+    isAuth(clientRoles.ALL_APIS),
     multerCloudFunction(allowedExtensions.Image).single('logo'),
     convertToWebP,
     validationCoreFunction(clientValidators.editClientSchema),
@@ -23,11 +27,13 @@ router.put('/edit/:clientId',
 )
 
 router.patch('/delete/:clientId',
+    isAuth(clientRoles.ALL_APIS),
     validationCoreFunction(clientValidators.deleteClientSchema),
     asyncHandler(clientController.deleteClient),
 )
 
 router.get('/get',
+    isAuth(clientRoles.ALL_APIS),
     validationCoreFunction(clientValidators.getClientSchema),
     asyncHandler(clientController.getClients),
 )

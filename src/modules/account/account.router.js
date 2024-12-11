@@ -85,14 +85,16 @@ router.get('/getProfile',
     isAuth(accountApisRoles.GET_PROFILE),
     asyncHandler(adminAuthController.getProfile)
 )
+
 router.get('/getAllDashboardUsers',
     isAuth(accountApisRoles.GET_ALL_USERS),
     asyncHandler(adminAuthController.getAllDashboardUsers)
 )
-// router.delete('/deleteUser/:userId',
-//     isAuth(accountApisRoles.DELETE_USER),
-//     validationCoreFunction(adminAuthValidators.deleteUserSchema),
-//     asyncHandler(adminAuthController.deleteUser),
-// )
+
+router.patch('/changeUserPassword/:userId',
+    isAuth(accountApisRoles.CHANGE_PASSWORD),
+    validationCoreFunction(adminAuthValidators.changeUserPassSchema),
+    asyncHandler(adminAuthController.changeUserPassword),
+)
 
 export default router

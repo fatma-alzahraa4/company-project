@@ -11,7 +11,7 @@ const router = Router()
 const combinedExtensions = [...allowedExtensions.Image,...allowedExtensions.Videos]
 
 router.post('/add',
-    // isAuth(projectApisRoles.ADD_PROJECT),
+    isAuth(projectApisRoles.ADD_PROJECT),
     multerCloudFunction(allowedExtensions.Image).single('mainImage'),
     convertToWebP,
     validationCoreFunction(projectValidators.addProjectSchema),
@@ -19,7 +19,7 @@ router.post('/add',
 )
 
 router.put('/edit/:projectId', 
-    // isAuth(projectApisRoles.EDIT_PROJECT),
+    isAuth(projectApisRoles.EDIT_PROJECT),
     multerCloudFunction(allowedExtensions.Image).single('mainImage'),
     convertToWebP,
     validationCoreFunction(projectValidators.editProjectSchema),
@@ -27,7 +27,7 @@ router.put('/edit/:projectId',
 )
 
 router.post('/addImages',
-    // isAuth(projectApisRoles.ADD_PROJECT_IMAGES),
+    isAuth(projectApisRoles.ADD_PROJECT_IMAGES),
     multerCloudFunction(allowedExtensions.Image).fields([
         { name: 'images', maxCount: 4 },
     ]),
@@ -37,13 +37,13 @@ router.post('/addImages',
 )
 
 router.delete('/deleteImage/:imageId',
-    // isAuth(projectApisRoles.DELETE_PROJECT_IMAGES),
+    isAuth(projectApisRoles.DELETE_PROJECT_IMAGES),
     validationCoreFunction(projectValidators.deleteProjectImageSchema),
     asyncHandler(projectControllers.deleteProjectImage)
 )
 
 // router.post('/addVideo',
-//     // isAuth(projectApisRoles.ADD_PROJECT_IMAGES),
+    // isAuth(projectApisRoles.ADD_PROJECT_IMAGES),
 //     multerCloudFunction(allowedExtensions.Videos).single('video'),
 //     convertToWebP,
 //     validationCoreFunction(projectValidators.addProjectVideosSchema),
@@ -51,25 +51,24 @@ router.delete('/deleteImage/:imageId',
 // )
 
 // router.delete('/deleteVideo/:videoId',
-//     // isAuth(projectApisRoles.DELETE_PROJECT_IMAGES),
+    // isAuth(projectApisRoles.DELETE_PROJECT_IMAGES),
 //     validationCoreFunction(projectValidators.deleteProjectVideoSchema),
 //     asyncHandler(projectControllers.deleteProjectVideo)
 // )
 
 router.delete('/delete/:projectId',
-    // isAuth(projectApisRoles.DELETE_PROJECT),
+    isAuth(projectApisRoles.DELETE_PROJECT),
     validationCoreFunction(projectValidators.deleteProjectSchema),
     asyncHandler(projectControllers.deleteProject)
 )
 
 router.get('/getProjects',
-    // isAuth(projectApisRoles.GET_PROJECTS),
+    isAuth(projectApisRoles.GET_PROJECTS),
     asyncHandler(projectControllers.getProjects)
 )
 
-
 router.get('/getProject/:projectId',
-    // isAuth(projectApisRoles.GET_PROJECTS),
+    isAuth(projectApisRoles.GET_PROJECTS),
     validationCoreFunction(projectValidators.getProjectSchema),
     asyncHandler(projectControllers.getProject)
 )

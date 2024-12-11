@@ -577,3 +577,50 @@ export const changeRole = async (req,res,next) => {
     }
     res.status(200).json({ message: 'Done', account:response})
 }
+
+//========================================== change user password =========================================
+
+export const changeUserPassword = async (req, res, next) => {
+    const { userId } = req.params
+    const { oldPassword, newPassword } = req.body
+    const requiredInputs = [
+        'oldPassword',
+        'newPassword'
+    ];
+    requiredInputs.forEach(input => {
+        if (!req.body[`${input}`]) {
+            return next(new Error(`Missing required field: ${input}`, { cause: 400 }));
+        }
+    });
+    const user = await accountModel.findOne({
+        $and:
+            [
+                { _id:userId },
+                { $or: [{ role: 'editor' }, { role: 'customerService' }] },
+            ]
+    })
+    if (!user) {
+        return next(new Error('this action allowed only for editor and customer servicse users', { cause: 401 }))
+    }
+    let oldPassMatch = pkg.compareSync(oldPassword, user?.password)
+    if (!oldPassMatch) {
+        return next(new Error('wrong old password', { cause: 400 }))
+    }
+    const hashedPassword = pkg.hashSync(newPassword, +process.env.SALT_ROUNDS)
+
+    user.password = hashedPassword
+    user.changePasswordTime = Date.now();
+    const resetedUser = await user.save()
+    const response = {
+        _id: resetedUser._id,
+        firstName: resetedUser.firstName,
+        lastName: resetedUser.lastName,
+        email: resetedUser.email,
+        phoneNumber: resetedUser.phoneNumber,
+        profileImage: {
+            secure_url: resetedUser.profileImage.secure_url,
+        },
+        token: resetedUser.token,
+    }
+    res.status(200).json({ message: 'Done', user: response })
+}
