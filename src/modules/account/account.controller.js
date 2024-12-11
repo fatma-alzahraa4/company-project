@@ -161,6 +161,10 @@ export const signIn = async (req, res, next) => {
         email: account.email,
         phoneNumber: account.phoneNumber,
         role:account.role,
+        profileImage: {
+            secure_url: account.profileImage.secure_url,
+            // alt: updatedUser.profileImage.alt,
+        },
         token: account.token,
     }
     res.status(200).json({ message: 'Done', account: response })
