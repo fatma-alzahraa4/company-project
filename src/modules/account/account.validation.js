@@ -125,7 +125,7 @@ export const addAccountSchema = {
         password: generalFields.password.required().messages({
             'string.pattern.base': 'Password must be at least 8 characters long, contain one uppercase letter, one lowercase letter, and one digit',
         }),
-        role:joi.string().min(5).max(15).valid('editor','customerService').required()
+        role:joi.string().min(5).max(15).valid('editor','customerService', 'admin').required()
     }).required()
 };
 
@@ -141,7 +141,7 @@ export const changeRoleSchema = {
             'string.empty': 'Email is required',
             'string.email': 'Invalid email format',
         }),
-        role:joi.string().min(5).max(15).valid('editor','customerService').required()
+        role:joi.string().min(5).max(15).valid('editor','customerService', 'admin').required()
     }).required()
 };
 
