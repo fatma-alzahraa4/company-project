@@ -43,6 +43,8 @@ export const addJobOffer = async (req, res, next) => {
         return next(new Error('Failed to create job offer', { cause: 400 }));
     }
     clientRedis.del('jobOffers');
+    clientRedis.del('jobsWebsite');
+
     res.status(200).json({ message: 'Done', jobOffer })
 }
 
@@ -74,6 +76,8 @@ export const editJobOffer = async (req, res, next) => {
         return next(new Error('Failed to update job offer', { cause: 400 }));
     }
     clientRedis.del('jobOffers');
+    clientRedis.del('jobsWebsite');
+
     res.status(200).json({ message: 'Done', jobOffer: updatedJobOffer })
 }
 
@@ -103,6 +107,8 @@ export const deleteJobOffer = async (req, res, next) => {
     }
     clientRedis.del('jobOffers');
     clientRedis.del(`jobApplicants_${jobId}`);
+    clientRedis.del('jobsWebsite');
+
     res.status(200).json({ message: 'Done' })
 }
 
@@ -188,6 +194,8 @@ export const applyToJob = async (req, res, next) => {
     }
     const jobApplicant = await jobApplicantModel.create(jobApplicantObj)
     clientRedis.del(`jobApplicants_${jobId}`);
+    clientRedis.del('jobsWebsite');
+
     res.status(200).json({ message: 'Done', jobApplicant })
 }
 
@@ -207,5 +215,7 @@ export const deleteJobApplicant = async (req, res, next) => {
     if (!deletedJobApplicant) {
         return next(new Error('Failed to delete the job applicant. Please verify the ID and try again.', { cause: 400 }))
     }
+    clientRedis.del('jobsWebsite');
+
     res.status(200).json({ message: 'Done' })
 }

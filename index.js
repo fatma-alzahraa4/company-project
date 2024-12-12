@@ -54,6 +54,8 @@ app.use('/project', routers.projectRouter);
 app.use('/webAPIs/home', webRouters.homeRouter)
 app.use('/webAPIs/project', webRouters.projectRouter)
 app.use('/webAPIs/about', webRouters.aboutRouter)
+app.use('/webAPIs/jobOffer', webRouters.jobRouter)
+
 
 app.all('*', (req, res, next) => {
   res.status(404).json({ message: '404 not found URL' })
