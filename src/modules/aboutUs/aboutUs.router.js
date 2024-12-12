@@ -96,4 +96,9 @@ router.delete('/deleteHowWeWork/:howWeWorkId',
     asyncHandler(aboutController.deleteHowWeWork),
 )
 
+router.get('/getHowWeWork',
+    isAuth(aboutRoles.ALL_APIS),
+    asyncHandler(aboutController.getHowWeWork),
+)
+
 export default router

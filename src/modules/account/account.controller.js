@@ -426,7 +426,7 @@ export const addAccount = async (req, res, next) => {
     if (!firstName || !lastName || !email || !phoneNumber || !password || !role) {
         return next(new Error('all fields are required', { cause: 400 }))
     }
-    if (role != 'customerService' && role != 'editor') {
+    if (role != 'customerService' && role != 'editor' && role != 'admin') {
         return next(new Error('please enter valid role', { cause: 400 }))
     }
     if (isTempEmail(email)) {
@@ -485,7 +485,7 @@ export const addAccount = async (req, res, next) => {
 
 export const getAllDashboardUsers = async (req,res,next) => {
     const users = await accountModel.find(                    
-        { $or: [{ role: 'editor' }, { role: 'customerService' }] },
+        { $or: [{ role: 'editor' }, { role: 'customerService' }, { role: 'admin' }] },
     ).select('firstName lastName email phoneNumber profileImage.secure_url role createdAt')
     res.status(200).json({ message: 'Done', dashboardUsers: users })
 
@@ -532,7 +532,7 @@ export const deleteAccount = async (req, res, next) => {
             $and:
                 [
                     { _id:userId },
-                    { $or: [{ role: 'editor' }, { role: 'customerService' }] },
+                    { $or: [{ role: 'editor' }, { role: 'customerService' }, { role: 'admin' }] },
                 ]
         }
     )
@@ -558,7 +558,7 @@ export const changeRole = async (req,res,next) => {
             $and:
                 [
                     { email },
-                    { $or: [{ role:'editor' }, { role:'customerService' }] },
+                    { $or: [{ role:'editor' }, { role:'customerService' }, { role: 'admin' }] },
                 ]
         },
         {role},

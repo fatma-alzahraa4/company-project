@@ -17,7 +17,6 @@ export const subServiceSchema = new Schema({
         required:true,
         default:true
     },
-   
 }, 
 { timestamps: true })
 

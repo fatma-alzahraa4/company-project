@@ -635,6 +635,19 @@ export const getWhyUsData = async (req, res, next) => {
     return res.status(200).json({ message: 'Done', ...whyUsData })
 }
 
+export const getHowWeWork = async (req, res, next) => {
+        const howWeWorkData = await getOrSetCache('howWeWorkDashBoard', async () => {
+            const aboutData = await aboutModel.findOne().select('-_id howWeWork');
+            if (!aboutData) {
+                throw new Error('Failed to get How We Work data');
+            }
+            return aboutData.howWeWork;
+        });
+
+        return res.status(200).json({ message: 'Done', howWeWork: howWeWorkData });
+};
+
+
 export const addHowWeWork = async (req, res, next) => {
     const { title, desc, altImage } = req.body
     const requiredInputs = [
