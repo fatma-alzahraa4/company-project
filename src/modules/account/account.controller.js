@@ -52,7 +52,7 @@ export const adminSignUp = async (req, res, next) => {
         password: hashedPassword,
         isVerified: false,
         verificationCode: hashedVerificationCode,
-        role: 'admin'
+        role: 'superAdmin'
     }
     const admin = await accountModel.create(adminObj)
     // const isEmailSent = sendEmailService(
@@ -82,7 +82,7 @@ export const verifyEmail = async (req, res, next) => {
         {
             $and:
                 [
-                    { $or: [{ role: 'admin' }, { role: 'editor' }, { role: 'customerService' }] },
+                    { $or: [{ role: 'superAdmin' }, { role: 'admin' }, { role: 'editor' }, { role: 'customerService' }] },
                     { email: decoded?.email },
                     { isVerified: false }
                 ]
@@ -201,7 +201,13 @@ export const forgetPassword = async (req, res, next) => {
     if (!email) {
         return next(new Error('all fields are required', { cause: 400 }))
     }
-    const admin = await accountModel.findOne({ email, role: 'admin' })
+    const admin = await accountModel.findOne({
+        $and:
+            [
+                { $or: [{ role: 'superAdmin' }, { role: 'admin' }] },
+                { email },
+            ]
+    })
     if (!admin) {
         return next(new Error('invalid email', { cause: 400 }))
     }
@@ -256,8 +262,11 @@ export const resetPassword = async (req, res, next) => {
     }
     const decoded = verifyToken({ token: forgetToken, signature: process.env.RESET_TOKEN })
     const admin = await accountModel.findOne({
-        email: decoded?.email,
-        role: 'admin'
+        $and:
+            [
+                { $or: [{ role: 'superAdmin' }, { role: 'admin' }] },
+                { email: decoded?.email },
+            ]
     })
     if (!admin) {
         return next(new Error('Invalid email', { cause: 400 }))
@@ -293,7 +302,13 @@ export const changePassword = async (req, res, next) => {
     if (!oldPassword || !newPassword) {
         return next(new Error('all fields are required', { cause: 400 }))
     }
-    const admin = await accountModel.findOne({_id,role:'admin'})
+    const admin = await accountModel.findOne({
+        $and:
+            [
+                { $or: [{ role: 'superAdmin' }, { role: 'admin' }] },
+                { _id},
+            ]
+    })
     if (!admin) {
         return next(new Error('no admin', { cause: 401 }))
     }
@@ -550,7 +565,7 @@ export const changeRole = async (req,res,next) => {
     if(!email){
         return next(new Error('Email is required', { cause: 400 }))
     }
-    if (role != 'customerService' && role != 'editor') {
+    if (role != 'customerService' && role != 'editor' && role != 'admin') {
         return next(new Error('please enter valid role', { cause: 400 }))
     }
     const updatedAccount = await accountModel.findOneAndUpdate(
@@ -596,7 +611,7 @@ export const changeUserPassword = async (req, res, next) => {
         $and:
             [
                 { _id:userId },
-                { $or: [{ role: 'editor' }, { role: 'customerService' }] },
+                { $or: [{ role: 'editor' }, { role: 'customerService' }, { role: 'admin' }] },
             ]
     })
     if (!user) {

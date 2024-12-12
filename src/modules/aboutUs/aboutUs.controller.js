@@ -216,6 +216,8 @@ export const addAboutData = async (req, res, next) => {
     clientRedis.del('aboutDashBoard');
     clientRedis.del('whyUsDataDashBoard');
     clientRedis.del('aboutWebsite');
+    clientRedis.del('howWeWorkDashBoard');
+
 
     return res.status(200).json({ message: 'Done', newAbout });
 };
@@ -568,6 +570,7 @@ export const editAboutData = async (req, res, next) => {
     clientRedis.del('aboutDashBoard');
     clientRedis.del('whyUsDataDashBoard');
     clientRedis.del('aboutWebsite');
+
     res.status(200).json({ message: 'Done', updatedAbout })
 }
 
@@ -685,6 +688,8 @@ export const addHowWeWork = async (req, res, next) => {
     clientRedis.del('homeData');
     clientRedis.del('aboutDashBoard');
     clientRedis.del('aboutWebsite');
+    clientRedis.del('howWeWorkDashBoard');
+
     res.status(200).json({ message: 'Done', updatedAbout })
 }
 
@@ -743,6 +748,8 @@ export const editHowWeWork = async (req, res, next) => {
     clientRedis.del('homeData');
     clientRedis.del('aboutDashBoard');
     clientRedis.del('aboutWebsite');
+    clientRedis.del('howWeWorkDashBoard');
+
     if (!updatedAbout) {
         if (howWeWork_Image) {
             await cloudinary.uploader.destroy(howWeWork_Image.public_id);
@@ -787,6 +794,7 @@ export const deleteHowWeWork = async (req, res, next) => {
     clientRedis.del('homeData');
     clientRedis.del('aboutDashBoard');
     clientRedis.del('aboutWebsite');
+    clientRedis.del('howWeWorkDashBoard');
 
     res.status(200).json({ message: 'Done', updatedAbout });
 };

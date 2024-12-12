@@ -28,7 +28,7 @@ const accountSchema = new Schema(
         },
         role:{
             type:String,
-            enum:['admin','editor','customerService']
+            enum:['superAdmin','admin','editor','customerService']
 
         },
         profileImage: {
