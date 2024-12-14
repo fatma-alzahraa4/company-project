@@ -59,7 +59,7 @@ export const editAboutSchema ={
 export const addHowWeWorkSchema ={
     body:joi.object({
         title:joi.string().required(),
-        desc:joi.string(),
+        desc:joi.string().required(),
         altImage:joi.string().required()
     }).required()
 }
