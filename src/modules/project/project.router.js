@@ -27,7 +27,7 @@ router.put('/edit/:projectId',
 )
 
 router.post('/addImages',
-    isAuth(projectApisRoles.ADD_PROJECT_IMAGES),
+    isAuth(projectApisRoles.ADD_PROJECT),
     multerCloudFunction(allowedExtensions.Image).fields([
         { name: 'images', maxCount: 4 },
     ]),
@@ -37,7 +37,7 @@ router.post('/addImages',
 )
 
 router.delete('/deleteImage/:imageId',
-    isAuth(projectApisRoles.DELETE_PROJECT_IMAGES),
+    isAuth(projectApisRoles.DELETE_PROJECT),
     validationCoreFunction(projectValidators.deleteProjectImageSchema),
     asyncHandler(projectControllers.deleteProjectImage)
 )
