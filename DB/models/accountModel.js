@@ -40,13 +40,6 @@ const accountSchema = new Schema(
             },
             customId: String,
         },
-        // ipAddresses:[
-        //     {
-        //         type:String,
-        //         required:true,
-        //         unique:true
-        //     }
-        // ],
         isVerified:{
             type:Boolean,
             required:true,

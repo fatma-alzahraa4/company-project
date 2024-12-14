@@ -163,12 +163,10 @@ export const aboutSchema = new Schema({
     },
     metaDesc: {
         type: String,
-        // maxlength: 200,
         required: true,
     },
     metaKeyWords: {
         type: String,
-        // maxlength: 250,
     },
     howWeWorkMainTitle: {
         type: String,

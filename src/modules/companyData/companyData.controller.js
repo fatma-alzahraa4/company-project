@@ -32,8 +32,6 @@ export const addCompanyData = async (req, res, next) => {
     if (!companyName || !phoneNum || !email) {
         return next(new Error('Please enter all required data', { cause: 400 }))
     }
-    // await companyModel.deleteMany()
-
     if (!req.files['logo']) {
         return next(new Error('Please upload company logo', { cause: 400 }));
     }

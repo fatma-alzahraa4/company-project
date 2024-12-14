@@ -238,8 +238,6 @@ export const editAboutData = async (req, res, next) => {
         whyUsImage1Alt,
         whyUsImage2Alt,
         howWeWorkMainTitle,
-        // howWeWorkArr,
-        // howWeWorkAlt,
         metaDesc,
         metaKeyWords,
         //new
@@ -458,102 +456,6 @@ export const editAboutData = async (req, res, next) => {
     ourValue_Image.alt = ourValueAlt || about.ourValueImage.alt
     about.ourValueImage = ourValue_Image;
 
-    // console.log('abouthowWeWorkArr', about.howWeWork);
-
-    // //     if (howWeWorkArr) {
-    // //         for (let i = 0; i < howWeWorkArr.length; i++) {
-    // //             let hWork = howWeWorkArr[i];
-    // // console.log('hwork',hWork);
-
-    // //             if (req.files && req.files[`howWeWorkImage${i + 1}`]) {
-    // //                 const file = req.files[`howWeWorkImage${i + 1}`][0];
-    // //                 const imageName = getFileNameWithoutExtension(file.originalname);
-    // //                 const customId = `${imageName}_${nanoId()}`;
-
-    // //                 const { secure_url, public_id } = await cloudinary.uploader.upload(file.path, {
-    // //                     folder: `${process.env.PROJECT_FOLDER}/howWeWork/${customId}`
-    // //                 });
-
-    // //                 hWork.image = {
-    // //                     secure_url: secure_url,
-    // //                     public_id: public_id,
-    // //                     customId: customId,
-    // //                     alt: howWeWorkAlt
-    // //                 };
-
-    // //                 uploadedPublicIds.push(public_id);
-    // //                 uploadedFolders.push(`${process.env.PROJECT_FOLDER}/howWeWork/${customId}`);
-
-    // //             } else if (about.howWeWork[i]) {
-    // //                 hWork.image = about.howWeWork[i].image;
-    // //             }
-    // //             hWork.title = hWork.title || about.howWeWork[i].title;
-    // //             hWork.desc = hWork.desc || about.howWeWork[i].desc;
-    // //         }
-    // //         console.log('howWeWorkArr',howWeWorkArr);
-
-    // //         about.howWeWork = howWeWorkArr;
-    // //     }
-
-    // const updatedIndices = []; // Array to track modified indices
-
-    // for (let i = 0; i < howWeWorkArr.length; i++) {
-    //     let hWork = howWeWorkArr[i];
-
-    //     if (!hWork) {
-    //         console.error(`hWork is undefined at index ${i}`);
-    //         continue; // Skip this iteration
-    //     }
-
-    //     if (req.files && req.files[`howWeWorkImage${i + 1}`]) {
-    //         const file = req.files[`howWeWorkImage${i + 1}`][0];
-    //         const imageName = getFileNameWithoutExtension(file.originalname);
-    //         const customId = `${imageName}_${nanoId()}`;
-
-    //         const { secure_url, public_id } = await cloudinary.uploader.upload(file.path, {
-    //             folder: `${process.env.PROJECT_FOLDER}/howWeWork/${customId}`
-    //         });
-
-    //         hWork.image = {
-    //             secure_url: secure_url,
-    //             public_id: public_id,
-    //             customId: customId,
-    //             alt: howWeWorkAlt || about.howWeWork[i]?.image?.alt || "default-alt"
-    //         };
-
-    //         uploadedPublicIds.push(public_id);
-    //         uploadedFolders.push(`${process.env.PROJECT_FOLDER}/howWeWork/${customId}`);
-    //         updatedIndices.push(i); // Mark this index as updated
-    //     } else if (about.howWeWork[i]) {
-    //         hWork.image = about.howWeWork[i].image;
-    //     } else {
-    //         console.warn(`No file or existing image found for index ${i}`);
-    //     }
-
-    //     hWork.title = hWork.title || about.howWeWork[i]?.title;
-    //     hWork.desc = hWork.desc || about.howWeWork[i]?.desc;
-
-    //     // Check if title or description differs from existing
-    //     if (
-    //         hWork.title !== about.howWeWork[i]?.title ||
-    //         hWork.desc !== about.howWeWork[i]?.desc
-    //     ) {
-    //         updatedIndices.push(i); // Mark this index as updated
-    //     }
-
-    //     console.log(`hWork at index ${i}:`, hWork);
-    // }
-
-    // // Update only modified elements in about.howWeWork
-    // updatedIndices.forEach((index) => {
-    //     about.howWeWork[index] = howWeWorkArr[index];
-    // });
-
-    // // If howWeWorkArr has more elements than about.howWeWork, append them
-    // if (howWeWorkArr.length > about.howWeWork.length) {
-    //     about.howWeWork.push(...howWeWorkArr.slice(about.howWeWork.length));
-    // }
-
 
     const updatedAbout = await about.save()
     if (!updatedAbout) {
@@ -592,7 +494,6 @@ export const deleteAbout = async (req, res, next) => {
         return next(new Error('Error occurred while deleting resources from Cloudinary. Please try again later.', { cause: 400 }));
     }
 
-    // Attempt to delete associated folders from Cloudinary
     try {
         await Promise.all([
             cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/whyUs/${deletedAbout.whyUsImage1.customId}`),
@@ -605,7 +506,6 @@ export const deleteAbout = async (req, res, next) => {
     } catch (error) {
         return next(new Error('Error occurred while deleting folders from Cloudinary. Please try again later.', { cause: 400 }));
     }
-    //not use but for me
     clientRedis.del('homeData');
     clientRedis.del('aboutDashBoard');
     clientRedis.del('whyUsDataDashBoard');

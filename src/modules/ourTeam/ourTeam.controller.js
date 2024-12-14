@@ -115,8 +115,6 @@ export const deleteTeamMember = async (req, res, next) => {
     if (!deletedMember) {
         return next(new Error('Failed to delete team member. Member may not exist or is already inactive.', { cause: 404 }));
     }
-    // await cloudinary.uploader.destroy(deletedMember.image.public_id)
-    // await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/team/${deletedMember.image.customId}`)
     clientRedis.del('homeData');
     clientRedis.del('teamDashBoard');
     clientRedis.del('clientsDashBoard:active');

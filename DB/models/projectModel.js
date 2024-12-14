@@ -73,9 +73,4 @@ projectSchema.virtual('images',{
     foreignField:'projectId',
 });
 
-// projectSchema.virtual('videos',{
-//     ref:'projectvideo',
-//     localField:'_id',
-//     foreignField:'projectId',
-// })
 export const projectModel = model('project', projectSchema)

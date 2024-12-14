@@ -36,9 +36,6 @@ export const getJobs = async (req, res, next) => {
                     $sort: { createdAt: -1 },
                 },
             ]),
-            // jobOfferModel.find()
-            //     .select('jobTitle address employmentType experienceYears jobDetails')
-            //     .sort({ createdAt: -1 }),
             jobOfferModel.countDocuments(),
         ])
         const data = { jobs, jobsCount }

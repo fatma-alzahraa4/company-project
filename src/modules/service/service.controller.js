@@ -11,7 +11,6 @@ export const addService = async (req, res, next) => {
     const { name, brief, isHome, altIcon } = req.body
     const requiredInputs = [
         'name',
-        // 'brief',
         'altIcon'
     ];
     requiredInputs.forEach(input => {
@@ -63,13 +62,14 @@ export const editService = async (req, res, next) => {
     if (req.file) {
         const fileName = getFileNameWithoutExtension(req.file.originalname);
         const customId = `${fileName}_${nanoId()}`;
-        await cloudinary.uploader.destroy(service.icon.public_id)
-        const [deletedFolder, { secure_url, public_id }] = await Promise.all([
-            cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Service/${service.icon.customId}`),
-            cloudinary.uploader.upload(req.file.path,
-                { folder: `${process.env.PROJECT_FOLDER}/Service/${customId}` }
-            )
-        ]);
+        if(service.icon.public_id){
+            await cloudinary.uploader.destroy(service.icon.public_id)
+            await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Service/${service.icon.customId}`)
+        }
+        const{ secure_url, public_id } = await cloudinary.uploader.upload(req.file.path,
+            { folder: `${process.env.PROJECT_FOLDER}/Service/${customId}` }
+        )
+            
         uploadedPublicIds.push(public_id);
         uploadedFolders.push(`${process.env.PROJECT_FOLDER}/Service/${customId}`);
         service_icon = {
@@ -116,8 +116,8 @@ export const deleteService = async (req, res, next) => {
     if (!deletedService) {
         return next(new Error('Failed to delete service. service may not exist or is already inactive.', { cause: 404 }))
     }
-    await cloudinary.uploader.destroy(deletedService.icon.public_id)
-    await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Service/${deletedService.icon.customId}`)
+    // await cloudinary.uploader.destroy(deletedService.icon.public_id)
+    // await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Service/${deletedService.icon.customId}`)
 
     clientRedis.del('homeData');
     clientRedis.del('projectsWebsite');
@@ -158,118 +158,3 @@ export const getServices = async (req, res, next) => {
         }
     }
 }
-
-// export const addServiceData = async (req, res, next) => {
-//     const { name, brief, isHome } = req.body
-//     const requiredInputs = [
-//         'name',
-//     ];
-//     requiredInputs.forEach(input => {
-//         if (!req.body[`${input}`]) {
-//             return next(new Error(`Missing required field: ${input}`, { cause: 400 }));
-//         }
-//     });
-
-//     const subServiceObj = {
-//         name,
-//         brief,
-//         serviceId
-//     }
-//     const newSubService = await subServiceModel.create(subServiceObj)
-//     if (!newSubService) {
-//         return next(new Error('Failed to create sub-service. Please try again.', { cause: 400 }));
-//     }
-//     clientRedis.del('homeData');
-//     clientRedis.del('projectsWebsite');
-//     clientRedis.del('projectsDashBoard');
-//     clientRedis.del('servicesDashBoard:active');
-//     clientRedis.del('servicesDashBoard:all');
-//     clientRedis.del('servicesDashBoard:all');
-//     clientRedis.del('servicesDashBoard:active');
-//     clientRedis.del('subServicesDashBoard:all');
-//     clientRedis.del('subServicesDashBoard:active');
-//     res.status(200).json({ message: 'Done', newSubService })
-
-// }
-
-// export const editSubService = async (req, res, next) => {
-//     const { subserviceId } = req.params
-//     const { name, brief, serviceId } = req.body
-//     const subService = await subServiceModel.findById(subserviceId)
-//     if (!subService) {
-//         return next(new Error('Sub-service not found. Please verify the ID and try again.', { cause: 404 }));
-//     }
-//     subService.name = name || subService.name
-//     subService.brief = brief || subService.brief
-//     subService.serviceId = serviceId || subService.serviceId
-
-//     const updatedSubService = await subService.save()
-//     if (!updatedSubService) {
-//         return next(new Error('Failed to update the sub-service. Please try again later.', { cause: 400 }));
-//     }
-//     clientRedis.del('homeData');
-//     clientRedis.del('projectsWebsite');
-//     clientRedis.del('projectsDashBoard');
-//     clientRedis.del('servicesDashBoard:active');
-//     clientRedis.del('mainServicesDashBoard:all');
-//     clientRedis.del('servicesDashBoard:all');
-//     clientRedis.del('servicesDashBoard:active');
-//     clientRedis.del('subServicesDashBoard:all');
-//     clientRedis.del('subServicesDashBoard:active');
-//     res.status(200).json({ message: 'Done', updatedSubService })
-// }
-
-// export const deleteSubService = async (req, res, next) => {
-//     const { subserviceId } = req.params
-//     const deletedSubService = await subServiceModel.findOneAndUpdate({ _id: subserviceId, active: true }, { active: false }, { new: true })
-//     if (!deletedSubService) {
-//         return next(new Error('Failed to delete sub-service.Sub-service may not exist or is already inactive.', { cause: 400 }))
-//     }
-//     clientRedis.del('homeData');
-//     clientRedis.del('projectsWebsite');
-//     clientRedis.del('projectsDashBoard');
-//     clientRedis.del('mainServicesDashBoard:active');
-//     clientRedis.del('mainServicesDashBoard:all');
-//     clientRedis.del('servicesDashBoard:all');
-//     clientRedis.del('servicesDashBoard:active');
-//     clientRedis.del('subServicesDashBoard:all');
-//     clientRedis.del('subServicesDashBoard:active');
-//     return res.status(200).json({ message: 'Done', deletedSubService })
-
-// }
-
-// export const getSubServices = async (req, res, next) => {
-//     const { notActive } = req.query
-//     if (!notActive || notActive === 'false') {
-//         const subServices = await getOrSetCache ('subServicesDashBoard:active' , async()=>{
-//             const subServices = await subServiceModel.find({ active: true }).populate([
-//                 {
-//                     path: 'serviceId',
-//                     select:'name'
-//                 },
-//             ])
-//             const data = {subServices}
-//             return data
-//         })
-//         return res.status(200).json({ message: 'Done', ...subServices })
-//     }
-//     else {
-//         if (notActive == 'true') {
-//             const subServices = await getOrSetCache ('subServicesDashBoard:all', async ()=>{
-//                 const subServices = await subServiceModel.find().populate([
-//                     {
-//                         path: 'serviceId',
-//                         select:'name'
-//                     },
-//                 ])
-//                 const data = {subServices}
-//                 return subServices
-//             })
-//             return res.status(200).json({ message: 'Done', ...subServices })
-//         }
-//         else {
-//             return next(new Error('wrong query', { cause: 400 }))
-//         }
-//     }
-
-// }

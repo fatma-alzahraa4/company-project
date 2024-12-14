@@ -8,7 +8,4 @@ router.get('/getAbout',
     asyncHandler(aboutControllers.aboutData),
 )
 
-// router.get('/getHomeByRedis',
-//     asyncHandler(homeController.homeDataByRedis),
-// )
 export default router

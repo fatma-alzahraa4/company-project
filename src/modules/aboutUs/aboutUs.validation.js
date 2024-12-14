@@ -56,4 +56,27 @@ export const editAboutSchema ={
     }).required()
 }
 
+export const addHowWeWorkSchema ={
+    body:joi.object({
+        title:joi.string().required(),
+        desc:joi.string(),
+        altImage:joi.string().required()
+    }).required()
+}
 
+export const editHowWeWorkSchema ={
+    params:joi.object({
+        howWeWorkId:generalFields._id.required()
+    }).required(),
+    body:joi.object({
+        title:joi.string(),
+        desc:joi.string(),
+        altImage:joi.string()
+    }).required()
+}
+
+export const deleteHowWeWorkSchema ={
+    params:joi.object({
+        howWeWorkId:generalFields._id.required()
+    }).required(),
+}

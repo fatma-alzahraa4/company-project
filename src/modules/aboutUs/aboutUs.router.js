@@ -58,7 +58,6 @@ router.put('/edit',
 
 router.delete('/delete',
     isAuth(aboutRoles.ALL_APIS),
-    // validationCoreFunction(aboutValidators.deleteAboutSchema),
     asyncHandler(aboutController.deleteAbout),
 )
 
@@ -78,7 +77,7 @@ router.post('/addHowWeWork',
     isAuth(aboutRoles.ALL_APIS),
     multerCloudFunction(allowedExtensions.Image).single('image'),
     convertToWebP,
-    // validationCoreFunction(aboutValidators.addMainServiceSchema),
+    validationCoreFunction(aboutValidators.addHowWeWorkSchema),
     asyncHandler(aboutController.addHowWeWork),
 )
 
@@ -86,13 +85,13 @@ router.put('/editHowWeWork/:howWeWorkId',
     isAuth(aboutRoles.ALL_APIS),
     multerCloudFunction(allowedExtensions.Image).single('image'),
     convertToWebP,
-    // validationCoreFunction(aboutValidators.addMainServiceSchema),
+    validationCoreFunction(aboutValidators.editHowWeWorkSchema),
     asyncHandler(aboutController.editHowWeWork),
 )
 
 router.delete('/deleteHowWeWork/:howWeWorkId',
     isAuth(aboutRoles.ALL_APIS),
-    // validationCoreFunction(aboutValidators.addMainServiceSchema),
+    validationCoreFunction(aboutValidators.deleteHowWeWorkSchema),
     asyncHandler(aboutController.deleteHowWeWork),
 )
 

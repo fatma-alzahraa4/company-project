@@ -1,7 +1,6 @@
 import { serviceModel } from "../../../DB/models/serviceModel.js"
 import { customAlphabet } from 'nanoid';
 import cloudinary from "../../utils/cloudinaryConfigrations.js";
-// import { subServiceModel } from "../../../DB/models/serviceModel.js";
 import { teamModel } from '../../../DB/models/OurTeamModel.js';
 import { clientModel } from "../../../DB/models/clientModel.js";
 import { clientRedis, getOrSetCache } from "../../utils/redis.js";
@@ -142,15 +141,6 @@ export const deleteClient = async (req, res, next) => {
     clientRedis.del('projectsWebsite');
     return res.status(200).json({ message: 'Done', deletedClient })
 }
-
-// export const clientToExpertise = async (req, res, next) => {
-//     const { clientId } = req.params;
-//     const updatedClient = await clientModel.findByIdAndUpdate(clientId,{isExpertise:true},{new:true});
-//     if (!updatedClient) {
-//         return next(new Error('Failed to update client. Please try again later.', { cause: 400 }));
-//     }
-//     return res.status(200).json({ message: 'Done', updatedClient })
-// }
 
 export const getClients = async (req, res, next) => {
     const { notActive } = req.query

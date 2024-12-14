@@ -42,20 +42,6 @@ router.delete('/deleteImage/:imageId',
     asyncHandler(projectControllers.deleteProjectImage)
 )
 
-// router.post('/addVideo',
-    // isAuth(projectApisRoles.ADD_PROJECT_IMAGES),
-//     multerCloudFunction(allowedExtensions.Videos).single('video'),
-//     convertToWebP,
-//     validationCoreFunction(projectValidators.addProjectVideosSchema),
-//     asyncHandler(projectControllers.addProjectVideo)
-// )
-
-// router.delete('/deleteVideo/:videoId',
-    // isAuth(projectApisRoles.DELETE_PROJECT_IMAGES),
-//     validationCoreFunction(projectValidators.deleteProjectVideoSchema),
-//     asyncHandler(projectControllers.deleteProjectVideo)
-// )
-
 router.delete('/delete/:projectId',
     isAuth(projectApisRoles.DELETE_PROJECT),
     validationCoreFunction(projectValidators.deleteProjectSchema),

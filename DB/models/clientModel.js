@@ -4,16 +4,13 @@ export const clientSchema = new Schema({
     companyName: {
         type: String,
         required: true,
-        // lowercase: true,
         minlength: 3,
-        // maxlength: 25
     },
     details:{
         type:String
     },
     companyLink: {
         type: String,
-        // required: true
     },
     logo: {
         secure_url: {

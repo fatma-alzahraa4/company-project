@@ -23,11 +23,9 @@ const jobOfferSchema = new Schema(
         },
         acceptedKeyWords:[{
             type: String,
-            // required: true,
         }],
         rejectedKeyWords:[{
             type: String,
-            // required: true,
         }],
     },
     {

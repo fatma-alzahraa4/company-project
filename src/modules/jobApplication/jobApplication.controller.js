@@ -115,41 +115,6 @@ export const deleteJobOffer = async (req, res, next) => {
 //========================================================Website APIs=======================================================
 
 
-
-// const filterResumeByKeywords = async (pdfBuffer, jobId) => {
-//     const job = await jobOfferModel.findById(jobId);
-//     if (!job) {
-//         throw new Error('Job offer not found');
-//     }
-
-//     const acceptedKeyWords = job.acceptedKeyWords || [];
-//     const rejectedKeyWords = job.rejectedKeyWords || [];
-
-//     // Parse the PDF buffer directly from req.file.buffer
-//     const pdfData = await pdfParse(pdfBuffer);
-//     const text = pdfData.text.toLowerCase();
-
-//     let acceptedKeywordCount = 0;
-//     let rejectedKeywordCount = 0;
-
-//     acceptedKeyWords.forEach(keyword => {
-//         const keywordLower = keyword.toLowerCase();
-//         const keywordCount = (text.match(new RegExp(keywordLower, 'g')) || []).length;
-//         acceptedKeywordCount += keywordCount;
-//     });
-
-//     rejectedKeyWords.forEach(keyword => {
-//         const keywordLower = keyword.toLowerCase();
-//         const keywordCount = (text.match(new RegExp(keywordLower, 'g')) || []).length;
-//         rejectedKeywordCount += keywordCount;
-//     });
-
-//     return {
-//         acceptedKeywordCount,
-//         rejectedKeywordCount
-//     };
-// };
-
 export const applyToJob = async (req, res, next) => {
     const { jobId } = req.params
     const {
