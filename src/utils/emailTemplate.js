@@ -296,7 +296,7 @@ td {
 	`
 }
 
-export const emailTemplateCompany = ({ companyName, companyEmail, phoneNum, note, IPaddress, subService, subject, link, linkData }) => {
+export const emailTemplateCompany = ({ companyName, companyEmail, phoneNum, note, IPaddress, service, subject, link, linkData }) => {
     return `<!DOCTYPE html>
          <html>
     <head>
@@ -410,7 +410,7 @@ export const emailTemplateCompany = ({ companyName, companyEmail, phoneNum, note
                         </tr>
                         <tr>
                             <th>Subscribed Service</th>
-                            <td>${subService}</td>
+                            <td>${service}</td>
                         </tr>
                     </table>
                     </div>

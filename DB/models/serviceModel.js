@@ -5,9 +5,28 @@ export const serviceSchema = new Schema({
         type:String,
         required:true,
     },
-    mainServiceId:{
-        type:Schema.Types.ObjectId,
-        ref:'MainService',
+    brief:{
+        type:String,
+    },
+    icon:{
+        secure_url:{
+            type:String,
+            required:true
+        },
+        public_id:{
+            type:String,
+            required:true
+        },
+        alt:{
+            type:String,
+            required: true
+        },
+        customId:String
+    },
+    isHome:{
+        type:Boolean,
+        required:true,
+        default:false
     },
     active:{
         type:Boolean,
@@ -15,14 +34,6 @@ export const serviceSchema = new Schema({
         default:true
     },
 }, 
-{ 
-    toObject:{virtuals:true},
-    toJSON:{virtuals:true},
-    timestamps: true 
-})
-serviceSchema.virtual('subServices',{
-    ref:'SubService',
-    localField:'_id',
-    foreignField:'serviceId'
-})
-export const serviceModel = model('Service',serviceSchema)
+{ timestamps: true })
+
+export const serviceModel = model('service',serviceSchema)

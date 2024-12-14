@@ -7,7 +7,7 @@ export const contactSchema ={
         phoneNum:generalFields.phoneNumbers.required(),
         note:joi.string().min(3),
         IP:joi.string().ip({ version: ['ipv4', 'ipv6'], cidr: 'forbidden' }).required(),
-        subService:joi.string().min(3).required(),
+        service:joi.string().min(3).required(),
 
     }).required()
 }

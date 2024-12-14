@@ -1,7 +1,7 @@
 import { serviceModel } from "../../../DB/models/serviceModel.js"
 import { customAlphabet } from 'nanoid';
 import cloudinary from "../../utils/cloudinaryConfigrations.js";
-import { subServiceModel } from "../../../DB/models/subServiceModel.js";
+// import { subServiceModel } from "../../../DB/models/serviceModel.js";
 import { teamModel } from '../../../DB/models/OurTeamModel.js';
 import { clientModel } from "../../../DB/models/clientModel.js";
 import { clientRedis, getOrSetCache } from "../../utils/redis.js";

@@ -25,7 +25,7 @@ export const contactSchema = new Schema({
       type:String,
       required:true  
     },
-    subService:{
+    service:{
         type:String,
         required:true
     }

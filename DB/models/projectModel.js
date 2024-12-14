@@ -55,7 +55,7 @@ export const projectSchema = new Schema(
         },
         categoryId:{
             type:Schema.Types.ObjectId,
-            ref:'SubService',
+            ref:'service',
             required:true,
         },
         projectFolder:String

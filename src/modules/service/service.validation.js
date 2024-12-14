@@ -2,9 +2,10 @@ import joi from "joi"
 import { generalFields } from "../../middleWares/validation.js"
 export const addServiceSchema ={
     body:joi.object({
-        name:joi.string().min(3).required(),
-        mainServiceId:generalFields._id.required(),
-        // alt:joi.string().min(3).max(100).required(),  
+        name:joi.string().required(),
+        brief:joi.string(),
+        isHome:joi.boolean().default(false),
+        altIcon:joi.string().required()
     }).required()
 }
 
@@ -13,9 +14,10 @@ export const editServiceSchema ={
         serviceId:generalFields._id.required()
     }).required(),
     body:joi.object({
-        name:joi.string().min(3),
-        mainServiceId:generalFields._id,
-        // alt:joi.string().min(3).max(100),  
+        name:joi.string(),
+        brief:joi.string(),
+        isHome:joi.boolean().default(false),
+        altIcon:joi.string()
     }).required()
 }
 

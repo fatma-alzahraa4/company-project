@@ -1,6 +1,6 @@
 import { companyModel } from "../../../DB/models/CompanyModel.js"
 import { contactModel } from "../../../DB/models/ContactUsModel.js"
-import { subServiceModel } from "../../../DB/models/subServiceModel.js"
+import { serviceModel } from "../../../DB/models/serviceModel.js"
 import { sendEmailService } from "../../services/sendEmail.js"
 import { clientRedis, getOrSetCache } from "../../utils/redis.js";
 import { emailTemplateCompany, emailTemplatePerson } from './../../utils/emailTemplate.js';
@@ -12,10 +12,10 @@ export const contact = async (req, res, next) => {
         phoneNum,
         note,
         IP,
-        subService
+        service
     } = req.body
-    const isSubServiceExist = await subServiceModel.findOne({ name: subService })
-    if (!isSubServiceExist) {
+    const isServiceExist = await serviceModel.findOne({ name: service })
+    if (!isServiceExist) {
         return next(new Error('No sub-service found with the provided name.', { cause: 404 }));
     }
     const contactObj =
@@ -25,7 +25,7 @@ export const contact = async (req, res, next) => {
         phoneNum,
         note,
         IP,
-        subService
+        service
     }
     const contactInfo = await contactModel.create(contactObj)
     if (!contactInfo) {
@@ -51,7 +51,7 @@ export const contact = async (req, res, next) => {
                     phoneNum: phoneNum,
                     note: note,
                     IPaddress: IP,
-                    subService: subService,
+                    service: service,
                     link: 'https://www.mailslurp.com/blog/nodemailer-npm/',
                     linkData: 'Click here to go to dashboard',
                     subject: 'notification email new company contacts US',
