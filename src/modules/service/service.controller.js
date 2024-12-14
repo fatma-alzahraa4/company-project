@@ -62,7 +62,7 @@ export const editService = async (req, res, next) => {
     if (req.file) {
         const fileName = getFileNameWithoutExtension(req.file.originalname);
         const customId = `${fileName}_${nanoId()}`;
-        if(service.icon.public_id){
+        if(service.icon?.public_id){
             await cloudinary.uploader.destroy(service.icon.public_id)
             await cloudinary.api.delete_folder(`${process.env.PROJECT_FOLDER}/Service/${service.icon.customId}`)
         }
