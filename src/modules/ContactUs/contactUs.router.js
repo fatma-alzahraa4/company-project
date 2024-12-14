@@ -8,11 +8,10 @@ const router = Router()
 router.post('/send',
     validationCoreFunction(contactValidators.contactSchema),
     asyncHandler(contactController.contact),
-    contactController.contact)
-
+)
 
 router.get('/get',
     asyncHandler(contactController.getContactUsers),
-    contactController.getContactUsers)
+)
 
 export default router
