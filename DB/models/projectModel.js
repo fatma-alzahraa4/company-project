@@ -30,7 +30,7 @@ export const projectSchema = new Schema(
         },
         projectLink: {
             type: String,
-            required: true
+            // required: true
         },
         details: {
             type: String,
