@@ -10,7 +10,7 @@ export const homeData = async (req, res, next) => {
     const homeData = await getOrSetCache(`homeData`, async () => {
         const [company, services, whyUsData, clients, expertise, team, projects] = await Promise.all([
             companyModel.findOne().select('-updatedAt -__v -_id -logo.public_id -logo.customId -contactUsImage.public_id -contactUsImage.customId'),
-            serviceModel.find({ active: true })
+            serviceModel.find({ active: true , isHome:true})
             .select('-updatedAt -__v -icon.public_id -icon.customId'),
             aboutModel.findOne().select('-_id whyUsTitle whyUsDesc whyUsSubtitle whyUsImage1.secure_url whyUsImage1.alt whyUsImage2.secure_url whyUsImage2.alt '),
             clientModel.find({ active: true, isExpertise:false }).select('-updatedAt -__v -active -logo.public_id -logo.customId')
