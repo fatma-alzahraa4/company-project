@@ -36,4 +36,9 @@ export const serviceSchema = new Schema({
 }, 
 { timestamps: true })
 
+serviceSchema.virtual('projects',{
+    ref:'project',
+    localField:'_id',
+    foreignField:'categoryId',
+});
 export const serviceModel = model('service',serviceSchema)
