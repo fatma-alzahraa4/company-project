@@ -1,4 +1,5 @@
 import { projectModel } from "../../../../DB/models/projectModel.js";
+import { serviceModel } from "../../../../DB/models/serviceModel.js";
 import { paginationFunc } from "../../../utils/pagination.js";
 import { getOrSetCache } from "../../../utils/redis.js";
 
@@ -6,7 +7,7 @@ export const getProjects = async (req, res, next) => {
     const { page, size } = req.query
     const { limit, skip } = paginationFunc({ page, size }); 
     const projects = await getOrSetCache(`projectsWebsite`, async () => {
-        const [projects , projcetsCount] = await Promise.all([
+        const [projects , projcetsCount, categories] = await Promise.all([
             projectModel.find()
             .select('-mainImage.public_id -mainImage.customId -updatedAt -progressPercentage -projectFolder -__v')
             .populate([
@@ -25,6 +26,7 @@ export const getProjects = async (req, res, next) => {
             ])
             .sort({ date: -1, createdAt: -1 }),
             projectModel.countDocuments(),
+            serviceModel.find({active:true}).select('name')
         ]) 
         const formattedProjects = projects.map(project => {
             const formattedImages = project.images.map(img => ({
@@ -37,13 +39,13 @@ export const getProjects = async (req, res, next) => {
                 images: formattedImages
             };
         })
-        const data = {projects:formattedProjects, projcetsCount}
+        const data = {projects:formattedProjects, projcetsCount, categories}
         return data;
     });
     const projectsFromRedis = {...projects}
       const paginatedProjects = projectsFromRedis.projects.slice(skip,( +skip + +limit));
 
-    res.json({message:"Done" ,projects:paginatedProjects, projcetsCount:projectsFromRedis.projcetsCount})
+    res.json({message:"Done" ,projects:paginatedProjects, projcetsCount:projectsFromRedis.projcetsCount, categories:projectsFromRedis.categories})
 }
 
 export const getProject = async (req, res, next) => {
